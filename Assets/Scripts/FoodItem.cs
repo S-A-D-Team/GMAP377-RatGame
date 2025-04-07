@@ -6,16 +6,24 @@ public class FoodItem : Contaminatable
 {
     [Space]
     [Header("Food Details")]
-    public int poisoned;
+    public bool poisoned;
+	public ParticleSystem poisonedEffect;
 
 	protected override void Start()
 	{
 		base.Start();
+		//make sure the fx is not playing 
+		poisonedEffect.Stop();
 	}
 
 	protected override void Update()
 	{
 		base.Update();
+	}
+
+	protected virtual void onPoisoned()
+	{
+		poisonedEffect.Play();
 	}
 
 }

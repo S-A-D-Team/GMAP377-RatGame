@@ -38,7 +38,7 @@ public class ContaminationSpread : MonoBehaviour
         Collider[] _initialTriggerEnter = Physics.OverlapSphere(contamizationZone.center, contamizationZone.radius);
         foreach (Collider _col in _initialTriggerEnter)
         {
-            Debug.Log(gameObject + " adding " +_col.gameObject + " to list");
+            //Debug.Log(gameObject + " adding " +_col.gameObject + " to list");
             // Check if the overlapping object has the Contaminate script
             Contaminatable _contamTest = _col.GetComponent<Contaminatable>();
             if (_contamTest)
