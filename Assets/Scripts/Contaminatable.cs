@@ -7,29 +7,20 @@ public class Contaminatable : MonoBehaviour
     [Header("Contamination")]
     [SerializeField]
     [Tooltip("Contamination of this Item (100 means maximum contamination)")]
-    private float contaminationValue = 0;
+    protected float contaminationValue = 0;
     [SerializeField]
     [Tooltip("Contamination buildup of this item (per hour)")]
-    private float contaminationBuildup = 0;
+    protected float contaminationBuildup = 0;
 
     [Space]
     [Header("Contamination Material")]
-    private Material mat; // Assign your material with the shader
+    protected Material mat; // Assign your material with the shader
     [SerializeField]
-    private string lerpProperty = "_Contamination_Lerp";
+    protected string lerpProperty = "_Contamination_Lerp";
 
     //does this obj has ContaminationSpread
     private bool canSpread = false;
 
-    //private float startTime;
-    
-    protected virtual void atMinutePass()
-	{
-        contaminationValue += contaminationBuildup / 60f;
-        contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
-
-        if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;
-    }
 
     protected virtual void Awake()
 	{
@@ -47,10 +38,18 @@ public class Contaminatable : MonoBehaviour
         mat = GetComponent<Renderer>().material;
     }
 
-    // Update is called once per frame
-    protected virtual void Update() 
+    /// <summary>
+    /// Basically a replacement for Update
+    /// Update happens at every minutePass, like Tick is ingame minute
+    /// Adds contamination value based on buildups and clamps.
+    /// Updates Buildup value
+    /// </summary>
+    protected virtual void atMinutePass()
     {
+        contaminationValue += contaminationBuildup / 60f;
+        contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
 
+        if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;
     }
 
     public void AddBuildUp(float _buildUpValue)
@@ -63,8 +62,11 @@ public class Contaminatable : MonoBehaviour
 		if(collision.gameObject.tag.ToLower().Contains("player"))
 		{
             //HEre we can add more buildup based on perks?
-            contaminationValue += 2f;
+            contaminationValue += 20f;
             AddBuildUp(5f);
+            //tick it
+            atMinutePass();
+            //Visual feedback
             StartCoroutine(LerpRoutine(mat));
         }
 	}
