@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Kit-paperJittered
-  m_Shader: {fileID: -6465566751694194690, guid: c436366bb03d7b842b151318976a6fc0,
+  m_Shader: {fileID: -6465566751694194690, guid: df783c83d07f6414cb6dd9d0d7f13d22,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -116,6 +116,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _Edge_Intensity: 1
     - _EnvironmentReflections: 1
     - _First_Layer_Lightness: 0.631
     - _Float: 0
@@ -140,6 +141,7 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _Third_Layer_Lightness: 0.051
+    - _Threshold: 0.176
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _clipLimit: 0.35
@@ -152,8 +154,10 @@ Material:
     - _paperUVSize: 5.22
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Base_Color: {r: 0.49019608, g: 0.49019608, b: 0.49019608, a: 0}
+    - _Base_Color: {r: 1, g: 0.14044955, b: 0, a: 1}
     - _Color: {r: 0.7830189, g: 0.54294235, b: 0.54294235, a: 1}
+    - _EdgeColor: {r: 1, g: 1, b: 1, a: 0}
+    - _Edge_Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutLineColor: {r: 0.8962264, g: 0.5626192, b: 0.19023678, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
