@@ -16,14 +16,23 @@ public class FoodItem : Contaminatable
 		poisonedEffect.Stop();
 	}
 
-	protected override void Update()
-	{
-		base.Update();
-	}
-
 	protected virtual void onPoisoned()
 	{
 		poisonedEffect.Play();
-	}
 
+		//Always show contaminated
+        //mat.SetFloat(lerpProperty, 100);
+    }
+
+	//tick
+	//ater we update the contamination and buildup values
+    protected override void atMinutePass()
+    {
+        base.atMinutePass();
+		//if we exceed value,
+		if(contaminationValue >= 100 && !poisonedEffect.isPlaying)
+		{
+            onPoisoned();
+        }
+    }
 }
