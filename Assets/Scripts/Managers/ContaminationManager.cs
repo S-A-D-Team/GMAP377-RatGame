@@ -7,18 +7,24 @@ public class ContaminationManager : MonoBehaviour
 {
     [SerializeField]
     private ContaminationSettings settings;
+    //Remove the serialization of this when we have an actual gameplay indicator for contamination levels
     [SerializeField]
     [Tooltip("Contamination level as a total percentage")]
     private float level;
     [SerializeField]
     [Tooltip("Contamination thresholds to determine gameplay changes")]
-    private float[] thresholds;
+    //Defined as a sorted set to enforce unique thresholds and proper behavior order from passing them
+    //In cases where there would need to be a repeat threshold value, that could be replaced by just triggering multiple behaviors elsewhere upon hitting the threshold
+    //Defensive measure in the event that designers do not enter (n1, n2, n3 ... , nk) values in the settings where n_(i+1) > n_i
+    private SortedSet<float> thresholds;
     
 
     //Each contaminable object will be registered with an individual contamination level
     private Dictionary<Contaminatable, float> contaminables = new Dictionary<Contaminatable, float>();
     private float flatLevel = 0;
     private float totalFlatLevel = 0;
+
+    public event System.Action<float> thresholdPassed;
     public static ContaminationManager Instance { get; private set; }
 
     private void Awake()
@@ -40,7 +46,7 @@ public class ContaminationManager : MonoBehaviour
         else
         {
             level = settings.initialContaminationLevel;
-            thresholds = settings.contaminationThresholds;
+            thresholds = new SortedSet<float>(settings.contaminationThresholds);
         }
         //Defensive measure for the dict contents
         contaminables.Clear();
@@ -57,7 +63,7 @@ public class ContaminationManager : MonoBehaviour
         
     }
 
-    //"Contaminaable" class is spelled wrong, should replace all instances of this later
+    //"Contaminable" class is spelled wrong, should replace all instances of this later
     public void AddContaminable (Contaminatable c, float v)
     {
         if (!contaminables.ContainsKey(c))
@@ -77,13 +83,28 @@ public class ContaminationManager : MonoBehaviour
         level = flatLevel / totalFlatLevel;
         CheckThresholds();
     }
-
-    /*TODO: 
-     * Implement logic to compare contamination percentage against thresholds
-     * Make sure to check whether each threshold has been passed or not to avoid erroneous repetition of resulting behavior
-    */
+    //Ensures that checkpoints can be passed simultaneously but only ever once
+    //Gameplay effects of passing these thresholds is defined elsewhere
     public void CheckThresholds()
     {
+        Queue<float> passedThresholds = new Queue<float>();
+        foreach(float checkpoint in thresholds)
+        {
+            if (level >= checkpoint)
+            {
+                passedThresholds.Enqueue(checkpoint);
+            }
+            else
+            {
+                break;
+            }
 
+            while (passedThresholds.Count > 0)
+            {
+                float passed = passedThresholds.Dequeue();
+                thresholds.Remove(passed);
+                thresholdPassed?.Invoke(passed);
+            }
+        }
     }
 }

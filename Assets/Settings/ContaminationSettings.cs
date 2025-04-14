@@ -10,5 +10,5 @@ public class ContaminationSettings : ScriptableObject
     public float initialContaminationLevel;
 
     [Header("Thresholds")]
-    public float[] contaminationThresholds;
+    public List<float> contaminationThresholds;
 }
