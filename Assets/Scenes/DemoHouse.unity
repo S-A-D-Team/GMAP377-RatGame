@@ -3282,7 +3282,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21.8
+  m_fontSize: 37.3
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3343,6 +3343,7 @@ GameObject:
   - component: {fileID: 1455612493}
   - component: {fileID: 1455612495}
   - component: {fileID: 1455612494}
+  - component: {fileID: 1455612496}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -3394,6 +3395,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25adf62942dc0204d92023ad6f456e54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1455612496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455612492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 938b356d008972b46942c4cefccf7cc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: f32264f347aa0d6479b1c97bac5f0e12, type: 2}
+  level: 0
 --- !u!1 &1547668518
 GameObject:
   m_ObjectHideFlags: 0
@@ -4048,7 +4063,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21.8
+  m_fontSize: 37.3
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

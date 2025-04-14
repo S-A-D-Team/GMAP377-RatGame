@@ -48,7 +48,7 @@ public class ContaminationSpread : MonoBehaviour
                     otherContaminationsInZone.Add(_contamTest);
             }
         }
-        if (!otherContaminationsInZone.Contains(gameObject.GetComponent<Contaminatable>()))
+        if (otherContaminationsInZone.Contains(gameObject.GetComponent<Contaminatable>()))
             otherContaminationsInZone.Remove(gameObject.GetComponent<Contaminatable>());
     }
 
