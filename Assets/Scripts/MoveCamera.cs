@@ -11,6 +11,6 @@ public class MoveCamera : MonoBehaviour
     void Update()
     {
         //Keeps the camera in line with the player
-        transform.position = cameraPos.position;
+        if(cameraPos != null) transform.position = cameraPos.position;
     }
 }
