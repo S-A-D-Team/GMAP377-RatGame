@@ -29,10 +29,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float jumpForce;
     [SerializeField]
+    private float minJumpForce;
+    [SerializeField]
+    private float maxJumpForce;
+    [SerializeField]
     private float jumpCooldown;
     [SerializeField]
     private float airMovement;
     private bool canJump;
+    private float currentJump;
 
     [Header("Key Bindings")]
     [SerializeField]
@@ -56,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         canJump = true;
+        currentJump = minJumpForce;
     }
 
     // Update is called once per frame
@@ -92,11 +98,26 @@ public class PlayerMovement : MonoBehaviour
         //Jump Input Check
         if(Input.GetKey(jumpKey) && grounded && canJump)
         {
-            canJump = false;
+            if (currentJump < maxJumpForce)
+            {
+                currentJump += Time.deltaTime * jumpForce;
+            }
+            else
+            {
+                currentJump = maxJumpForce;
+            }
+        }
+        //Check if jump key has been pressed, jump if so.
+        else
+        {
+            if (currentJump > minJumpForce)
+            {
+                canJump = false;
 
-            Jump();
+                Jump();
 
-            Invoke(nameof(ResetJump), jumpCooldown);
+                Invoke(nameof(ResetJump), jumpCooldown);
+            }
         }
 
         //Running Check
@@ -151,7 +172,9 @@ public class PlayerMovement : MonoBehaviour
         //Makes sure y speed is 0
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        rb.AddForce(transform.up * currentJump, ForceMode.Impulse);
+
+        currentJump = minJumpForce;
     }
 
     private void ResetJump()
