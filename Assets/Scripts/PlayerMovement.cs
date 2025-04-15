@@ -40,8 +40,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private KeyCode runKey = KeyCode.LeftShift;
 
-
-
+    //Temp get/setter to access player attribute for a mutation (refer to GameManager.cs)
+    public float JumpForce
+    {
+        get { return jumpForce; }
+        set { jumpForce = value; }
+    }
     //Collects movement inputs
     private float horInput;
     private float vertInput;
@@ -56,6 +60,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         canJump = true;
+        //Subject to change but currently let's the Game Manager keep track of the player
+        GameManager.Instance.RegisterPlayer(this);
     }
 
     // Update is called once per frame

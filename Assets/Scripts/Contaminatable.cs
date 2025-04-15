@@ -33,6 +33,8 @@ public class Contaminatable : MonoBehaviour
     protected virtual void Start() 
     {
         ContaminationSpread _contamSpreadCheck = GetComponent<ContaminationSpread>();
+        //Add it to the dictionary of tracked contaminable objects, done here instead of in the manager to allow dynamic spawning
+        ContaminationManager.Instance.AddContaminable(this, contaminationValue);
         //if it exists, then true, otherwise false
         canSpread = _contamSpreadCheck;
         mat = GetComponent<Renderer>().material;
@@ -48,7 +50,8 @@ public class Contaminatable : MonoBehaviour
     {
         contaminationValue += contaminationBuildup / 60f;
         contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
-
+        //Update its entry in the manager
+        //ContaminationManager.Instance.CalculateContaminationLevel(this, contaminationValue);
         if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;
     }
 
@@ -63,6 +66,7 @@ public class Contaminatable : MonoBehaviour
 		{
             //HEre we can add more buildup based on perks?
             contaminationValue += 20f;
+            contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
             AddBuildUp(5f);
             //tick it
             atMinutePass();
