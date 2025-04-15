@@ -29,15 +29,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float jumpForce;
     [SerializeField]
-    private float minJumpForce;
-    [SerializeField]
-    private float maxJumpForce;
-    [SerializeField]
     private float jumpCooldown;
     [SerializeField]
     private float airMovement;
     private bool canJump;
-    private float currentJump;
 
     [Header("Key Bindings")]
     [SerializeField]
@@ -45,8 +40,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private KeyCode runKey = KeyCode.LeftShift;
 
-
-
+    //Temp get/setter to access player attribute for a mutation (refer to GameManager.cs)
+    public float JumpForce
+    {
+        get { return jumpForce; }
+        set { jumpForce = value; }
+    }
     //Collects movement inputs
     private float horInput;
     private float vertInput;
@@ -61,7 +60,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         canJump = true;
-        currentJump = minJumpForce;
+        //Subject to change but currently let's the Game Manager keep track of the player
+        GameManager.Instance.RegisterPlayer(this);
     }
 
     // Update is called once per frame
@@ -98,26 +98,11 @@ public class PlayerMovement : MonoBehaviour
         //Jump Input Check
         if(Input.GetKey(jumpKey) && grounded && canJump)
         {
-            if (currentJump < maxJumpForce)
-            {
-                currentJump += Time.deltaTime * jumpForce;
-            }
-            else
-            {
-                currentJump = maxJumpForce;
-            }
-        }
-        //Check if jump key has been pressed, jump if so.
-        else
-        {
-            if (currentJump > minJumpForce)
-            {
-                canJump = false;
+            canJump = false;
 
-                Jump();
+            Jump();
 
-                Invoke(nameof(ResetJump), jumpCooldown);
-            }
+            Invoke(nameof(ResetJump), jumpCooldown);
         }
 
         //Running Check
@@ -172,9 +157,7 @@ public class PlayerMovement : MonoBehaviour
         //Makes sure y speed is 0
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        rb.AddForce(transform.up * currentJump, ForceMode.Impulse);
-
-        currentJump = minJumpForce;
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
     private void ResetJump()
