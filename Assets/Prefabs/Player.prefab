@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 2240846081640140446}
   - component: {fileID: 1015684664545300683}
   - component: {fileID: 7344085817859708281}
-  - component: {fileID: 5235589478710674354}
   m_Layer: 0
   m_Name: PlayerObj
   m_TagString: Untagged
@@ -58,13 +57,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2996159687012565720}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.72216326, y: -0, z: -0, w: 0.6917227}
-  m_LocalPosition: {x: 0, y: -0.0387, z: 0.0017}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: -0.0387, z: 0.001699999}
   m_LocalScale: {x: 0.08445494, y: 0.084454946, z: 0.084454946}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 604104785542074620}
-  m_LocalEulerAnglesHint: {x: -92.467, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &1015684664545300683
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -115,29 +114,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &5235589478710674354
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2996159687012565720}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5058273188919755049
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,7 +125,7 @@ GameObject:
   - component: {fileID: 604104785542074620}
   - component: {fileID: 6916524303983875178}
   - component: {fileID: 1304832216517500403}
-  - component: {fileID: 7580557218342221352}
+  - component: {fileID: 7607355011323265677}
   m_Layer: 0
   m_Name: Player
   m_TagString: player
@@ -227,8 +203,8 @@ MonoBehaviour:
   airMovement: 0.2
   jumpKey: 32
   runKey: 304
---- !u!65 &7580557218342221352
-BoxCollider:
+--- !u!136 &7607355011323265677
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -245,9 +221,11 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.094168514, y: 0.08196175, z: 0.20017314}
-  m_Center: {x: 0.00034752302, y: -0.033422768, z: -0.0029498339}
+  serializedVersion: 2
+  m_Radius: 0.043022092
+  m_Height: 0.17154261
+  m_Direction: 2
+  m_Center: {x: 0, y: -0.038746666, z: 0.00054068863}
 --- !u!1 &5416546354237750039
 GameObject:
   m_ObjectHideFlags: 0
