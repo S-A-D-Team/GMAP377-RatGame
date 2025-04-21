@@ -62,7 +62,7 @@ public class ContaminationSpread : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(gameObject + " adding " + other.gameObject + " to list");
+        //Debug.Log(gameObject + " adding " + other.gameObject + " to list");
 
         // Check if the object has the Contaminate script
         Contaminable _contamTest = other.GetComponent<Contaminable>();
