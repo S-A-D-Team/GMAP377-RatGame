@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private RatStats playerStats;
+    //Ability flags
+    private bool canBite;
+    private bool canClimb;
+
+    private float climbSpeed;
+
     [Header("Base Movement")]
     [SerializeField]
     [Tooltip("The base walking speed of the player")]
@@ -29,23 +36,26 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float jumpForce;
     [SerializeField]
+    private float minJumpForce;
+    [SerializeField]
+    private float maxJumpForce;
+    [SerializeField]
     private float jumpCooldown;
     [SerializeField]
     private float airMovement;
     private bool canJump;
+    private float currentJump;
 
     [Header("Key Bindings")]
     [SerializeField]
     private KeyCode jumpKey = KeyCode.Space;
     [SerializeField]
     private KeyCode runKey = KeyCode.LeftShift;
+    [SerializeField]
+    private KeyCode refreshStatsKey = KeyCode.R;
 
-    //Temp get/setter to access player attribute for a mutation (refer to GameManager.cs)
-    public float JumpForce
-    {
-        get { return jumpForce; }
-        set { jumpForce = value; }
-    }
+
+
     //Collects movement inputs
     private float horInput;
     private float vertInput;
@@ -60,8 +70,25 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         canJump = true;
-        //Subject to change but currently let's the Game Manager keep track of the player
-        GameManager.Instance.RegisterPlayer(this);
+        currentJump = minJumpForce;
+        GameManager.Instance.RegisterPlayer(gameObject);
+        playerStats = GameManager.Instance.ratStats;
+        //Initialize stats from rat stats
+        RefreshStats();
+    }
+
+    //Initializes or overrides any editor values for the player stats (useful for sanity checking)
+    private void RefreshStats()
+    {
+        speed = playerStats.walkSpeed;
+        runSpeed = playerStats.runSpeed;
+        groundDrag = playerStats.groundDrag;
+        climbSpeed = playerStats.climbSpeed;
+        maxJumpForce = playerStats.maxJumpForce;
+
+        canBite = playerStats.canBite;
+        canClimb = playerStats.canClimb;
+
     }
 
     // Update is called once per frame
@@ -98,11 +125,26 @@ public class PlayerMovement : MonoBehaviour
         //Jump Input Check
         if(Input.GetKey(jumpKey) && grounded && canJump)
         {
-            canJump = false;
+            if (currentJump < maxJumpForce)
+            {
+                currentJump += Time.deltaTime * jumpForce;
+            }
+            else
+            {
+                currentJump = maxJumpForce;
+            }
+        }
+        //Check if jump key has been pressed, jump if so.
+        else
+        {
+            if (currentJump > minJumpForce)
+            {
+                canJump = false;
 
-            Jump();
+                Jump();
 
-            Invoke(nameof(ResetJump), jumpCooldown);
+                Invoke(nameof(ResetJump), jumpCooldown);
+            }
         }
 
         //Running Check
@@ -113,6 +155,11 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             running = false;
+        }
+
+        if(Input.GetKey(refreshStatsKey))
+        {
+            RefreshStats();
         }
     }
 
@@ -140,14 +187,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void SPeedControl()
     {
+        //Limit the speed based on movement state
+        float contextSpeedCap = running ? runSpeed : speed;
+        
         //Limits the max speed that the player can reach
         Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         //Checks if speed execeeeds max
-        if (flatVelocity.magnitude > speed)
+        if (flatVelocity.magnitude > contextSpeedCap)
         {
             //Sets speed to maxed out speed
-            Vector3 limitedVelocity = flatVelocity.normalized * speed;
+            Vector3 limitedVelocity = flatVelocity.normalized * contextSpeedCap;
             rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
         }
     }
@@ -157,7 +207,9 @@ public class PlayerMovement : MonoBehaviour
         //Makes sure y speed is 0
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        rb.AddForce(transform.up * currentJump, ForceMode.Impulse);
+
+        currentJump = minJumpForce;
     }
 
     private void ResetJump()

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Contaminatable : MonoBehaviour
+public class Contaminable : MonoBehaviour
 {
     [Header("Contamination")]
     [SerializeField]
