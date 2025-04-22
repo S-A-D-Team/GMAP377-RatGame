@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoodItem : Contaminatable
+public class FoodItem : Contaminable
 {
     [Space]
     [Header("Food Details")]

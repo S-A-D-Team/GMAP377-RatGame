@@ -11,7 +11,7 @@ public class ContaminationSpread : MonoBehaviour
     private SphereCollider contamizationZone;
     [SerializeField]
     [Tooltip("(Internal) List of foods in its contamination range")]
-    private List<Contaminatable> otherContaminationsInZone;
+    private List<Contaminable> otherContaminationsInZone;
 
 
 	private void Awake()
@@ -40,7 +40,7 @@ public class ContaminationSpread : MonoBehaviour
         {
             //Debug.Log(gameObject + " adding " +_col.gameObject + " to list");
             // Check if the overlapping object has the Contaminate script
-            Contaminatable _contamTest = _col.GetComponent<Contaminatable>();
+            Contaminable _contamTest = _col.GetComponent<Contaminable>();
             if (_contamTest)
             {
                 //only add if not already there
@@ -48,13 +48,13 @@ public class ContaminationSpread : MonoBehaviour
                     otherContaminationsInZone.Add(_contamTest);
             }
         }
-        if (otherContaminationsInZone.Contains(gameObject.GetComponent<Contaminatable>()))
-            otherContaminationsInZone.Remove(gameObject.GetComponent<Contaminatable>());
+        if (otherContaminationsInZone.Contains(gameObject.GetComponent<Contaminable>()))
+            otherContaminationsInZone.Remove(gameObject.GetComponent<Contaminable>());
     }
 
     private void atMinutePass()
 	{
-        foreach (Contaminatable _contamObj in otherContaminationsInZone)
+        foreach (Contaminable _contamObj in otherContaminationsInZone)
         {
             _contamObj.AddBuildUp(contaminationRate);
         }
@@ -65,7 +65,7 @@ public class ContaminationSpread : MonoBehaviour
         //Debug.Log(gameObject + " adding " + other.gameObject + " to list");
 
         // Check if the object has the Contaminate script
-        Contaminatable _contamTest = other.GetComponent<Contaminatable>();
+        Contaminable _contamTest = other.GetComponent<Contaminable>();
         if (_contamTest)
         {
             //only add if not already there
@@ -78,7 +78,7 @@ public class ContaminationSpread : MonoBehaviour
 	{
         Debug.Log(gameObject + " REMOVING " + other.gameObject + " to list");
         // Check if the object has the Contaminate script
-        Contaminatable _contamTest = other.GetComponent<Contaminatable>();
+        Contaminable _contamTest = other.GetComponent<Contaminable>();
         if (_contamTest)
         {
             //only if already there

@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class Hole : MonoBehaviour
 {
-    public bool isEnabled = true;
+    public bool isEnabled = false;
     string wallLayerName = "Walls";
     public GameObject holePrefab;
 
     public List<GameObject> wallsInContact = new List<GameObject>();
-
 
     void Update()
     {

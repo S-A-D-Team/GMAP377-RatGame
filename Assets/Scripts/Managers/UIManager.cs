@@ -65,12 +65,18 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject Parameters_UI_Object;
     [SerializeField] private GameObject template_InputField;
     [SerializeField] private GameObject template_Dropdown;
-    [SerializeField] private GameObject template_ToggleBox;
+    [SerializeField] private GameObject template_Toggle;
     private List<Parameter> parameters;
+    private List<int> paramIDs;
+    private bool paramUIChanged = false;
 
     [Space]
     [Header("Pause")]
-    [SerializeField] private List<GameObject>  pauseScreens;
+    [SerializeField] private List<GameObject> pauseScreens;
+
+    public event System.Action<List<int>> updateParams;
+
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -88,29 +94,42 @@ public class UIManager : MonoBehaviour
         //disable them just in case
         template_InputField.SetActive(false);
         template_Dropdown.SetActive(false);
-        template_ToggleBox.SetActive(false);
+        template_Toggle.SetActive(false);
 
         // Add a TextField parameter
         int textParamID = AddParameterOptionTextField("Username", "PlayerOne");
+        int jumpMutationTextParamID = AddParameterOptionTextField("Jump");
+        setParamValue(jumpMutationTextParamID, "Stack #");
+        int speedMutationTextParamID = AddParameterOptionTextField("Speed");
+        setParamValue(speedMutationTextParamID, "Stack #");
         setParamValue(textParamID, "NewPlayerName");
         Debug.Log("Text Param Value: " + getParamValue(textParamID));
 
-        // Add a Dropdown parameter
+        /*Add a Dropdown parameter
         List<string> dropdownOptions = new List<string> { "Easy", "Medium", "Hard" };
         int dropdownParamID = AddParameterOptionDropMenu("Difficulty", dropdownOptions, 0);
         setParamValue(dropdownParamID, "Hard");
         Debug.Log("Dropdown Param Value: " + getParamValue(dropdownParamID));
+        */
 
         // Add a Toggle parameter
-        int toggleParamID = AddParameterOptionToggleBox("Enable Music", true);
-        setParamValue(toggleParamID, false);
-        Debug.Log("Toggle Param Value: " + getParamValue(toggleParamID));
+        int toggleClimbID = AddParameterOptionToggle("Climb", false);
+        int toggleBiteID = AddParameterOptionToggle("Bite", false);
+        setParamValue(toggleClimbID, false);
+        setParamValue(toggleBiteID, false);
+
+        paramIDs = new List<int> { jumpMutationTextParamID, speedMutationTextParamID, toggleClimbID, toggleBiteID };
 
         //disable all pause ui elements
         foreach (GameObject _uis in pauseScreens)
         {
             _uis.SetActive(false);
         }
+    }
+    public void SelfDestroy()
+    {
+        Instance = null;
+        Destroy(gameObject);
     }
 
     public void TriggerDeathEffect()
@@ -171,8 +190,12 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1.0f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        //Invoke
+        if (paramUIChanged)
+        {
+            updateParams?.Invoke(paramIDs);
+        }
+        paramUIChanged = false;
+        ClearParamUIListeners();
     }
 
     public void onPause()
@@ -180,6 +203,37 @@ public class UIManager : MonoBehaviour
         foreach(GameObject _uis in pauseScreens)
         {
             _uis.SetActive(true);
+        }
+        Debug.Log("Pause!");
+        SetupParamUIListeners();
+    }
+
+    private void SetupParamUIListeners()
+    {
+        paramUIChanged = false;
+
+        foreach (var inputField in Parameters_UI_Object.GetComponentsInChildren<TMP_InputField>())
+        {
+            inputField.onValueChanged.AddListener((_) => paramUIChanged = true);
+        }
+
+        foreach (var toggle in Parameters_UI_Object.GetComponentsInChildren<Toggle>())
+        {
+            toggle.onValueChanged.AddListener((_) => paramUIChanged = true);
+        }
+
+    }
+
+    private void ClearParamUIListeners()
+    {
+        foreach (var inputField in Parameters_UI_Object.GetComponentsInChildren<TMP_InputField>())
+        {
+            inputField.onValueChanged.RemoveAllListeners();
+        }
+
+        foreach (var toggle in Parameters_UI_Object.GetComponentsInChildren<Toggle>())
+        {
+            toggle.onValueChanged.RemoveAllListeners();
         }
     }
 
@@ -204,22 +258,19 @@ public class UIManager : MonoBehaviour
 
         return newParam.getID();
     }
-    public int AddParameterOptionToggleBox(string label, bool _initialToggle = false)
+    public int AddParameterOptionToggle(string label, bool _initialToggle = false)
     {
-        GameObject _temp = Instantiate(template_ToggleBox, Parameters_UI_Object.transform);
+        GameObject _temp = Instantiate(template_Toggle, Parameters_UI_Object.transform);
         _temp.SetActive(true);
 
         Parameter newParam = new Parameter(label, _initialToggle, _temp);
 
         _temp.GetComponentInChildren<TextMeshProUGUI>().text = label;
-        ToggleBox toggleBox = _temp.GetComponentInChildren<ToggleBox>();
-        toggleBox.paramID = newParam.getID();
-        toggleBox.Init(_initialToggle);
-        // Sync ToggleBox
-        toggleBox.onValueChanged += (bool val) =>
+        Toggle Toggle = _temp.GetComponentInChildren<Toggle>();
+        Toggle.onValueChanged.AddListener((bool val) =>
         {
             newParam.value = val;
-        };
+        });
 
         parameters.Add(newParam);
         return newParam.getID();
@@ -302,11 +353,10 @@ public class UIManager : MonoBehaviour
                     }
                 }
 
-                ToggleBox toggleBox = param.go.GetComponentInChildren<ToggleBox>();
-                if (toggleBox != null && value is bool boolVal)
+                Toggle Toggle = param.go.GetComponentInChildren<Toggle>();
+                if (Toggle != null && value is bool boolVal)
                 {
-                    toggleBox.value = boolVal;
-                    toggleBox.childObject.SetActive(boolVal);
+                    Toggle.isOn = boolVal;
                     return true;
                 }
 
