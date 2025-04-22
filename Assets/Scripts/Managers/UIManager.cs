@@ -30,6 +30,10 @@ public class Parameter
     {
         return id;
     }
+    public string getLabel()
+    {
+        return label;
+    }
     public string GetDisplayValue()
     {
         if (value is bool boolVal)
@@ -164,10 +168,14 @@ public class UIManager : MonoBehaviour
         {
             _uis.SetActive(false);
         }
+        Time.timeScale = 1.0f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         //Invoke
     }
 
-    public void pnPause()
+    public void onPause()
     {
         foreach(GameObject _uis in pauseScreens)
         {
@@ -238,6 +246,15 @@ public class UIManager : MonoBehaviour
         parameters.Add(newParam);
 
         return newParam.getID();
+    }
+
+    public string getParamName(int id)
+    {
+        foreach (Parameter param in parameters)
+        {
+            if (param.getID() == id) return param.label;
+        }
+        return "null";
     }
 
     public object getParamValue(int id)

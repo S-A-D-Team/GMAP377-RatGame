@@ -62,6 +62,9 @@ public class PlayerMovement : MonoBehaviour
         canJump = true;
         //Subject to change but currently let's the Game Manager keep track of the player
         GameManager.Instance.RegisterPlayer(this);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
@@ -81,6 +84,13 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             rb.drag = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UIManager.Instance.onPause();
+            Time.timeScale = 0.0f;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
         }
     }
 
