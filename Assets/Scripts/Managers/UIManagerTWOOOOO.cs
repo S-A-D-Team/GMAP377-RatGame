@@ -5,15 +5,31 @@ using UnityEngine.SceneManagement;
 
 public class UIManagerTWOOOOO : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public IEnumerator startReload(float time)
     {
-        
+        yield return new WaitForSeconds(time);
+        ReloadScene();
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void ReloadScene()
     {
-        
+        Time.timeScale = 1f;
+
+        // Destroy singletons if needed
+        GameManager.Instance?.SelfDestroy();
+        UIManager.Instance?.SelfDestroy();
+        GameTimer.Instance?.SelfDestroy();
+        ContaminationManager.Instance?.SelfDestroy();
+
+
+
+        // Or use GameObject.Find and destroy specific persistent objects
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
     }
 }

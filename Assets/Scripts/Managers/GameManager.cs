@@ -256,5 +256,13 @@ public class GameManager : MonoBehaviour
         ratMov.RefreshStats();
     }
 
+    public void onJumpStackChange(int newVal)
+    {
+
+    }
+    public void onSpeedStackChange(int newVal)
+    {
+
+    }
 
 }

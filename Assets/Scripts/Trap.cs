@@ -14,6 +14,7 @@ public class Trap : MonoBehaviour
 		{
 			Destroy(other.gameObject);
 			GameManager.Instance.onPlayerTrapped();
+			StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
 			snapAudio.Play();
 		}
 	}

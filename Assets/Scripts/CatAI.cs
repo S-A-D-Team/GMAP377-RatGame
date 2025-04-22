@@ -98,6 +98,9 @@ public class CatAI : EnemyAi
     {
         if (collision.gameObject.CompareTag("player"))
         {
+            Destroy(collision.gameObject);
+            GameManager.Instance.onPlayerTrapped();
+            StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
             print("Cat Kill");
         }
     }
