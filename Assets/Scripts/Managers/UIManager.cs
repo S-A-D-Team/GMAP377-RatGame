@@ -68,13 +68,13 @@ public class UIManager : MonoBehaviour
     //[SerializeField] private GameObject template_Toggle;
     private List<Parameter> parameters;
     private List<int> paramIDs;
-    private bool paramUIChanged = false;
+    //private bool paramUIChanged = false;
 
     [Space]
     [Header("Pause")]
     [SerializeField] private List<GameObject> pauseScreens;
 
-    public event System.Action<List<int>> updateParams;
+    //public event System.Action<List<int>> updateParams;
 
 
     private void Awake()
@@ -190,12 +190,12 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1.0f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        if (paramUIChanged)
+        /*if (paramUIChanged)
         {
             updateParams?.Invoke(paramIDs);
-        }
-        paramUIChanged = false;
-        ClearParamUIListeners();
+        }*/
+        //paramUIChanged = false;
+        //ClearParamUIListeners();
     }
 
     public void onPause()
@@ -204,11 +204,10 @@ public class UIManager : MonoBehaviour
         {
             _uis.SetActive(true);
         }
-        Debug.Log("Pause!");
-        SetupParamUIListeners();
+        //SetupParamUIListeners();
     }
 
-    private void SetupParamUIListeners()
+    /*private void SetupParamUIListeners()
     {
         paramUIChanged = false;
 
@@ -222,9 +221,9 @@ public class UIManager : MonoBehaviour
             toggle.onValueChanged.AddListener((_) => paramUIChanged = true);
         }
 
-    }
+    }*/
 
-    private void ClearParamUIListeners()
+    /*private void ClearParamUIListeners()
     {
         foreach (var inputField in Parameters_UI_Object.GetComponentsInChildren<TMP_InputField>())
         {
@@ -235,7 +234,7 @@ public class UIManager : MonoBehaviour
         {
             toggle.onValueChanged.RemoveAllListeners();
         }
-    }
+    }*/
 
     /*
     public int AddParameterOptionTextField(string label, string _initialValue = "Enter Here...")
@@ -366,24 +365,22 @@ public class UIManager : MonoBehaviour
         }
         return false;
     }
-
     [Space]
     [Header("Parameters")]
-    
+
     public Toggle biteToggle;
 
     public void onBiteToggleChange()
     {
         GameObject.FindWithTag("player").GetComponent<Hole>().isEnabled = biteToggle.isOn;
-        //_ = biteToggle.isOn;
     }
+
     
-    /*
     public Toggle ClimbToggle;
     public void onClimbToggleChange()
     {
-        _ = ClimbToggle.isOn;
-    }*/
+        GameManager.Instance.onClimbToggle(ClimbToggle.isOn);
+    }
 
     public TMP_InputField jumpStack;
     public void onJumpStackChange()
@@ -398,7 +395,7 @@ public class UIManager : MonoBehaviour
 
             throw;
         }
-        
+
     }
 
     public TMP_InputField speedStack;
@@ -414,6 +411,9 @@ public class UIManager : MonoBehaviour
 
             throw;
         }
-        
+
     }
+
+
+
 }

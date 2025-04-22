@@ -24,16 +24,17 @@ public static class MutationUtils
 
     public static float ApplyMultiplicativeDecay(float baseValue, int stacks, float minValue = 0.5f, float decay = 0.9f)
     {
-        float decayedMultiplier = baseValue * Mathf.Pow(decay, stacks);
-        float finalMultiplier = Mathf.Clamp(decayedMultiplier, minValue, baseValue);
-        return finalMultiplier;
+        float decayedValue = baseValue * Mathf.Pow(decay, stacks);
+        float finalValue = Mathf.Clamp(decayedValue, minValue, baseValue);
+        
+        return finalValue;
     }
 
     //Overload version for designers
     public static float ApplyMultiplicativeDecay(AnimationCurve curveTool, float baseValue, int stacks, float minValue = 0.5f)
     {
-        float decayedMultiplier = baseValue * curveTool.Evaluate(stacks);
-        float finalMultiplier = Mathf.Clamp(decayedMultiplier, minValue, baseValue);
-        return finalMultiplier;
+        float decayedValue = baseValue * curveTool.Evaluate(stacks);
+        float finalValue = Mathf.Clamp(decayedValue, minValue, baseValue);
+        return finalValue;
     }
 }

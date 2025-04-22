@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
             mutationLibrary = Resources.Load<MutationLibrary>("MutationLibrary");
         }
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
-        UIManager.Instance.updateParams += OnParamUIUpdate;
+        //UIManager.Instance.updateParams += OnParamUIUpdate;
     }
     public void SelfDestroy()
     {
@@ -68,7 +68,9 @@ public class GameManager : MonoBehaviour
         //Handle mutation and potential environment updates from here
     }
 
-    public void OnParamUIUpdate(List<int> parameterIDs)
+
+    /* This method smells bad and makes my brain hurt (don't ask questions)
+     public void OnParamUIUpdate(List<int> parameterIDs)
     {
         foreach (int id in parameterIDs)
         {
@@ -198,7 +200,7 @@ public class GameManager : MonoBehaviour
                     return;
             }
         }
-    }
+    }*/
 
     //Handler so mutations can be added by an identifier instead of the direct type
     public void AddMutation(string mutationName)
@@ -258,11 +260,48 @@ public class GameManager : MonoBehaviour
 
     public void onJumpStackChange(int newVal)
     {
-
+        JumpMutation newMutation = theRat.GetComponent<JumpMutation>();
+        if (newMutation != null)
+        {
+            newMutation.SetStacks(newVal);
+            ratMov.RefreshStats();
+        }
+        else
+        {
+            newMutation = theRat.AddComponent<JumpMutation>();
+            newMutation.Initialize();
+            newMutation.SetStacks(newVal);
+        }
     }
     public void onSpeedStackChange(int newVal)
     {
+        SpeedMutation newMutation = theRat.GetComponent<SpeedMutation>();
+        if (newMutation != null)
+        {
+            newMutation.SetStacks(newVal);
+            ratMov.RefreshStats();
+        }
+        else
+        {
+            newMutation = theRat.AddComponent<SpeedMutation>();
+            newMutation.Initialize();
+            newMutation.SetStacks(newVal);
+        }
+    }
 
+    public void onClimbToggle(bool newVal)
+    {
+        ClimbMutation newMutation = theRat.GetComponent<ClimbMutation>();
+        if (newMutation != null)
+        {
+            newMutation.setCurrentFlag(newVal);
+        }
+        else
+        {
+            newMutation = theRat.AddComponent<ClimbMutation>();
+            newMutation.Initialize();
+            newMutation.setCurrentFlag(newVal);
+        }
     }
 
 }

@@ -83,6 +83,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
         //Ensure stacks is non-negative
         stacks = Mathf.Max(0, stacks);
 
+        //Might have to edit this like speed mutation as well
         //Programmatic version, modifiable by changing the serialized min/max/decay directly
         if (!useEditorCurve)
         {
