@@ -64,9 +64,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private PlayerMovement RatMov;
 
     [SerializeField] private GameObject Parameters_UI_Object;
-    [SerializeField] private GameObject template_InputField;
-    [SerializeField] private GameObject template_Dropdown;
-    [SerializeField] private GameObject template_Toggle;
+    //[SerializeField] private GameObject template_InputField;
+    //[SerializeField] private GameObject template_Dropdown;
+    //[SerializeField] private GameObject template_Toggle;
     private List<Parameter> parameters;
     private List<int> paramIDs;
     private bool paramUIChanged = false;
@@ -93,33 +93,33 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         //disable them just in case
-        template_InputField.SetActive(false);
-        template_Dropdown.SetActive(false);
-        template_Toggle.SetActive(false);
+        //template_InputField.SetActive(false);
+        //template_Dropdown.SetActive(false);
+        //template_Toggle.SetActive(false);
 
         // Add a TextField parameter
-        int textParamID = AddParameterOptionTextField("Username", "PlayerOne");
-        int jumpMutationTextParamID = AddParameterOptionTextField("Jump");
-        setParamValue(jumpMutationTextParamID, "Stack #");
-        int speedMutationTextParamID = AddParameterOptionTextField("Speed");
-        setParamValue(speedMutationTextParamID, "Stack #");
-        setParamValue(textParamID, "NewPlayerName");
-        Debug.Log("Text Param Value: " + getParamValue(textParamID));
+        //int textParamID = AddParameterOptionTextField("Username", "PlayerOne");
+        //int jumpMutationTextParamID = AddParameterOptionTextField("Jump");
+        //setParamValue(jumpMutationTextParamID, "Stack #");
+        //int speedMutationTextParamID = AddParameterOptionTextField("Speed");
+        //setParamValue(speedMutationTextParamID, "Stack #");
+        //setParamValue(textParamID, "NewPlayerName");
+        //Debug.Log("Text Param Value: " + getParamValue(textParamID));
 
-        /*Add a Dropdown parameter
-        List<string> dropdownOptions = new List<string> { "Easy", "Medium", "Hard" };
-        int dropdownParamID = AddParameterOptionDropMenu("Difficulty", dropdownOptions, 0);
-        setParamValue(dropdownParamID, "Hard");
-        Debug.Log("Dropdown Param Value: " + getParamValue(dropdownParamID));
-        */
+        ///*Add a Dropdown parameter
+        //List<string> dropdownOptions = new List<string> { "Easy", "Medium", "Hard" };
+        //int dropdownParamID = AddParameterOptionDropMenu("Difficulty", dropdownOptions, 0);
+        //setParamValue(dropdownParamID, "Hard");
+        //Debug.Log("Dropdown Param Value: " + getParamValue(dropdownParamID));
+        //*/
 
-        // Add a Toggle parameter
-        int toggleClimbID = AddParameterOptionToggle("Climb", false);
-        int toggleBiteID = AddParameterOptionToggle("Bite", false);
-        setParamValue(toggleClimbID, false);
-        setParamValue(toggleBiteID, false);
+        //// Add a Toggle parameter
+        //int toggleClimbID = AddParameterOptionToggle("Climb", false);
+        //int toggleBiteID = AddParameterOptionToggle("Bite", false);
+        //setParamValue(toggleClimbID, false);
+        //setParamValue(toggleBiteID, false);
 
-        paramIDs = new List<int> { jumpMutationTextParamID, speedMutationTextParamID, toggleClimbID, toggleBiteID };
+        //paramIDs = new List<int> { jumpMutationTextParamID, speedMutationTextParamID, toggleClimbID, toggleBiteID };
 
         //disable all pause ui elements
         foreach (GameObject _uis in pauseScreens)
@@ -237,6 +237,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /*
     public int AddParameterOptionTextField(string label, string _initialValue = "Enter Here...")
     {
         GameObject _temp = Instantiate(template_InputField, Parameters_UI_Object.transform);
@@ -297,7 +298,7 @@ public class UIManager : MonoBehaviour
         parameters.Add(newParam);
 
         return newParam.getID();
-    }
+    }*/
 
     public string getParamName(int id)
     {
@@ -365,4 +366,56 @@ public class UIManager : MonoBehaviour
         }
         return false;
     }
+    [Space]
+    [Header("Parameters")]
+
+    public Toggle biteToggle;
+
+    public void onBiteToggleChange()
+    {
+        GameObject.FindWithTag("player").GetComponent<Hole>().isEnabled = biteToggle.isOn;
+        //_ = biteToggle.isOn;
+    }
+
+    /*
+    public Toggle ClimbToggle;
+    public void onClimbToggleChange()
+    {
+        _ = ClimbToggle.isOn;
+    }*/
+
+    public TMP_InputField jumpStack;
+    public void onJumpStackChange()
+    {
+        try
+        {
+            int newVal = int.Parse(jumpStack.text);
+            GameManager.Instance.onJumpStackChange(newVal);
+        }
+        catch (System.Exception)
+        {
+
+            throw;
+        }
+
+    }
+
+    public TMP_InputField speedStack;
+    public void onspeedStackChange()
+    {
+        try
+        {
+            int newVal = int.Parse(speedStack.text);
+            GameManager.Instance.onSpeedStackChange(newVal);
+        }
+        catch (System.Exception)
+        {
+
+            throw;
+        }
+
+    }
+
+
+
 }
