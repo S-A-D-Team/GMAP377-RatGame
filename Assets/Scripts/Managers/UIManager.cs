@@ -126,6 +126,11 @@ public class UIManager : MonoBehaviour
             _uis.SetActive(false);
         }
     }
+    public void SelfDestroy()
+    {
+        Instance = null;
+        Destroy(gameObject);
+    }
 
     public void TriggerDeathEffect()
     {
@@ -199,25 +204,22 @@ public class UIManager : MonoBehaviour
         {
             _uis.SetActive(true);
         }
-
+        Debug.Log("Pause!");
         SetupParamUIListeners();
     }
 
     private void SetupParamUIListeners()
     {
-        Debug.Log("Attempting to listen");
         paramUIChanged = false;
 
         foreach (var inputField in Parameters_UI_Object.GetComponentsInChildren<TMP_InputField>())
         {
             inputField.onValueChanged.AddListener((_) => paramUIChanged = true);
-            Debug.Log("Found an inputField");
         }
 
         foreach (var toggle in Parameters_UI_Object.GetComponentsInChildren<Toggle>())
         {
             toggle.onValueChanged.AddListener((_) => paramUIChanged = true);
-            Debug.Log("Found a toggle");
         }
 
     }

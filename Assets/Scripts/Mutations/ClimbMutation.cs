@@ -9,6 +9,7 @@ public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
     {
         rat = GameManager.Instance.ratStats;
         climbLogic = rat.gameObject.GetComponent<PlayerMovement>();
+        Debug.Log("You can climb now");
     }
 
     public override void onMutate()

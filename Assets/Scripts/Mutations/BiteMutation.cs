@@ -9,6 +9,7 @@ public class BiteMutation : PhysicalMutation, IMutation, IToggleable
     {
         rat = GameManager.Instance.ratStats;
         biteLogic = rat.gameObject.GetComponent<Hole>();
+        Debug.Log("You can chomp now");
     }
 
     public override void onMutate()

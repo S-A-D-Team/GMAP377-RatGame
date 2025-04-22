@@ -519,6 +519,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
+      propertyPath: playerWidth
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
       propertyPath: maxJumpForce
       value: 7.5
       objectReference: {fileID: 0}
@@ -526,6 +531,11 @@ PrefabInstance:
         type: 3}
       propertyPath: minJumpForce
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
+      propertyPath: whatIsClimbable.m_Bits
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 3377198739701718355, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
@@ -1503,7 +1513,7 @@ PrefabInstance:
     - target: {fileID: 4277189983340825798, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 45.851604
+      value: 38.193855
       objectReference: {fileID: 0}
     - target: {fileID: 4349344703173132843, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}

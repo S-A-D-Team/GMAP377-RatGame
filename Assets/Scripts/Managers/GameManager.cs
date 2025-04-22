@@ -35,7 +35,11 @@ public class GameManager : MonoBehaviour
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
         UIManager.Instance.updateParams += OnParamUIUpdate;
     }
-
+    public void SelfDestroy()
+    {
+        Instance = null;
+        Destroy(gameObject);
+    }
     public void onPlayerTrapped()
     {
         //more thngs to do when player dies
@@ -69,59 +73,130 @@ public class GameManager : MonoBehaviour
         foreach (int id in parameterIDs)
         {
            var value = UIManager.Instance.getParamValue(id);
+           Debug.Log(value);
            string mutationName = UIManager.Instance.getParamName(id) + "Mutation";
-           Component mutationComponent = theRat.GetComponent(mutationName);
-           if (value is bool boolVal)
-           {
-                //Add the Physical Mutation
-                if (boolVal && mutationComponent == null)
-                {
-                    AddMutation(mutationName);
-                }
-                else if (!boolVal)
-                {
-                    //Toggle the mutation off
-                    if (mutationComponent != null)
+            switch (mutationName) {
+                case "JumpMutation":
+                    int jumpVal = 0;
+                    if (value is int val1) jumpVal = val1;
+                    JumpMutation jump = theRat.GetComponent<JumpMutation>();
+                    if (jump != null)
                     {
-                        IToggleable physMutation = mutationComponent as IToggleable;
-                        physMutation.setCurrentFlag(boolVal);
+                        Debug.Log("MORE Jump");
+                        jump.SetStacks(jumpVal);
                         ratMov.RefreshStats();
                     }
-                }
-                //Nothing if the flag is the same as parameter value
-                else
-                {
+                    else
+                    {
+                        //Nothing if non-positive stacks are set for a mutation that's not yet added
+                        if (jumpVal <= 0)
+                        {
+                            Debug.Log("Not positive?");
+                            return;
+                        }
+                        //First add the mutation component then set any stacks if there's more than one
+                        Debug.Log("You can Yeet higher now");
+                        JumpMutation newMutation = theRat.AddComponent<JumpMutation>();
+                        newMutation.Initialize();
+                        newMutation.onMutate();
+                        if (jumpVal > 1)
+                        {
+                            Debug.Log("...and higher");
+                            newMutation.SetStacks(jumpVal);
+                        }
+                        ratMov.RefreshStats();
+                    }
+                    break;
+
+                case "SpeedMutation":
+                    int speedVal = 0;
+                    if (value is int val2) speedVal = val2;
+                    SpeedMutation speed = theRat.GetComponent<SpeedMutation>();
+                    if (speed != null)
+                    {
+                        Debug.Log("MORE Nyoom");
+                        speed.SetStacks(speedVal);
+                        ratMov.RefreshStats();
+                    }
+                    else
+                    {
+                        //Nothing if non-positive stacks are set for a mutation that's not yet added
+                        if (speedVal <= 0)
+                        {
+                            Debug.Log("Not positive?");
+                            return;
+                        }
+                        //First add the mutation component then set any stacks if there's more than one
+                        Debug.Log("You can skitter faster now");
+                        SpeedMutation newMutation = theRat.AddComponent<SpeedMutation>();
+                        newMutation.Initialize();
+                        newMutation.onMutate();
+                        if (speedVal > 1)
+                        {
+                            Debug.Log("...and faster");
+                            newMutation.SetStacks(speedVal);
+                        }
+                        ratMov.RefreshStats();
+                    }
+                    break;
+
+                case "BiteMutation":
+                    BiteMutation bite = theRat.GetComponent<BiteMutation>();
+                    bool biteFlag = false;
+                    if (value is bool flag1) biteFlag = flag1;
+                    if (bite == null && biteFlag)
+                    {
+                        Debug.Log("Adding chompers");
+                        BiteMutation newMutation = theRat.AddComponent<BiteMutation>();
+                        newMutation.Initialize();
+                        newMutation.onMutate();
+                        ratMov.RefreshStats();
+                    }
+                    else if (!biteFlag)
+                    {
+                        if (bite != null)
+                        {
+                            Debug.Log("You feel less ravenous");
+                            bite.setCurrentFlag(biteFlag);
+                            ratMov.RefreshStats();
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    break;
+
+                case "ClimbMutation":
+                    ClimbMutation climb = theRat.GetComponent<ClimbMutation>();
+                    bool climbFlag = false;
+                    if (value is bool flag2) biteFlag = flag2;
+                    if (climb == null && climbFlag)
+                    {
+                        Debug.Log("You can climb now");
+                        ClimbMutation newMutation = theRat.AddComponent<ClimbMutation>();
+                        newMutation.Initialize();
+                        newMutation.onMutate();
+                        ratMov.RefreshStats();
+                    }
+                    else if (!climbFlag)
+                    {
+                        if (climb != null)
+                        {
+                            Debug.Log("You forgot how to climb");
+                            climb.setCurrentFlag(climbFlag);
+                            ratMov.RefreshStats();
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    break;
+                
+                default:
                     return;
-                }
-           }
-           else if (value is int intVal)
-           {
-                //Update the Meta Mutation stacks
-                if (mutationComponent != null)
-                {
-                    IStackable metaMutation = mutationComponent as IStackable;
-                    metaMutation.SetStacks(intVal);
-                    ratMov.RefreshStats();
-                }
-                else
-                {
-                    //Nothing if non-positive stacks are set for a mutation that's not yet added
-                    if (intVal <= 0)
-                    {
-                        return;
-                    }
-                    //First add the mutation component then set any stacks if there's more than one
-                    AddMutation(mutationName);
-                    if (intVal > 1)
-                    {
-                        mutationComponent = theRat.GetComponent(mutationName);
-                        IStackable metaMutation = mutationComponent as IStackable;
-                        metaMutation.SetStacks(intVal);
-                        ratMov.RefreshStats();
-                    }
-                }
-           }
-           
+            }
         }
     }
 

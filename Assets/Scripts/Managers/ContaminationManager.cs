@@ -63,6 +63,12 @@ public class ContaminationManager : MonoBehaviour
         
     }
 
+    public void SelfDestroy()
+    {
+        Instance = null;
+        Destroy(gameObject);
+    }
+
     //"Contaminable" class is spelled wrong, should replace all instances of this later
     public void AddContaminable (Contaminable c, float v)
     {
