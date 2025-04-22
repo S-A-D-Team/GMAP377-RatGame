@@ -63,7 +63,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject template_Dropdown;
     [SerializeField] private GameObject template_ToggleBox;
     private List<Parameter> parameters;
-
+    private List<int> paramIDs;
+    
+    public event System.Action<List<int>>  updateParams;
 
     private void Awake()
     {
@@ -86,19 +88,27 @@ public class UIManager : MonoBehaviour
 
         // Add a TextField parameter
         int textParamID = AddParameterOptionTextField("Username", "PlayerOne");
+        int jumpMutationTextParamID = AddParameterOptionTextField("Jump");
+        setParamValue(jumpMutationTextParamID, "Stack #");
+        int speedMutationTextParamID = AddParameterOptionTextField("Speed");
+        setParamValue(speedMutationTextParamID, "Stack #");
         setParamValue(textParamID, "NewPlayerName");
         Debug.Log("Text Param Value: " + getParamValue(textParamID));
 
-        // Add a Dropdown parameter
+        /*Add a Dropdown parameter
         List<string> dropdownOptions = new List<string> { "Easy", "Medium", "Hard" };
         int dropdownParamID = AddParameterOptionDropMenu("Difficulty", dropdownOptions, 0);
         setParamValue(dropdownParamID, "Hard");
         Debug.Log("Dropdown Param Value: " + getParamValue(dropdownParamID));
+        */
 
         // Add a Toggle parameter
-        int toggleParamID = AddParameterOptionToggleBox("Enable Music", true);
-        setParamValue(toggleParamID, false);
-        Debug.Log("Toggle Param Value: " + getParamValue(toggleParamID));
+        int toggleClimbID = AddParameterOptionToggleBox("Climb", false);
+        int toggleBiteID = AddParameterOptionToggleBox("Bite", false);
+        setParamValue(toggleClimbID, false);
+        setParamValue(toggleBiteID, false);
+
+        paramIDs = new List<int> { jumpMutationTextParamID, speedMutationTextParamID, toggleClimbID, toggleBiteID };
     }
 
     public void TriggerDeathEffect()
@@ -106,6 +116,11 @@ public class UIManager : MonoBehaviour
         deathSet.SetActive(true);
         //indefinately pulse the red
         StartCoroutine(PulseDeathRed());
+    }
+
+    public string getLabel(int paramID)
+    {
+        return "s";
     }
 
     //Replace with tween later
@@ -152,7 +167,7 @@ public class UIManager : MonoBehaviour
 
     void onResume()
     {
-        //Invoke
+        updateParams?.Invoke(paramIDs);
     }
 
     public int AddParameterOptionTextField(string label, string _initialValue = "Enter Here...")

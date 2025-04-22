@@ -530,7 +530,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5058273188919755049, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1426769698}
   m_SourcePrefab: {fileID: 100100000, guid: dffda832c25c2ae4dbeee30ae07658ef, type: 3}
 --- !u!4 &1426769695 stripped
 Transform:
@@ -544,6 +548,31 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1426769694}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1426769697 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5058273188919755049, guid: dffda832c25c2ae4dbeee30ae07658ef,
+    type: 3}
+  m_PrefabInstance: {fileID: 1426769694}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1426769698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426769697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7786677d14f037549a6f8967f49ba1c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  runSpeed: 8
+  walkSpeed: 6
+  climbSpeed: 5
+  maxJumpForce: 7.5
+  canBite: 0
+  canClimb: 0
+  groundDrag: 4
 --- !u!1 &1705757458
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,6 +759,17 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6398189281160355245, guid: d3122e841a998c841abddaa1b3dc90b6,
+        type: 3}
+      propertyPath: ratStats
+      value: 
+      objectReference: {fileID: 1426769698}
+    - target: {fileID: 6398189281160355245, guid: d3122e841a998c841abddaa1b3dc90b6,
+        type: 3}
+      propertyPath: mutationLibrary
+      value: 
+      objectReference: {fileID: 11400000, guid: cddcbf41b5dd6cf4f8530296b44598f1,
+        type: 2}
     - target: {fileID: 7218541586542324789, guid: d3122e841a998c841abddaa1b3dc90b6,
         type: 3}
       propertyPath: m_Enabled
@@ -1494,7 +1534,7 @@ PrefabInstance:
     - target: {fileID: 4277189983340825798, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 45.860874
+      value: 38.19383
       objectReference: {fileID: 0}
     - target: {fileID: 4349344703173132843, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}

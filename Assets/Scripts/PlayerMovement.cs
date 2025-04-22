@@ -32,6 +32,13 @@ public class PlayerMovement : MonoBehaviour
     private LayerMask whatIsGround;
     private bool grounded;
 
+    [Header("Climb Check")]
+    [SerializeField]
+    private float playerWidth;
+    [SerializeField]
+    private LayerMask whatIsClimbable;
+    private bool climbing;
+
     [Header("Jumping")]
     [SerializeField]
     private float jumpForce;
@@ -53,6 +60,9 @@ public class PlayerMovement : MonoBehaviour
     private KeyCode runKey = KeyCode.LeftShift;
     [SerializeField]
     private KeyCode refreshStatsKey = KeyCode.R;
+    [SerializeField]
+    private KeyCode climbKey = KeyCode.F;
+
 
 
 
@@ -61,7 +71,13 @@ public class PlayerMovement : MonoBehaviour
     private float vertInput;
 
     private Vector3 moveDirection;
+    private Vector3 jumpDirection;
     private Rigidbody rb;
+
+    private Vector3 groundDirection;
+    private Vector3 groundJumpDirection;
+    private Vector3 climbDirection;
+    private Vector3 wallJumpDirection;
     
 
     // Start is called before the first frame update
@@ -71,6 +87,10 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
         canJump = true;
         currentJump = minJumpForce;
+        groundDirection = orientation.forward;
+        climbDirection = orientation.up;
+        groundJumpDirection = orientation.up;
+        wallJumpDirection = -orientation.forward;
         GameManager.Instance.RegisterPlayer(gameObject);
         playerStats = GameManager.Instance.ratStats;
         //Initialize stats from rat stats
@@ -122,12 +142,22 @@ public class PlayerMovement : MonoBehaviour
         horInput = Input.GetAxisRaw("Horizontal");
         vertInput = Input.GetAxisRaw("Vertical");
 
+        //Wall Jump Check
+        if (Input.GetKeyDown(jumpKey) && climbing && canJump)
+        {
+            canJump = false;
+
+            WallJump();
+
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
         //Jump Input Check
-        if(Input.GetKey(jumpKey) && grounded && canJump)
+        else if(Input.GetKey(jumpKey) && grounded && canJump)
         {
             if (currentJump < maxJumpForce)
             {
                 currentJump += Time.deltaTime * jumpForce;
+                Mathf.Clamp(currentJump, minJumpForce, maxJumpForce);
             }
             else
             {
@@ -157,9 +187,15 @@ public class PlayerMovement : MonoBehaviour
             running = false;
         }
 
-        if(Input.GetKey(refreshStatsKey))
+        if(Input.GetKeyDown(refreshStatsKey))
         {
             RefreshStats();
+        }
+
+        if (Input.GetKeyDown(climbKey) && canClimb)
+        {
+            //Should probably also adjust the raycast for climbing later, this currently just mirrors the ground raycast
+            climbing = Physics.Raycast(transform.position, orientation.forward, playerWidth * 0.5f + 0.01f, whatIsClimbable);
         }
     }
 
@@ -167,9 +203,17 @@ public class PlayerMovement : MonoBehaviour
     {
         //Calculate movemnt based on inputs
         moveDirection = orientation.forward * vertInput + orientation.right * horInput;
+        rb.useGravity = !climbing;
 
-        if (grounded)
+        if (climbing)
         {
+            //Can only climb vertically, not horizontally
+            moveDirection = climbDirection * vertInput;
+            rb.AddForce(moveDirection.normalized * climbSpeed * 3f, ForceMode.Force);
+        }
+        else if (grounded)
+        {
+            moveDirection = groundDirection * vertInput + orientation.right * horInput;
             if (running)
             {
                 rb.AddForce(moveDirection.normalized * runSpeed * 3f, ForceMode.Force);
@@ -179,6 +223,7 @@ public class PlayerMovement : MonoBehaviour
                 rb.AddForce(moveDirection.normalized * speed * 3f, ForceMode.Force);
             }
         }
+        
         else
         {
             rb.AddForce(moveDirection.normalized * speed * 3f * airMovement, ForceMode.Force);
@@ -187,18 +232,28 @@ public class PlayerMovement : MonoBehaviour
 
     private void SPeedControl()
     {
-        //Limit the speed based on movement state
-        float contextSpeedCap = running ? runSpeed : speed;
-        
-        //Limits the max speed that the player can reach
-        Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        //Checks if speed execeeeds max
-        if (flatVelocity.magnitude > contextSpeedCap)
+        if (climbing)
         {
-            //Sets speed to maxed out speed
-            Vector3 limitedVelocity = flatVelocity.normalized * contextSpeedCap;
-            rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
+            //Damp the climbing speed slightly to reduce sliding
+            Vector3 climbVelocity = new Vector3(0f, rb.velocity.y * 0.9f, 0f);
+            float cappedYVelocity = Mathf.Clamp(climbVelocity.y, -climbSpeed, climbSpeed);
+            rb.velocity = new Vector3(0f, cappedYVelocity, 0f);
+        }
+        else
+        {
+            //Limit the speed based on movement state
+            float contextSpeedCap = running ? runSpeed : speed;
+
+            //Limits the max speed that the player can reach
+            Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+            //Checks if speed exceeds max
+            if (flatVelocity.magnitude > contextSpeedCap)
+            {
+                //Sets speed to maxed out speed
+                Vector3 limitedVelocity = flatVelocity.normalized * contextSpeedCap;
+                rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
+            }
         }
     }
 
@@ -215,5 +270,22 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         canJump = true;
+    }
+
+    private void WallJump()
+    {
+        climbing = false;
+        rb.velocity = Vector3.zero;
+        //Modify this to use some sort of variable for the kick off force and vertical force later
+        Vector3 wallJumpForce = -transform.forward * (maxJumpForce / 2f) + Vector3.up * minJumpForce;
+        rb.AddForce(wallJumpForce, ForceMode.Impulse);
+        StartCoroutine(ClimbCooldown());
+    }
+
+    IEnumerator ClimbCooldown()
+    {
+        canClimb = false;
+        yield return new WaitForSeconds(0.25f);
+        canClimb = playerStats.canClimb;
     }
 }

@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
             mutationLibrary = Resources.Load<MutationLibrary>("MutationLibrary");
         }
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
+        UIManager.Instance.updateParams += OnParamUpdate;
     }
 
     public void onPlayerTrapped()
@@ -54,6 +55,15 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Threshold " + threshold + "% reached.");
         //Handle mutation and potential environment updates from here
+    }
+
+    public void OnParamUpdate(List<int> parameterIDs)
+    {
+        foreach (int id in parameterIDs)
+        {
+           var value =  UIManager.Instance.getParamValue(id);
+           //grab the label, pass to AddMutation
+        }
     }
 
     //Handler so mutations can be added by an identifier instead of the direct type
