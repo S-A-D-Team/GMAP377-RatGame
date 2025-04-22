@@ -100,13 +100,12 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
         {
             if (!useEditorCurve)
             {
-                float finalMultiplier = MutationUtils.ApplyMultiplicativeDecay(maxDrag, stacks, minDrag, decay);
-                rat.groundDrag *= finalMultiplier;
+                rat.groundDrag = MutationUtils.ApplyMultiplicativeDecay(maxDrag, stacks, minDrag, decay);
+                
             }
             else
             {
-                float finalMultiplier = MutationUtils.ApplyMultiplicativeDecay(decayCurve, maxDrag, stacks, minDrag);
-                rat.groundDrag *= finalMultiplier;
+                rat.groundDrag = MutationUtils.ApplyMultiplicativeDecay(decayCurve, maxDrag, stacks, minDrag);
             }
         }
         stacks++;
