@@ -61,6 +61,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject deathSet;
     [SerializeField] private Image deathNoise;
     [SerializeField] private Image deathRed;
+    [SerializeField] private PlayerMovement RatMov;
 
     [SerializeField] private GameObject Parameters_UI_Object;
     [SerializeField] private GameObject template_InputField;
@@ -204,7 +205,6 @@ public class UIManager : MonoBehaviour
         {
             _uis.SetActive(true);
         }
-        Debug.Log("Pause!");
         SetupParamUIListeners();
     }
 
@@ -365,7 +365,4 @@ public class UIManager : MonoBehaviour
         }
         return false;
     }
-
-
-
 }
