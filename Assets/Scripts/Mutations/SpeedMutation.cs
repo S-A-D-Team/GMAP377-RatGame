@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpeedMutation : MetaMutation, IMutation
+public class SpeedMutation : MetaMutation, IMutation, IStackable
 {
     [SerializeField]
     private float runSpeedMultiplier = -200f;
@@ -12,7 +12,10 @@ public class SpeedMutation : MetaMutation, IMutation
     private float minDrag = -2f;
     [SerializeField]
     private float maxDrag = -1f;
-    
+
+    private float initialWalkSpeed;
+    private float initialRunSpeed;
+    private float initialDrag;
   
 
     // Start is called before the first frame update
@@ -30,6 +33,9 @@ public class SpeedMutation : MetaMutation, IMutation
     public void Initialize()
     {
         rat = GameManager.Instance.ratStats;
+        initialWalkSpeed = rat.walkSpeed;
+        initialRunSpeed = rat.runSpeed;
+        initialDrag = rat.groundDrag;
         if (stacks < 0) stacks = 0;
         if (runSpeedMultiplier < 0) runSpeedMultiplier = 1.5f;
         if (walkSpeedMultiplier < 0) walkSpeedMultiplier = 1.15f;
@@ -38,6 +44,41 @@ public class SpeedMutation : MetaMutation, IMutation
         if (maxDrag < 0) maxDrag = rat.groundDrag;
     }
 
+    public void SetStacks(int s)
+    {
+        //Refactor this into the interface or the Utils maybe since the code is the same between Jump and Speed
+        if (s < 0)
+        {
+            //0 out stacks for negative values
+            ResetStacks();
+            return;
+        }
+
+        else if (s == stacks)
+        {
+            return;
+        }
+
+        int stackDiff = s > stacks ? (s - stacks) : s;
+        
+        if (s < stacks)
+        {
+            ResetStacks();
+        }
+
+        for (int i = 0; i < stackDiff; i++)
+        {
+            stackMutation();
+        }
+    }
+
+    private void ResetStacks()
+    {
+        rat.walkSpeed = initialWalkSpeed;
+        rat.runSpeed = initialRunSpeed;
+        rat.groundDrag = initialDrag;
+        stacks = 0;
+    }
     public override void onMutate()
     {
         stackMutation();

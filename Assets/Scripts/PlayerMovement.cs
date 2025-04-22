@@ -8,7 +8,6 @@ public class PlayerMovement : MonoBehaviour
     //Ability flags
     private bool canBite;
     private bool canClimb;
-
     private float climbSpeed;
 
     [Header("Base Movement")]
@@ -63,9 +62,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private KeyCode climbKey = KeyCode.F;
 
-
-
-
     //Collects movement inputs
     private float horInput;
     private float vertInput;
@@ -87,18 +83,20 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
         canJump = true;
         currentJump = minJumpForce;
-        groundDirection = orientation.forward;
+        //groundDirection = orientation.forward;
         climbDirection = orientation.up;
         groundJumpDirection = orientation.up;
         wallJumpDirection = -orientation.forward;
         GameManager.Instance.RegisterPlayer(gameObject);
         playerStats = GameManager.Instance.ratStats;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         //Initialize stats from rat stats
         RefreshStats();
     }
 
-    //Initializes or overrides any editor values for the player stats (useful for sanity checking)
-    private void RefreshStats()
+    //Updates values for the player stats
+    public void RefreshStats()
     {
         speed = playerStats.walkSpeed;
         runSpeed = playerStats.runSpeed;
@@ -108,7 +106,6 @@ public class PlayerMovement : MonoBehaviour
 
         canBite = playerStats.canBite;
         canClimb = playerStats.canClimb;
-
     }
 
     // Update is called once per frame
@@ -118,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.01f, whatIsGround);
 
         CollectInputs();
-        SPeedControl();
+        SpeedControl();
 
         //Apply movement drag
         if (grounded)
@@ -129,6 +126,7 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.drag = 0;
         }
+        
     }
 
     private void FixedUpdate()
@@ -192,6 +190,14 @@ public class PlayerMovement : MonoBehaviour
             RefreshStats();
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UIManager.Instance.onPause();
+            Time.timeScale = 0.0f;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+        }
+
         if (Input.GetKeyDown(climbKey) && canClimb)
         {
             //Should probably also adjust the raycast for climbing later, this currently just mirrors the ground raycast
@@ -213,7 +219,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (grounded)
         {
-            moveDirection = groundDirection * vertInput + orientation.right * horInput;
+            moveDirection = orientation.forward * vertInput + orientation.right * horInput;
             if (running)
             {
                 rb.AddForce(moveDirection.normalized * runSpeed * 3f, ForceMode.Force);
@@ -230,7 +236,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void SPeedControl()
+    private void SpeedControl()
     {
         if (climbing)
         {

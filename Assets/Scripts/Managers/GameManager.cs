@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject theRat;
 
+    private PlayerMovement ratMov;
+
     public RatStats ratStats;
     [Tooltip("Drag the generated library asset here, attempts to load from runtime resources otherwise")]
     public MutationLibrary mutationLibrary;
@@ -31,7 +33,7 @@ public class GameManager : MonoBehaviour
             mutationLibrary = Resources.Load<MutationLibrary>("MutationLibrary");
         }
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
-        UIManager.Instance.updateParams += OnParamUpdate;
+        UIManager.Instance.updateParams += OnParamUIUpdate;
     }
 
     public void onPlayerTrapped()
@@ -45,9 +47,14 @@ public class GameManager : MonoBehaviour
     {
         theRat = rat;
         ratStats = rat.GetComponent<RatStats>();
+        ratMov = rat.GetComponent<PlayerMovement>();
         if (ratStats == null)
         {
             Debug.Log("RatStats not added to Player prefab!");
+        }
+        if (ratMov == null)
+        {
+            Debug.Log("PlayerMovement not added to Player prefab!");
         }
     }
 
@@ -57,12 +64,64 @@ public class GameManager : MonoBehaviour
         //Handle mutation and potential environment updates from here
     }
 
-    public void OnParamUpdate(List<int> parameterIDs)
+    public void OnParamUIUpdate(List<int> parameterIDs)
     {
         foreach (int id in parameterIDs)
         {
-           var value =  UIManager.Instance.getParamValue(id);
-           //grab the label, pass to AddMutation
+           var value = UIManager.Instance.getParamValue(id);
+           string mutationName = UIManager.Instance.getParamName(id) + "Mutation";
+           Component mutationComponent = theRat.GetComponent(mutationName);
+           if (value is bool boolVal)
+           {
+                //Add the Physical Mutation
+                if (boolVal && mutationComponent == null)
+                {
+                    AddMutation(mutationName);
+                }
+                else if (!boolVal)
+                {
+                    //Toggle the mutation off
+                    if (mutationComponent != null)
+                    {
+                        IToggleable physMutation = mutationComponent as IToggleable;
+                        physMutation.setCurrentFlag(boolVal);
+                        ratMov.RefreshStats();
+                    }
+                }
+                //Nothing if the flag is the same as parameter value
+                else
+                {
+                    return;
+                }
+           }
+           else if (value is int intVal)
+           {
+                //Update the Meta Mutation stacks
+                if (mutationComponent != null)
+                {
+                    IStackable metaMutation = mutationComponent as IStackable;
+                    metaMutation.SetStacks(intVal);
+                    ratMov.RefreshStats();
+                }
+                else
+                {
+                    //Nothing if non-positive stacks are set for a mutation that's not yet added
+                    if (intVal <= 0)
+                    {
+                        return;
+                    }
+                    //First add the mutation component then set any stacks if there's more than one
+                    AddMutation(mutationName);
+                    if (intVal > 1)
+                    {
+                        mutationComponent = theRat.GetComponent(mutationName);
+                        IStackable metaMutation = mutationComponent as IStackable;
+                        metaMutation.SetStacks(intVal);
+                        ratMov.RefreshStats();
+                    }
+                }
+           }
+           
         }
     }
 
@@ -99,6 +158,8 @@ public class GameManager : MonoBehaviour
             newMutation.Initialize();
             newMutation.onMutate();
         }
+        //Might make this an event to invoke later if multiple sources need to refresh values copied from RatStats
+        ratMov.RefreshStats();
     }
 
     //Generic method to directly add a mutation when the type is already known at compile-time
@@ -117,6 +178,7 @@ public class GameManager : MonoBehaviour
             newMutation.Initialize();
             newMutation.onMutate();
         }
+        ratMov.RefreshStats();
     }
 
 

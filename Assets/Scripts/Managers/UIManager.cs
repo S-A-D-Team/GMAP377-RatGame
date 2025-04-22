@@ -30,6 +30,10 @@ public class Parameter
     {
         return id;
     }
+    public string getLabel()
+    {
+        return label;
+    }
     public string GetDisplayValue()
     {
         if (value is bool boolVal)
@@ -61,11 +65,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject Parameters_UI_Object;
     [SerializeField] private GameObject template_InputField;
     [SerializeField] private GameObject template_Dropdown;
-    [SerializeField] private GameObject template_ToggleBox;
+    [SerializeField] private GameObject template_Toggle;
     private List<Parameter> parameters;
     private List<int> paramIDs;
-    
-    public event System.Action<List<int>>  updateParams;
+    private bool paramUIChanged = false;
+
+    [Space]
+    [Header("Pause")]
+    [SerializeField] private List<GameObject> pauseScreens;
+
+    public event System.Action<List<int>> updateParams;
+
 
     private void Awake()
     {
@@ -84,7 +94,7 @@ public class UIManager : MonoBehaviour
         //disable them just in case
         template_InputField.SetActive(false);
         template_Dropdown.SetActive(false);
-        template_ToggleBox.SetActive(false);
+        template_Toggle.SetActive(false);
 
         // Add a TextField parameter
         int textParamID = AddParameterOptionTextField("Username", "PlayerOne");
@@ -103,12 +113,18 @@ public class UIManager : MonoBehaviour
         */
 
         // Add a Toggle parameter
-        int toggleClimbID = AddParameterOptionToggleBox("Climb", false);
-        int toggleBiteID = AddParameterOptionToggleBox("Bite", false);
+        int toggleClimbID = AddParameterOptionToggle("Climb", false);
+        int toggleBiteID = AddParameterOptionToggle("Bite", false);
         setParamValue(toggleClimbID, false);
         setParamValue(toggleBiteID, false);
 
         paramIDs = new List<int> { jumpMutationTextParamID, speedMutationTextParamID, toggleClimbID, toggleBiteID };
+
+        //disable all pause ui elements
+        foreach (GameObject _uis in pauseScreens)
+        {
+            _uis.SetActive(false);
+        }
     }
 
     public void TriggerDeathEffect()
@@ -116,11 +132,6 @@ public class UIManager : MonoBehaviour
         deathSet.SetActive(true);
         //indefinately pulse the red
         StartCoroutine(PulseDeathRed());
-    }
-
-    public string getLabel(int paramID)
-    {
-        return "s";
     }
 
     //Replace with tween later
@@ -165,9 +176,63 @@ public class UIManager : MonoBehaviour
         gameTime.text = _formattedTime;
     }
 
-    void onResume()
+    public void onResume()
     {
-        updateParams?.Invoke(paramIDs);
+        foreach (GameObject _uis in pauseScreens)
+        {
+            _uis.SetActive(false);
+        }
+        Time.timeScale = 1.0f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        if (paramUIChanged)
+        {
+            updateParams?.Invoke(paramIDs);
+        }
+        paramUIChanged = false;
+        ClearParamUIListeners();
+    }
+
+    public void onPause()
+    {
+        foreach(GameObject _uis in pauseScreens)
+        {
+            _uis.SetActive(true);
+        }
+
+        SetupParamUIListeners();
+    }
+
+    private void SetupParamUIListeners()
+    {
+        Debug.Log("Attempting to listen");
+        paramUIChanged = false;
+
+        foreach (var inputField in Parameters_UI_Object.GetComponentsInChildren<TMP_InputField>())
+        {
+            inputField.onValueChanged.AddListener((_) => paramUIChanged = true);
+            Debug.Log("Found an inputField");
+        }
+
+        foreach (var toggle in Parameters_UI_Object.GetComponentsInChildren<Toggle>())
+        {
+            toggle.onValueChanged.AddListener((_) => paramUIChanged = true);
+            Debug.Log("Found a toggle");
+        }
+
+    }
+
+    private void ClearParamUIListeners()
+    {
+        foreach (var inputField in Parameters_UI_Object.GetComponentsInChildren<TMP_InputField>())
+        {
+            inputField.onValueChanged.RemoveAllListeners();
+        }
+
+        foreach (var toggle in Parameters_UI_Object.GetComponentsInChildren<Toggle>())
+        {
+            toggle.onValueChanged.RemoveAllListeners();
+        }
     }
 
     public int AddParameterOptionTextField(string label, string _initialValue = "Enter Here...")
@@ -191,22 +256,19 @@ public class UIManager : MonoBehaviour
 
         return newParam.getID();
     }
-    public int AddParameterOptionToggleBox(string label, bool _initialToggle = false)
+    public int AddParameterOptionToggle(string label, bool _initialToggle = false)
     {
-        GameObject _temp = Instantiate(template_ToggleBox, Parameters_UI_Object.transform);
+        GameObject _temp = Instantiate(template_Toggle, Parameters_UI_Object.transform);
         _temp.SetActive(true);
 
         Parameter newParam = new Parameter(label, _initialToggle, _temp);
 
         _temp.GetComponentInChildren<TextMeshProUGUI>().text = label;
-        ToggleBox toggleBox = _temp.GetComponentInChildren<ToggleBox>();
-        toggleBox.paramID = newParam.getID();
-        toggleBox.Init(_initialToggle);
-        // Sync ToggleBox
-        toggleBox.onValueChanged += (bool val) =>
+        Toggle Toggle = _temp.GetComponentInChildren<Toggle>();
+        Toggle.onValueChanged.AddListener((bool val) =>
         {
             newParam.value = val;
-        };
+        });
 
         parameters.Add(newParam);
         return newParam.getID();
@@ -233,6 +295,15 @@ public class UIManager : MonoBehaviour
         parameters.Add(newParam);
 
         return newParam.getID();
+    }
+
+    public string getParamName(int id)
+    {
+        foreach (Parameter param in parameters)
+        {
+            if (param.getID() == id) return param.label;
+        }
+        return "null";
     }
 
     public object getParamValue(int id)
@@ -280,11 +351,10 @@ public class UIManager : MonoBehaviour
                     }
                 }
 
-                ToggleBox toggleBox = param.go.GetComponentInChildren<ToggleBox>();
-                if (toggleBox != null && value is bool boolVal)
+                Toggle Toggle = param.go.GetComponentInChildren<Toggle>();
+                if (Toggle != null && value is bool boolVal)
                 {
-                    toggleBox.value = boolVal;
-                    toggleBox.childObject.SetActive(boolVal);
+                    Toggle.isOn = boolVal;
                     return true;
                 }
 
