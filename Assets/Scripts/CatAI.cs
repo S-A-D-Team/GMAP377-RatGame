@@ -27,6 +27,8 @@ public class CatAI : EnemyAi
 
     private Vector3 prevTask;
 
+    [SerializeField] private Animator anim;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -68,10 +70,14 @@ public class CatAI : EnemyAi
         {
             if (!playerFound)
             {
+                agent.speed = 1;
+                anim.SetFloat("WalkSpeed", 0f);
                 isReacting = false;
             }
             else
             {
+                agent.speed = 3;
+                anim.SetFloat("WalkSpeed", 1.0f);
                 Chase(player.position);
             }
         }
