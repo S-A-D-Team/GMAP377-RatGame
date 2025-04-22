@@ -64,7 +64,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject template_ToggleBox;
     private List<Parameter> parameters;
 
-
+    [Space]
+    [Header("Pause")]
+    [SerializeField] private List<GameObject>  pauseScreens;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -99,6 +101,12 @@ public class UIManager : MonoBehaviour
         int toggleParamID = AddParameterOptionToggleBox("Enable Music", true);
         setParamValue(toggleParamID, false);
         Debug.Log("Toggle Param Value: " + getParamValue(toggleParamID));
+
+        //disable all pause ui elements
+        foreach (GameObject _uis in pauseScreens)
+        {
+            _uis.SetActive(false);
+        }
     }
 
     public void TriggerDeathEffect()
@@ -150,9 +158,21 @@ public class UIManager : MonoBehaviour
         gameTime.text = _formattedTime;
     }
 
-    void onResume()
+    public void onResume()
     {
+        foreach (GameObject _uis in pauseScreens)
+        {
+            _uis.SetActive(false);
+        }
         //Invoke
+    }
+
+    public void pnPause()
+    {
+        foreach(GameObject _uis in pauseScreens)
+        {
+            _uis.SetActive(true);
+        }
     }
 
     public int AddParameterOptionTextField(string label, string _initialValue = "Enter Here...")
