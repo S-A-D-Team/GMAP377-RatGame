@@ -33,6 +33,7 @@ public class HumanAI : EnemyAi
     private bool playerFound;
     private bool isInTask;
     private bool isReacting;
+    private bool playerMoving;
 
     private float taskTimer;
     private float locationTime;
@@ -48,6 +49,7 @@ public class HumanAI : EnemyAi
         isReacting = false;
         prevTask = new Vector3(0,0,0);
         reactionCanvas.SetActive(false);
+        playerMoving = false;
     }
 
     // Update is called once per frame
@@ -55,12 +57,16 @@ public class HumanAI : EnemyAi
     {
         if (!isReacting)
         {
-            playerFound = base.isPlayerSighted(player) && base.isSightClear(player);
+            playerFound = base.isPlayerSighted(player);
             if (playerFound)
             {
-                StartCoroutine(timeReaction());
-                Reaction();
-                isReacting = true;
+                checkMoving();
+                if (!playerMoving)
+                {
+                    StartCoroutine(timeReaction());
+                    Reaction();
+                    isReacting = true;
+                }
             }
             else if (!isInTask)
             {
@@ -97,7 +103,7 @@ public class HumanAI : EnemyAi
     {
         isInTask = false;
         taskTimer = 0;
-        cat.Chase(player.position);
+        cat.FirstReaction(player.position);
     }
 
     IEnumerator timeReaction()
@@ -113,5 +119,16 @@ public class HumanAI : EnemyAi
         Vector3 oppositeDirection = transform.position - playerDirection;
 
         agent.SetDestination(oppositeDirection);
+    }
+
+    IEnumerator checkMoving()
+    {
+        Vector3 currentPos = player.position;
+        yield return new WaitForSeconds(0.1f);
+        if(player.position != currentPos)
+        {
+            playerMoving = true;
+        }
+        playerMoving = false;
     }
 }
