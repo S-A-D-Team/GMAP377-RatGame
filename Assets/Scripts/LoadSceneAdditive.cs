@@ -6,9 +6,8 @@ public class LoadSceneAdditive : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SceneManager.LoadScene("LivingRoom-Alpha1", LoadSceneMode.Additive);
-        //and then the kitchen
-        //SceneManager.LoadScene("LivingRoom-Alpha1", LoadSceneMode.Additive);
+        SceneManager.LoadScene("Pre-Alpha_LivingRoom", LoadSceneMode.Additive);
+        SceneManager.LoadScene("Pre-Alpha_Kitchen", LoadSceneMode.Additive);
     }
 
 }
