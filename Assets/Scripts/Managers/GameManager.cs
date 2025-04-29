@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 //By extension, this includes specifically the Linq namespace (accessed through the System namespace)
 using System.Linq;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -201,7 +202,12 @@ public class GameManager : MonoBehaviour
             }
         }
     }*/
-
+    public void RandomMutate()
+    {
+        List<GameObject> prefabs = mutationLibrary.mutationPrefabs;
+        string randomMutationName = prefabs[Random.Range(0, prefabs.Count)].name;
+        AddMutation(randomMutationName);
+    }
     //Handler so mutations can be added by an identifier instead of the direct type
     public void AddMutation(string mutationName)
     {

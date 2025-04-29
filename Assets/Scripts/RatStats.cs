@@ -16,5 +16,18 @@ public class RatStats : MonoBehaviour
     public bool canBite;
     public bool canClimb;
     public float groundDrag;
+    public enum hungerLevel
+    {
+        Full = 110,
+        Content = 100,
+        Peckish = 75,
+        Hungry = 50,
+        Starving = 25,
+        Ravenous = 0
+    }
+    public float hungerPenalty;
+    public float hungerTolerance;
+    public float staminaLevel;
+
 
 }

@@ -11,6 +11,11 @@ public class Contaminable : MonoBehaviour
     [SerializeField]
     [Tooltip("Contamination buildup of this item (per hour)")]
     protected float contaminationBuildup = 0;
+    [SerializeField]
+    [Tooltip("Mutation Points granted on Infection")]
+    //Set to 3 by default to hard code all infected items giving enough to mutate
+    protected int mutationYield = 3;
+    protected bool canGrantPoints = true;
 
     [Space]
     [Header("Contamination Material")]
@@ -20,6 +25,9 @@ public class Contaminable : MonoBehaviour
 
     //does this obj has ContaminationSpread
     private bool canSpread = false;
+
+    [Tooltip("Set this to true for a contaminable item so the human will head toward and eat this item, infecting them and leading to a win state for the demo")]
+    public bool isWinCondition = false;
 
 
     protected virtual void Awake()
@@ -50,6 +58,15 @@ public class Contaminable : MonoBehaviour
     {
         contaminationValue += contaminationBuildup / 60f;
         contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
+        if (contaminationValue >= 100f && canGrantPoints)
+        {
+            canGrantPoints = false;
+            ContaminationManager.Instance.AddMutationPoints(mutationYield);
+            if (isWinCondition)
+            {
+                ContaminationManager.Instance.ActivateWinCondition(this);
+            }
+        }
         //Update its entry in the manager
         //ContaminationManager.Instance.CalculateContaminationLevel(this, contaminationValue);
         if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;

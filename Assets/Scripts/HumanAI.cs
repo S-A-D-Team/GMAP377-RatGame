@@ -103,7 +103,7 @@ public class HumanAI : EnemyAi
     {
         isInTask = false;
         taskTimer = 0;
-        cat.FirstReaction(player.position);
+        //cat.FirstReaction(player.position);
     }
 
     IEnumerator timeReaction()
