@@ -60,7 +60,7 @@ public class Hole : MonoBehaviour
         yield return null;
         yield return null;
 
-        wall.GetComponent<WallsHole>().AddHole(newObj.GetComponent<BoxCollider>().bounds);
+        wall.GetComponent<WallsHole>().AddHole(newObj);
         wallsInContact.Clear();
     }
 

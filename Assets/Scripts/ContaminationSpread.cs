@@ -56,7 +56,7 @@ public class ContaminationSpread : MonoBehaviour
 	{
         foreach (Contaminable _contamObj in otherContaminationsInZone)
         {
-            _contamObj.AddBuildUp(contaminationRate);
+            //_contamObj.AddBuildUp(contaminationRate);
         }
     }
 

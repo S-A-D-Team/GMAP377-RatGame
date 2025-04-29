@@ -74,6 +74,10 @@ public class UIManager : MonoBehaviour
     [Header("Pause")]
     [SerializeField] private List<GameObject> pauseScreens;
 
+    [SerializeField] private Image hungerBar;
+    [SerializeField] private Image StaminaBar;
+    [SerializeField] private GameObject InteractUI;
+    [SerializeField] private GameObject InfectUI;
     //public event System.Action<List<int>> updateParams;
 
 
@@ -207,6 +211,28 @@ public class UIManager : MonoBehaviour
         //SetupParamUIListeners();
     }
 
+    public void showInteractCue(bool _state)
+    {
+        InteractUI.SetActive(_state);
+    }
+
+    public void showInfectionCue(bool _state)
+    {
+        InfectUI.SetActive(_state);
+    }
+
+    public void changeHungerBar(float _change)
+    {
+        hungerBar.fillAmount += _change;
+        if (hungerBar.fillAmount <= 0)
+        {
+
+            Destroy(GameObject.FindWithTag("player").gameObject);
+            GameManager.Instance.onPlayerTrapped();
+            StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
+            Debug.Log("STARVATION");
+        }
+    }
     /*private void SetupParamUIListeners()
     {
         paramUIChanged = false;

@@ -16,6 +16,7 @@ public class WallsHole : MonoBehaviour
     [SerializeField]
     private Axes AxisToCheck;
     public List<Bounds> Holes = new List<Bounds>();
+    public List<GameObject> HolesObject = new List<GameObject>();
     private void Start()
     {
         initialBounds = GetComponent<BoxCollider>().bounds;
@@ -24,9 +25,10 @@ public class WallsHole : MonoBehaviour
     /// Adds a new hole and recreates the collider layout.
     /// Gets box collider bounds from the Hole
     /// </summary>
-    public void AddHole(Bounds holeBounds)
+    public void AddHole(GameObject hole)
     {
-        Holes.Add(holeBounds);
+        Holes.Add(hole.GetComponent<BoxCollider>().bounds);
+        HolesObject.Add(hole);
         CreateHoleInCollider();
     }
 
@@ -168,5 +170,33 @@ public class WallsHole : MonoBehaviour
         sphere.transform.position = _pos;
         sphere.transform.localScale = Vector3.one * 0.1f;
         sphere.GetComponent<Collider>().enabled = false;
+    }
+
+    public void ResetWall()
+    {
+        foreach (GameObject hole in HolesObject)
+        {
+            Destroy(hole);
+        }
+        Holes.Clear();
+
+        //remove all BoxColliders colliders
+        //remove all Walls if any
+        foreach (Transform c in GetComponentsInChildren<Transform>().Where(child => child != transform && child.CompareTag("SpawnedWall")))
+        {
+            Destroy(c.gameObject);
+        }
+        foreach (BoxCollider _col in GetComponents<BoxCollider>())
+        {
+            if (!_col.isTrigger) Destroy(_col);
+        }
+
+        // Add a new BoxCollider
+        BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+
+        // Convert world-space bounds to local-space center and size
+        //collider.center = transform.InverseTransformPoint(initialBounds.center);
+        //collider.size = transform.InverseTransformVector(initialBounds.size);
+
     }
 }

@@ -77,20 +77,18 @@ public class Contaminable : MonoBehaviour
         contaminationBuildup += _buildUpValue;
     }
 
-	private void OnCollisionEnter(Collision collision)
+    protected virtual void ContaminateItem()
 	{
-		if(collision.gameObject.tag.ToLower().Contains("player"))
-		{
-            //HEre we can add more buildup based on perks?
-            contaminationValue += 20f;
-            contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
-            AddBuildUp(5f);
-            //tick it
-            atMinutePass();
-            //Visual feedback
-            StartCoroutine(LerpRoutine(mat));
-        }
-	}
+        //HEre we can add more buildup based on perks?
+        contaminationValue += 20f;
+        contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
+        AddBuildUp(5f);
+        //tick it
+        atMinutePass();
+        //Visual feedback
+        StartCoroutine(LerpRoutine(mat));
+    }
+    
 
     //Considering this might be used elsewhere too, 
     //I might consider moving this to a big utility functions script file later
