@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class Hole : MonoBehaviour
 {
-    public bool isEnabled = true;
+    public bool isEnabled = false;
     string wallLayerName = "Walls";
     public GameObject holePrefab;
 
     public List<GameObject> wallsInContact = new List<GameObject>();
-
 
     void Update()
     {
@@ -61,7 +60,7 @@ public class Hole : MonoBehaviour
         yield return null;
         yield return null;
 
-        wall.GetComponent<WallsHole>().AddHole(newObj.GetComponent<BoxCollider>().bounds);
+        wall.GetComponent<WallsHole>().AddHole(newObj);
         wallsInContact.Clear();
     }
 
