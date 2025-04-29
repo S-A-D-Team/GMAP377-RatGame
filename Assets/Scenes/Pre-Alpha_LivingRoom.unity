@@ -7403,6 +7403,7 @@ GameObject:
   - component: {fileID: 120349470}
   - component: {fileID: 120349469}
   - component: {fileID: 120349473}
+  - component: {fileID: 120349474}
   m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
@@ -7528,6 +7529,27 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 51f806789b47aa44482adc8e8ee27d9c, type: 2}
   m_BuildHeightMesh: 0
+--- !u!65 &120349474
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120349468}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 9.999979, y: 0.48558187, z: 10}
+  m_Center: {x: 0, y: -0.24279094, z: 0}
 --- !u!1 &152195383
 GameObject:
   m_ObjectHideFlags: 0
