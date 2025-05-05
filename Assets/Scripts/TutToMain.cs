@@ -12,3 +12,5 @@ public class TutToMain : MonoBehaviour
         SceneManager.LoadScene(sceneToTransitionTo);
     }
 }
+
+//before modifying this script in any way please message Bee/Bashira
