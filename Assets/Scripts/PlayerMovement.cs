@@ -16,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Running")]
     [SerializeField]
     private float runSpeed;
-    private bool running;
 
     [Header("Ground Check")]
     [SerializeField]
@@ -27,18 +26,14 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jumping")]
     [SerializeField]
-    private float jumpForce;
-    [SerializeField]
-    private float jumpCooldown;
-    [SerializeField]
     private float airMovement;
-    private bool canJump;
+    [SerializeField]
+    private float jumpForce;
 
-    [Header("Key Bindings")]
-    [SerializeField]
-    private KeyCode jumpKey = KeyCode.Space;
-    [SerializeField]
-    private KeyCode runKey = KeyCode.LeftShift;
+    private PlayerInputCollection playerInput;
+
+    private Vector3 moveDirection;
+    private Rigidbody rb;
 
     //Temp get/setter to access player attribute for a mutation (refer to GameManager.cs)
     public float JumpForce
@@ -46,22 +41,15 @@ public class PlayerMovement : MonoBehaviour
         get { return jumpForce; }
         set { jumpForce = value; }
     }
-    //Collects movement inputs
-    private float horInput;
-    private float vertInput;
-
-    private Vector3 moveDirection;
-    private Rigidbody rb;
-    
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        canJump = true;
         //Subject to change but currently let's the Game Manager keep track of the player
         GameManager.Instance.RegisterPlayer(this);
+        playerInput = GetComponent<PlayerInputCollection>();
     }
 
     // Update is called once per frame
@@ -70,8 +58,8 @@ public class PlayerMovement : MonoBehaviour
         //ground check
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.01f, whatIsGround);
 
-        CollectInputs();
-        SPeedControl();
+        playerInput.CollectInputs(grounded);
+        SpeedControl();
 
         //Apply movement drag
         if (grounded)
@@ -89,41 +77,14 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
-    private void CollectInputs()
-    {
-        //Take in inputs
-        horInput = Input.GetAxisRaw("Horizontal");
-        vertInput = Input.GetAxisRaw("Vertical");
-
-        //Jump Input Check
-        if(Input.GetKey(jumpKey) && grounded && canJump)
-        {
-            canJump = false;
-
-            Jump();
-
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
-
-        //Running Check
-        if(Input.GetKey(runKey) && grounded)
-        {
-            running = true;
-        }
-        else
-        {
-            running = false;
-        }
-    }
-
     private void MovePlayer()
     {
         //Calculate movemnt based on inputs
-        moveDirection = orientation.forward * vertInput + orientation.right * horInput;
+        moveDirection = orientation.forward * playerInput.VertInput + orientation.right * playerInput.HorInput;
 
         if (grounded)
         {
-            if (running)
+            if (playerInput.Running)
             {
                 rb.AddForce(moveDirection.normalized * runSpeed * 3f, ForceMode.Force);
             }
@@ -138,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void SPeedControl()
+    private void SpeedControl()
     {
         //Limits the max speed that the player can reach
         Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
@@ -152,16 +113,13 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Jump()
+    public void Jump()
     {
         //Makes sure y speed is 0
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-    }
+        rb.AddForce(transform.up * playerInput.CurrentJump, ForceMode.Impulse);
 
-    private void ResetJump()
-    {
-        canJump = true;
+        playerInput.ResetJump();
     }
 }
