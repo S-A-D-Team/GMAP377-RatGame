@@ -190,7 +190,7 @@ public class PlayerMovement : MonoBehaviour
             RefreshStats();
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !UIManager.Instance.isTutorialActive)
         {
             UIManager.Instance.onPause();
             Time.timeScale = 0.0f;

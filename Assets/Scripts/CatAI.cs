@@ -31,6 +31,7 @@ public class CatAI : EnemyAi
 
     //Chase Mechanic
     [SerializeField] private bool playerLockedOn = false;
+    [SerializeField] private bool playerSpottedFirstTime = false;
     private Vector3 lastValidPlayerPosition;
     [SerializeField]  private List<Vector3> offNavMeshTrail = new List<Vector3>();
     private int frameCounter = 0;
@@ -76,6 +77,13 @@ public class CatAI : EnemyAi
                 Reaction();
                 isReacting = true;
                 playerLockedOn = true;
+
+                //if the player has been spotted for the first time, 
+                if(!playerSpottedFirstTime)
+                {
+                    playerSpottedFirstTime = true;
+                    UIManager.Instance.beginTutorial(6);
+                }
             }
             else if (!isInTask)
             {

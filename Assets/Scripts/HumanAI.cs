@@ -40,6 +40,9 @@ public class HumanAI : EnemyAi
 
     private Vector3 prevTask;
 
+    [SerializeField] private bool playerSpottedFirstTime = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -66,6 +69,14 @@ public class HumanAI : EnemyAi
                     StartCoroutine(timeReaction());
                     Reaction();
                     isReacting = true;
+
+                    //if the player has been spotted for the first time, 
+                    if (!playerSpottedFirstTime)
+                    {
+                        playerSpottedFirstTime = true;
+                        UIManager.Instance.beginTutorial(5);
+                    }
+
                 }
             }
             else if (!isInTask)

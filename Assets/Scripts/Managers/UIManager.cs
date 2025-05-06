@@ -57,12 +57,22 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gameDay;
 
     [Space]
+    [Header("Tutorial")]
+    public bool isTutorialActive = false;
+    [SerializeField] private TutorialManager tutorialManager;
+    [SerializeField] private GameObject tutorialParent;
+    [SerializeField] private TextMeshProUGUI tutorialCaption;
+    public Image hungerHighlight;
+    public Image staminaHighlight;
+    public Image mutationHighlight;
+    [SerializeField] private GameObject tutorialContinueButton;
+    [Space]
 
     [SerializeField] private GameObject deathSet;
     [SerializeField] private Image deathNoise;
     [SerializeField] private Image deathRed;
 
-    [SerializeField] private GameObject Parameters_UI_Object;
+    
     //[SerializeField] private GameObject template_InputField;
     //[SerializeField] private GameObject template_Dropdown;
     //[SerializeField] private GameObject template_Toggle;
@@ -70,14 +80,18 @@ public class UIManager : MonoBehaviour
     private List<int> paramIDs;
     //private bool paramUIChanged = false;
 
-    [Space]
-    [Header("Pause")]
+    [Space]  
     [SerializeField] private List<GameObject> pauseScreens;
 
+    [Space]
     [SerializeField] private Image hungerBar;
     [SerializeField] private Image StaminaBar;
     [SerializeField] private GameObject InteractUI;
     [SerializeField] private GameObject InfectUI;
+
+    [Space]
+    public TextMeshProUGUI mutationPointsGainCueText;
+    public GameObject mutationPointsGainCue;
     //public event System.Action<List<int>> updateParams;
 
 
@@ -232,6 +246,41 @@ public class UIManager : MonoBehaviour
         _value = Mathf.Clamp(_value, 0f, 1f);
         hungerBar.fillAmount = _value;
     }
+
+    public void SetTutorialCaption(string _narration)
+    {
+        tutorialCaption.text = _narration;
+    }
+
+    public IEnumerator cueMutation()
+    {
+        mutationPointsGainCue.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        mutationPointsGainCue.SetActive(false);
+    }
+
+    public void beginTutorial(int _tutorialIndex)
+    {
+        tutorialParent.SetActive(true);
+        tutorialManager.tutorialStage = _tutorialIndex;
+        isTutorialActive = true;
+        tutorialManager.SetTutorial();
+        //enable the cursor and stop
+        Time.timeScale = 0.0f;
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+    public void endTutorial()
+    {
+        tutorialParent.SetActive(false);
+        isTutorialActive = false;
+        //continue the game
+        Time.timeScale = 1.0f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+    }
+
     /*private void SetupParamUIListeners()
     {
         paramUIChanged = false;
@@ -393,6 +442,7 @@ public class UIManager : MonoBehaviour
     [Space]
     [Header("Parameters")]
 
+    [SerializeField] private GameObject Parameters_UI_Object;
     public Toggle biteToggle;
 
     public void onBiteToggleChange()

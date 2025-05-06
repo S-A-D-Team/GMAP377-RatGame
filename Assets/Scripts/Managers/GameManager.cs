@@ -38,10 +38,7 @@ public class GameManager : MonoBehaviour
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
         //UIManager.Instance.updateParams += OnParamUIUpdate;
 
-        ratStats.hunger = 1;
-        ratStats.stamina = 1;
-        ratStats.currentHungerLavel = hungerLevel.Full;
-        ratStats.staminaCap = 1f;
+        
     }
     public void SelfDestroy()
     {
@@ -69,6 +66,11 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("PlayerMovement not added to Player prefab!");
         }
+
+        ratStats.hunger = 1;
+        ratStats.stamina = 1;
+        ratStats.currentHungerLavel = hungerLevel.Full;
+        ratStats.staminaCap = 1f;
     }
 
     public void OnThresholdTrigger(float threshold)
@@ -214,6 +216,7 @@ public class GameManager : MonoBehaviour
     {
         List<GameObject> prefabs = mutationLibrary.mutationPrefabs;
         string randomMutationName = prefabs[Random.Range(0, prefabs.Count)].name;
+        UIManager.Instance.mutationPointsGainCueText.text = "You gained a new mutation: " + randomMutationName;
         AddMutation(randomMutationName);
     }
     //Handler so mutations can be added by an identifier instead of the direct type
