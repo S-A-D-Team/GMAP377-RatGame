@@ -115,7 +115,7 @@ public class GameTimer : MonoBehaviour
         minutePassed?.Invoke();
 
         //-0.5 for day skip, so such is per minute
-        GameManager.Instance.changeHungerBar(-0.00034f);
+        GameManager.Instance.changeHunger(-0.00034f);
 
     }
 

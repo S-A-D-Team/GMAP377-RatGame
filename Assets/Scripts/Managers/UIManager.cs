@@ -221,6 +221,11 @@ public class UIManager : MonoBehaviour
         InfectUI.SetActive(_state);
     }
 
+    public void changeStaminaBar(float _newvalue)
+    {
+        StaminaBar.fillAmount = _newvalue;
+    }
+
     public void changeHungerBar(float _change)
     {
         float _value = hungerBar.fillAmount += _change;

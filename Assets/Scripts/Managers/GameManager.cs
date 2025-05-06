@@ -318,7 +318,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void changeHungerBar(float _change)
+    public void changeHunger(float _change)
     {
         UIManager.Instance.changeHungerBar(_change);
         ratStats.hunger += _change;
@@ -362,7 +362,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        ratStats.stamina = Mathf.Clamp(ratStats.stamina, 0f, ratStats.staminaCap);
+        changeStamina(0);
 
         if (ratStats.hunger <= -0.002)
         {
@@ -373,6 +373,13 @@ public class GameManager : MonoBehaviour
             Debug.Log("STARVATION");
         }
 
+    }
+
+    public void changeStamina(float _change)
+    {
+        ratStats.stamina += _change;
+        ratStats.stamina = Mathf.Clamp(ratStats.stamina, 0f, ratStats.staminaCap);
+        UIManager.Instance.changeStaminaBar(ratStats.stamina);
     }
 
 }

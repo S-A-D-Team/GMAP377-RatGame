@@ -52,7 +52,7 @@ public class FoodItem : Contaminable
 
     protected virtual void EatItem()
     {
-         UIManager.Instance.changeHungerBar(0.1f);
+        GameManager.Instance.changeHunger(0.1f);
         Destroy(gameObject);
     }
 
