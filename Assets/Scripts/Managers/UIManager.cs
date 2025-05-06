@@ -223,15 +223,9 @@ public class UIManager : MonoBehaviour
 
     public void changeHungerBar(float _change)
     {
-        hungerBar.fillAmount += _change;
-        if (hungerBar.fillAmount <= 0)
-        {
-
-            Destroy(GameObject.FindWithTag("player").gameObject);
-            GameManager.Instance.onPlayerTrapped();
-            StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
-            Debug.Log("STARVATION");
-        }
+        float _value = hungerBar.fillAmount += _change;
+        _value = Mathf.Clamp(_value, 0f, 1f);
+        hungerBar.fillAmount = _value;
     }
     /*private void SetupParamUIListeners()
     {

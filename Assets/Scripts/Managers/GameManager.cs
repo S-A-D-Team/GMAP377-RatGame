@@ -6,6 +6,8 @@ using System;
 //By extension, this includes specifically the Linq namespace (accessed through the System namespace)
 using System.Linq;
 using Random = UnityEngine.Random;
+using static RatStats;
+using static UnityEngine.Rendering.DebugUI;
 
 public class GameManager : MonoBehaviour
 {
@@ -35,12 +37,18 @@ public class GameManager : MonoBehaviour
         }
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
         //UIManager.Instance.updateParams += OnParamUIUpdate;
+
+        ratStats.hunger = 1;
+        ratStats.stamina = 1;
+        ratStats.currentHungerLavel = hungerLevel.Full;
+        ratStats.staminaCap = 1f;
     }
     public void SelfDestroy()
     {
         Instance = null;
         Destroy(gameObject);
     }
+
     public void onPlayerTrapped()
     {
         //more thngs to do when player dies
@@ -308,6 +316,63 @@ public class GameManager : MonoBehaviour
             newMutation.Initialize();
             newMutation.setCurrentFlag(newVal);
         }
+    }
+
+    public void changeHungerBar(float _change)
+    {
+        UIManager.Instance.changeHungerBar(_change);
+        ratStats.hunger += _change;
+
+        float _value = Mathf.Clamp01(ratStats.hunger);
+        int index = Mathf.FloorToInt(_value * 6f);
+
+        switch (5 - index)
+        {
+            case 0: 
+                ratStats.currentHungerLavel = hungerLevel.Ravenous;
+                ratStats.staminaCap = 0.4f;
+                break;
+            case 1: 
+                ratStats.currentHungerLavel = hungerLevel.Starving;
+                ratStats.staminaCap = 0.5f;
+
+                break;
+            case 2: 
+                ratStats.currentHungerLavel = hungerLevel.Hungry;
+                ratStats.staminaCap = 0.65f;
+
+                break;
+            case 3: 
+                ratStats.currentHungerLavel = hungerLevel.Peckish;
+                ratStats.staminaCap = 0.8f;
+
+                break;  
+            case 4: 
+                ratStats.currentHungerLavel = hungerLevel.Content;
+                ratStats.staminaCap = 0.9f;
+
+                break;
+            case 5: 
+                ratStats.currentHungerLavel = hungerLevel.Full;
+                ratStats.staminaCap = 1f;
+                break;
+            default:
+                ratStats.currentHungerLavel = hungerLevel.Ravenous;
+                ratStats.staminaCap = 0.4f;
+                break;
+        }
+
+        ratStats.stamina = Mathf.Clamp(ratStats.stamina, 0f, ratStats.staminaCap);
+
+        if (ratStats.hunger <= -0.002)
+        {
+
+            Destroy(GameObject.FindWithTag("player").gameObject);
+            GameManager.Instance.onPlayerTrapped();
+            StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
+            Debug.Log("STARVATION");
+        }
+
     }
 
 }
