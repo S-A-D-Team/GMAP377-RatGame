@@ -28,8 +28,9 @@ public class UIManagerTWOOOOO : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void Quit()
+    public void quitGame()
     {
-        Application.Quit();
+        ReloadScene();
+        SceneManager.LoadSceneAsync("MainMenu");
     }
 }
