@@ -3,9 +3,14 @@ guid: 0a7de13c9e0b0cb488d6e403a81eace6
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Magazines
+    second: {fileID: 2100000, guid: 27f80db5b1dc0cd4887bb151e5d48d7b, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1

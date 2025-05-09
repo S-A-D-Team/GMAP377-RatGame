@@ -54,6 +54,11 @@ public class GameTimer : MonoBehaviour
             Instance = null;
         }
     }
+    public void SelfDestroy()
+    {
+        Instance = null;
+        Destroy(gameObject);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -108,6 +113,28 @@ public class GameTimer : MonoBehaviour
 
         //Let all subsscribers know of minuteIncrease
         minutePassed?.Invoke();
+
+        //-0.5 for day skip, so such is per minute
+        GameManager.Instance.changeHunger(-0.00034f);
+
+    }
+
+    public void skipDay()
+    {
+        if (!GameObject.FindWithTag("player").gameObject.GetComponent<PlayerSafeZone>().isTouchingWallBack)
+        {
+            return;
+        }
+        UIManager.Instance.onResume();
+        Time.timeScale = 1.0f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        for (int i = 0; i < 1440; i++) 
+        {
+            AdvanceMinute();
+        }
+
     }
 
 }

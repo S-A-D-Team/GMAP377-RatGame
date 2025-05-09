@@ -128,6 +128,7 @@ GameObject:
   - component: {fileID: 7607355011323265677}
   - component: {fileID: 3377198739701718355}
   - component: {fileID: 7701203519220823874}
+  - component: {fileID: 946212899350555962}
   m_Layer: 0
   m_Name: Player
   m_TagString: player
@@ -179,7 +180,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &1304832216517500403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,11 +201,19 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
+  playerWidth: 0
+  whatIsClimbable:
+    serializedVersion: 2
+    m_Bits: 0
   jumpForce: 4.5
+  minJumpForce: 0
+  maxJumpForce: 0
   jumpCooldown: 0.8
   airMovement: 0.2
   jumpKey: 32
   runKey: 304
+  refreshStatsKey: 114
+  climbKey: 102
 --- !u!136 &7607355011323265677
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -267,6 +276,19 @@ CapsuleCollider:
   m_Height: 0.2
   m_Direction: 2
   m_Center: {x: 0, y: -0.038746666, z: 0.00054068863}
+--- !u!114 &946212899350555962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5058273188919755049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043eab7b2589818439467954d027055c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isTouchingWallBack: 0
 --- !u!1 &5416546354237750039
 GameObject:
   m_ObjectHideFlags: 0

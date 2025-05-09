@@ -20,11 +20,14 @@ public class ContaminationManager : MonoBehaviour
     
 
     //Each contaminable object will be registered with an individual contamination level
-    private Dictionary<Contaminatable, float> contaminables = new Dictionary<Contaminatable, float>();
+    private Dictionary<Contaminable, float> contaminables = new Dictionary<Contaminable, float>();
     private float flatLevel = 0;
     private float totalFlatLevel = 0;
+    private int mutationRequirements = 3;
 
     public event System.Action<float> thresholdPassed;
+    //Subscribe the human agent to this so they go toward a designated infected item to trigger a win
+    public event System.Action<Contaminable> winConActive;
     public static ContaminationManager Instance { get; private set; }
 
     private void Awake()
@@ -63,8 +66,14 @@ public class ContaminationManager : MonoBehaviour
         
     }
 
-    //"Contaminable" class is spelled wrong, should replace all instances of this later
-    public void AddContaminable (Contaminatable c, float v)
+    public void SelfDestroy()
+    {
+        Instance = null;
+        Destroy(gameObject);
+    }
+
+    
+    public void AddContaminable (Contaminable c, float v)
     {
         if (!contaminables.ContainsKey(c))
         {
@@ -74,7 +83,8 @@ public class ContaminationManager : MonoBehaviour
         }
     }
 
-    public void CalculateContaminationLevel(Contaminatable c, float v)
+    //Deprecated for now
+    public void CalculateContaminationLevel(Contaminable c, float v)
     {
         //Add the change in value to the flat contamination level before updating the object's entry
         flatLevel += v - contaminables[c];
@@ -83,6 +93,8 @@ public class ContaminationManager : MonoBehaviour
         level = flatLevel / totalFlatLevel;
         CheckThresholds();
     }
+
+    //Deprecated for now
     //Ensures that checkpoints can be passed simultaneously but only ever once
     //Gameplay effects of passing these thresholds is defined elsewhere
     public void CheckThresholds()
@@ -106,5 +118,20 @@ public class ContaminationManager : MonoBehaviour
                 thresholdPassed?.Invoke(passed);
             }
         }
+    }
+
+    public void AddMutationPoints(int points)
+    {
+        flatLevel += points;
+        if (flatLevel >= mutationRequirements)
+        {
+            flatLevel -= mutationRequirements;
+            GameManager.Instance.RandomMutate();
+        }
+    }
+
+    public void ActivateWinCondition(Contaminable c)
+    {
+        winConActive?.Invoke(c);
     }
 }
