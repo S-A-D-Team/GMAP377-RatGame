@@ -12,10 +12,13 @@ public class RatStats : MonoBehaviour
     public float runSpeed;
     public float walkSpeed;
     public float climbSpeed;
+    public float airSpeed;
+    public float jumpChargeRate;
     public float maxJumpForce;
     public bool canBite;
     public bool canClimb;
     public float groundDrag;
+    public float hunger;
     public enum hungerLevel
     {
         Full = 110,
@@ -27,7 +30,15 @@ public class RatStats : MonoBehaviour
     }
     public float hungerPenalty;
     public float hungerTolerance;
-    public float staminaLevel;
+    public float stamina;
 
+
+    //Player will have to grab the hunger level
+    //When applying stats, will have to apply a modifier based on that hunger level
+    //110 / 100 = 1.1x modifier to speed
+    //100 / 100 1x modifier
+    //hungertolerance = 5
+    //hungerpenalty = 100 - tolerance
+    
 
 }

@@ -22,7 +22,10 @@ public class FoodItem : Contaminable
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                EatItem();
+                if (!poisoned)
+                {
+                    EatItem();
+                }
             }
             else if (Input.GetKeyDown(KeyCode.F))
             {
@@ -33,6 +36,7 @@ public class FoodItem : Contaminable
     protected virtual void onPoisoned()
 	{
 		poisonedEffect.Play();
+        poisoned = true;
 
 		//Always show contaminated
         //mat.SetFloat(lerpProperty, 100);
