@@ -14,23 +14,27 @@ public class PlayerMovement : MonoBehaviour
     private float climbSpeed;
 
     //Resources that affect mobility stats/access
-    private RatStats.hungerLevel hungerLevel = RatStats.hungerLevel.Content;
-    private RatStats.hungerLevel previousHungerLevel;
-    private float hunger;
+    private RatStats.hungerLevel hungerLevel;
     private float hungerPenalty;
     //Currently no way to affect this, likely to be tied to a mutation or other infection mechanic
     private float hungerTolerance;
+    //Set true when Ravenous to enable specialized behavior
+    private bool tooHungryToCare = false;
 
     //TODO: Incorporate stamina costs into action checking
     //Likely to create a utility class for managing stamina drain/regen
     private float stamina;
+    private float staminaRegen;
+    private float maxStamina;
+    private float regenDelay;
+    private float lastStamUse;
     [Header("Stamina Costs Per Action")]
     [SerializeField]
-    private float runStamDrain;
+    private float runStamDrain = 0.1f;
     [SerializeField]
-    private float climbStamDrain;
+    private float climbStamDrain = 0.1f;
     [SerializeField]
-    private float biteStamDrain;
+    private float biteStamDrain = 0.25f;
 
     [Header("Base Movement")]
     [SerializeField]
@@ -136,7 +140,7 @@ public class PlayerMovement : MonoBehaviour
     private verticalAction currentVertical;
     private positionalState currentPositional;
 
-    private int debugStateChecks = 3;
+    //private int debugStateChecks = 3;
 
     private void Awake()
     {
@@ -150,16 +154,9 @@ public class PlayerMovement : MonoBehaviour
         rb.useGravity = true;
         canJump = true;
         jumpStarted = false;
-        /*
-        currentLateral = lateralAction.Idle;
-        currentVertical = verticalAction.Idle;
-        currentPositional = positionalState.Grounded;
-        */
         groundNormal = orientation.up;
         climbDirection = orientation.up;
-        previousHungerLevel = hungerLevel;
         wallJumpDirection = -orientation.forward;
-
         GameManager.Instance.RegisterPlayer(gameObject);
         playerStats = GameManager.Instance.ratStats;
         //Initialize stats from rat stats
@@ -173,18 +170,21 @@ public class PlayerMovement : MonoBehaviour
         runSpeed = playerStats.runSpeed;
         airMovement = playerStats.airSpeed;
         groundDrag = playerStats.groundDrag;
+        
         climbSpeed = playerStats.climbSpeed;
+        
         jumpChargeRate = playerStats.jumpChargeRate;
         maxJumpForce = playerStats.maxJumpForce;
-        
-        hunger = playerStats.hunger;
         //Might have this refresh hunger to full instead for testing purposes
-        hungerLevel = GetHungerLevel();
-        previousHungerLevel = hungerLevel;
         hungerPenalty = playerStats.hungerPenalty;
         hungerTolerance = playerStats.hungerTolerance;
-
+        hungerLevel = playerStats.currentHungerLevel;
+        
+        staminaRegen = playerStats.stamRegen;
         stamina = playerStats.stamina;
+        maxStamina = playerStats.staminaCap;
+        regenDelay = playerStats.stamRegenDelay;
+
 
         canBite = playerStats.canBite;
         canClimb = playerStats.canClimb;
@@ -196,15 +196,29 @@ public class PlayerMovement : MonoBehaviour
         {
             RefreshStats();
         }
-        //Update stats if a different hunger threshold is reached
-        hungerLevel = GetHungerLevel();
-        if (hungerLevel != previousHungerLevel)
-        {
-            AdjustStatsToHunger();
-            previousHungerLevel = hungerLevel;
-        }
         //Ascertain player intention based on input and position
         ActionStateUpdate();
+
+        //Ignore any stamina interactions if ravenous - it is essentially infinite in this state
+        if (!tooHungryToCare)
+        {
+            //Apply any stamina regeneration after a delay from last stamina consuming action
+            if (!running && !climbing && Time.time - lastStamUse >= regenDelay && stamina < maxStamina)
+            {
+                regenStamina();
+                Debug.Log("Regaining stam");
+            }
+            else if (running)
+            {
+                useStamina(runStamDrain * Time.deltaTime);
+                Debug.Log("Using run stam");
+            }
+            else if (climbing)
+            {
+                useStamina(climbStamDrain * Time.deltaTime);
+            }
+        }
+        
 
     }
 
@@ -215,58 +229,28 @@ public class PlayerMovement : MonoBehaviour
         CheckGround();
         //Ascertain player positioning relative to surfaces
         PositionalStateUpdate();
-        if (debugStateChecks > 0)
-        {
-            Debug.Log(currentPositional);
-            debugStateChecks--;
-        }
         //Apply movement based on the above combination of surface checks, input, current positional state
         MovePlayer();
         //Adjust true movement to valid ranges
         SpeedControl();
     }
 
-    private void AdjustStatsToHunger()
+    public void AdjustStatsToHunger()
     {
         float truePenalty = hungerPenalty - hungerTolerance;
         //Starving - Full: Receive a discretely decaying stat modifier given default range of [0.25, 1.1] for 0 hunger tolerance
         //Ravenous: Receive an emergency positive stat modifier to aid in last stand attempts
         float statMultiplier = hungerLevel == RatStats.hungerLevel.Ravenous ? 1.25f : (int)hungerLevel / truePenalty;
 
+        //Enable stamina bypassing behavior when near death
+        tooHungryToCare = hungerLevel == RatStats.hungerLevel.Ravenous;
+        Debug.Log("Too hungry to care? " + tooHungryToCare);
+
         //Currently only affects directional input-based mobility, modifying the jumping might add too much complexity to level design given current jump height variability
         speed = playerStats.walkSpeed * statMultiplier;
         runSpeed = playerStats.runSpeed * statMultiplier;
         climbSpeed = playerStats.climbSpeed * statMultiplier;
         airMovement =  playerStats.airSpeed * statMultiplier;
-    }
-
-    //Determine hunger level based on what range actual hunger value falls under
-    private RatStats.hungerLevel GetHungerLevel()
-    {
-        if (hunger > (int)RatStats.hungerLevel.Content && hunger <= (int)RatStats.hungerLevel.Full)
-        {
-            return RatStats.hungerLevel.Full;
-        }
-        else if (hunger > (int)RatStats.hungerLevel.Peckish && hunger <= (int)RatStats.hungerLevel.Content)
-        {
-            return RatStats.hungerLevel.Content;
-        }
-        else if (hunger > (int)RatStats.hungerLevel.Hungry && hunger <= (int)RatStats.hungerLevel.Peckish)
-        {
-            return RatStats.hungerLevel.Peckish;
-        }
-        else if (hunger > (int)RatStats.hungerLevel.Starving && hunger <= (int)RatStats.hungerLevel.Hungry)
-        {
-            return RatStats.hungerLevel.Hungry;
-        }
-        else if (hunger > (int)RatStats.hungerLevel.Ravenous && hunger <= (int)RatStats.hungerLevel.Starving)
-        {
-            return RatStats.hungerLevel.Starving;
-        }
-        else
-        {
-            return RatStats.hungerLevel.Ravenous;
-        }
     }
 
     private void SpeedControl()
@@ -314,7 +298,6 @@ public class PlayerMovement : MonoBehaviour
 
         //Make sure jump is held during jump squat to allow for full hop transition
         //Prevents situations where players press jump, release, and then quickly hold again within frame window leading to full hop
-        //Currently 4-frame jump squat window
         float holdWindow = 0.075f;
         float offsetGravity = 4.25f;
         while (holdWindow > 0f)
@@ -341,8 +324,7 @@ public class PlayerMovement : MonoBehaviour
 
         StartCoroutine(JumpCooldown());
     }
-    //jumpStarted determines whether the player should be checking for short hop from ground or extending full hop from air
-    //Also prevents full hop behavior if airborne was entered without short hopping
+    
     private void ShortHop()
     {
         bool canCoyoteJump = Time.time < lastGrounded + coyoteInterval;
@@ -367,9 +349,6 @@ public class PlayerMovement : MonoBehaviour
         //Full hop up to variable, capped jump height
         //Always entered from short hop, ends at height cap or jump button release
         currentJumpForce = minJumpForce;
-        Debug.Log(playerInput.JumpHeld);
-        Debug.Log(currentJumpForce < maxJumpForce);
-        Debug.Log(jumpStarted);
 		while (playerInput.JumpHeld && currentJumpForce < maxJumpForce && jumpStarted)
 		{
 			float deltaForce = jumpChargeRate * Time.deltaTime;
@@ -515,7 +494,7 @@ public class PlayerMovement : MonoBehaviour
 
             }
             //Attach to climbable surfaces too steep to walk/run up, but no more than 90 degree, so long as climb is unlocked/off cooldown
-            else if (NearClimbable() && canClimb)
+            else if (NearClimbable() && canClimb && hasStamina(climbStamDrain))
             {
                 climbing = true;
                 currentPositional = positionalState.Climbing;
@@ -527,8 +506,8 @@ public class PlayerMovement : MonoBehaviour
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
 
-        //Wall jump and edge case where contact with climbable surface is lost
-        if (currentPositional == positionalState.Climbing && (!NearClimbable() || currentVertical == verticalAction.WallJumping))
+        //Wall jump, edge case where contact with climbable surface is lost, and running out of stamina
+        if (currentPositional == positionalState.Climbing && (!NearClimbable() || currentVertical == verticalAction.WallJumping || hasStamina(climbStamDrain)))
         {
             climbing = false;
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
@@ -552,7 +531,7 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
-                    if (playerInput.RunHeld)
+                    if (playerInput.RunHeld && hasStamina(runStamDrain))
                     {
                         currentLateral = lateralAction.Running;
                     }
@@ -595,7 +574,7 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
-                    if (playerInput.RunHeld)
+                    if (playerInput.RunHeld && hasStamina(runStamDrain))
                     {
                         currentLateral = lateralAction.Running;
                     }
@@ -618,6 +597,7 @@ public class PlayerMovement : MonoBehaviour
         switch (currentPositional)
         {
             case positionalState.Climbing:
+                running = false;
                 if (currentLateral == lateralAction.Scaling)
                 {
                     //Can only climb vertically, not horizontally
@@ -672,16 +652,24 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    //TENTATIVE STAM FUNCTIONS
     //Make sure player has the stamina to use an intended action
     private bool hasStamina(float stamCost)
     {
+        if (stamina - stamCost >= 0) { Debug.Log("Need more stam"); }
         return stamina - stamCost >= 0;
     }
 
     //Slap this at the end of any code block implementing a stamina draining behavior
     private void useStamina(float stamCost)
     {
-        stamina -= stamCost;
+        GameManager.Instance.changeStamina(-stamCost);
+        stamina = playerStats.stamina;
+        lastStamUse = Time.time;
+    }
+
+    private void regenStamina()
+    {
+        GameManager.Instance.changeStamina(staminaRegen * Time.deltaTime);
+        stamina = playerStats.stamina;
     }
 }

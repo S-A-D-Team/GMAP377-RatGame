@@ -12177,6 +12177,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
+      propertyPath: runStamDrain
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
+      propertyPath: biteStamDrain
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
+      propertyPath: climbStamDrain
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
       propertyPath: jumpChargeRate
       value: 10
       objectReference: {fileID: 0}
@@ -16990,9 +17005,13 @@ MonoBehaviour:
   canClimb: 0
   groundDrag: 4
   hunger: 100
+  stamina: 1
+  staminaCap: 1
+  stamRegen: 0.1
+  stamRegenDelay: 1
+  currentHungerLevel: 110
   hungerPenalty: 100
   hungerTolerance: 0
-  stamina: 0
 --- !u!114 &2014804301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20761,7 +20780,7 @@ PrefabInstance:
     - target: {fileID: 4277189983340825798, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 57.160492
+      value: 53.2025
       objectReference: {fileID: 0}
     - target: {fileID: 4349344703173132843, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
