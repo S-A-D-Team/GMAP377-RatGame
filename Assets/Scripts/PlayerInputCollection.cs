@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerInputCollection : MonoBehaviour
 {
-    [Header("Running")]
+    /*[Header("Running")]
     private bool running;
 
     [Header("Jumping")]
@@ -103,5 +103,5 @@ public class PlayerInputCollection : MonoBehaviour
     {
         currentJump = minJumpForce;
         canJump = true;
-    }
+    }*/
 }
