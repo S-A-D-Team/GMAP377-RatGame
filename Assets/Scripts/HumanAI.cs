@@ -41,7 +41,6 @@ public class HumanAI : EnemyAi
 
     private Vector3 prevTask;
 
-
     private KeyCode killKey = KeyCode.Z;
 
     public UnityEvent humanDeath;
@@ -68,7 +67,7 @@ public class HumanAI : EnemyAi
     {
         if (Input.GetKey(killKey))
         {
-            //StartCoroutine(EatInfected());
+            EatInfected();
         }
         if (!isReacting)
         {
@@ -155,14 +154,17 @@ public class HumanAI : EnemyAi
         playerMoving = false;
     }
 
-    /*IEnumerator EatInfected()
+    private void EatInfected()
     {
         GameObject infectedItem = GameObject.FindWithTag("Kill Food");
         Vector3 infectedPosition = infectedItem.transform.position;
         agent.SetDestination(infectedPosition);
-        isReacting = true;
+        isInTask = true;
 
-        yield return new WaitUntil(ReachedDestination);
+        while (!ReachedDestination())
+        {
+            continue;
+        }
 
         Destroy(infectedItem);
         humanDeath.Invoke();
@@ -181,5 +183,5 @@ public class HumanAI : EnemyAi
             }
         }
         return false;
-    }*/
+    }
 }

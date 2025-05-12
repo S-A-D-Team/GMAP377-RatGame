@@ -51,23 +51,33 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
             return;
         }
 
-        int stackDiff = s > stacks ? (s - stacks) : s;
-
-        if (s < stacks)
-        {
-            ResetStacks();
-        }
-
-        for (int i = 0; i < stackDiff; i++)
-        {
-            stackMutation();
-        }
+        RecalculateStacks(s);
     }
 
     private void ResetStacks()
     {
         rat.maxJumpForce = initialJumpForce;
         stacks = 0;
+    }
+
+    private void RecalculateStacks(int newStacks)
+    {
+        //Might have to edit this like speed mutation as well
+        //Programmatic version, modifiable by changing the serialized min/max/decay directly
+        if (!useEditorCurve)
+        {
+            float finalMultiplier = MutationUtils.ApplyStackedMultiplier(newStacks, minJumpMultiplier, maxJumpMultiplier, decay);
+            rat.maxJumpForce *= finalMultiplier;
+        }
+        //Designer friendly version if the editor option is toggled on and a specific, visualized curving option is required
+        //min/max changes still affect this but decay does not
+        else
+        {
+            float finalMultiplier = MutationUtils.ApplyStackedMultiplier(decayCurve, newStacks, minJumpMultiplier, maxJumpMultiplier);
+            rat.maxJumpForce *= finalMultiplier;
+        }
+
+        stacks = newStacks;
     }
 
     public override void onMutate()

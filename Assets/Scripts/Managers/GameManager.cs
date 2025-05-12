@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject theRat;
+    [Tooltip("Tentative target threshold for determining met win condition from contamination")]
+    [SerializeField]
+    private float winConThreshold;
 
     private PlayerMovement ratMov;
 
@@ -69,7 +72,7 @@ public class GameManager : MonoBehaviour
 
         ratStats.hunger = 1;
         ratStats.stamina = 1;
-        ratStats.currentHungerLavel = hungerLevel.Full;
+        ratStats.currentHungerLevel = hungerLevel.Full;
         ratStats.staminaCap = 1f;
     }
 
@@ -77,141 +80,14 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Threshold " + threshold + "% reached.");
         //Handle mutation and potential environment updates from here
+        if (threshold >= winConThreshold)
+        {
+            Debug.Log("Win condition triggered.");
+        }
     }
 
 
-    /* This method smells bad and makes my brain hurt (don't ask questions)
-     public void OnParamUIUpdate(List<int> parameterIDs)
-    {
-        foreach (int id in parameterIDs)
-        {
-           var value = UIManager.Instance.getParamValue(id);
-           Debug.Log(value);
-           string mutationName = UIManager.Instance.getParamName(id) + "Mutation";
-            switch (mutationName) {
-                case "JumpMutation":
-                    int jumpVal = 0;
-                    if (value is int val1) jumpVal = val1;
-                    JumpMutation jump = theRat.GetComponent<JumpMutation>();
-                    if (jump != null)
-                    {
-                        Debug.Log("MORE Jump");
-                        jump.SetStacks(jumpVal);
-                        ratMov.RefreshStats();
-                    }
-                    else
-                    {
-                        //Nothing if non-positive stacks are set for a mutation that's not yet added
-                        if (jumpVal <= 0)
-                        {
-                            Debug.Log("Not positive?");
-                            return;
-                        }
-                        //First add the mutation component then set any stacks if there's more than one
-                        Debug.Log("You can Yeet higher now");
-                        JumpMutation newMutation = theRat.AddComponent<JumpMutation>();
-                        newMutation.Initialize();
-                        newMutation.onMutate();
-                        if (jumpVal > 1)
-                        {
-                            Debug.Log("...and higher");
-                            newMutation.SetStacks(jumpVal);
-                        }
-                        ratMov.RefreshStats();
-                    }
-                    break;
-
-                case "SpeedMutation":
-                    int speedVal = 0;
-                    if (value is int val2) speedVal = val2;
-                    SpeedMutation speed = theRat.GetComponent<SpeedMutation>();
-                    if (speed != null)
-                    {
-                        Debug.Log("MORE Nyoom");
-                        speed.SetStacks(speedVal);
-                        ratMov.RefreshStats();
-                    }
-                    else
-                    {
-                        //Nothing if non-positive stacks are set for a mutation that's not yet added
-                        if (speedVal <= 0)
-                        {
-                            Debug.Log("Not positive?");
-                            return;
-                        }
-                        //First add the mutation component then set any stacks if there's more than one
-                        Debug.Log("You can skitter faster now");
-                        SpeedMutation newMutation = theRat.AddComponent<SpeedMutation>();
-                        newMutation.Initialize();
-                        newMutation.onMutate();
-                        if (speedVal > 1)
-                        {
-                            Debug.Log("...and faster");
-                            newMutation.SetStacks(speedVal);
-                        }
-                        ratMov.RefreshStats();
-                    }
-                    break;
-
-                case "BiteMutation":
-                    BiteMutation bite = theRat.GetComponent<BiteMutation>();
-                    bool biteFlag = false;
-                    if (value is bool flag1) biteFlag = flag1;
-                    if (bite == null && biteFlag)
-                    {
-                        Debug.Log("Adding chompers");
-                        BiteMutation newMutation = theRat.AddComponent<BiteMutation>();
-                        newMutation.Initialize();
-                        newMutation.onMutate();
-                        ratMov.RefreshStats();
-                    }
-                    else if (!biteFlag)
-                    {
-                        if (bite != null)
-                        {
-                            Debug.Log("You feel less ravenous");
-                            bite.setCurrentFlag(biteFlag);
-                            ratMov.RefreshStats();
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    break;
-
-                case "ClimbMutation":
-                    ClimbMutation climb = theRat.GetComponent<ClimbMutation>();
-                    bool climbFlag = false;
-                    if (value is bool flag2) biteFlag = flag2;
-                    if (climb == null && climbFlag)
-                    {
-                        Debug.Log("You can climb now");
-                        ClimbMutation newMutation = theRat.AddComponent<ClimbMutation>();
-                        newMutation.Initialize();
-                        newMutation.onMutate();
-                        ratMov.RefreshStats();
-                    }
-                    else if (!climbFlag)
-                    {
-                        if (climb != null)
-                        {
-                            Debug.Log("You forgot how to climb");
-                            climb.setCurrentFlag(climbFlag);
-                            ratMov.RefreshStats();
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    break;
-                
-                default:
-                    return;
-            }
-        }
-    }*/
+   
     public void RandomMutate()
     {
         List<GameObject> prefabs = mutationLibrary.mutationPrefabs;
@@ -236,7 +112,7 @@ public class GameManager : MonoBehaviour
     }
 
     //Called after a mutation identifier is converted into a runtime type
-    //Functionally the same as the generic version if also passed a known time but still resolves at runtime (more overhead)
+    //Functionally the same as the generic version if also passed a known type but still resolves at runtime (more overhead)
     //Flexible, not type-safe
     public void AddMutation(Type mutationType)
     {
@@ -328,41 +204,47 @@ public class GameManager : MonoBehaviour
 
         float _value = Mathf.Clamp01(ratStats.hunger);
         int index = Mathf.FloorToInt(_value * 6f);
-
+        hungerLevel previousHungerLevel = ratStats.currentHungerLevel;
         switch (5 - index)
         {
             case 0: 
-                ratStats.currentHungerLavel = hungerLevel.Ravenous;
+                ratStats.currentHungerLevel = hungerLevel.Ravenous;
                 ratStats.staminaCap = 0.4f;
                 break;
             case 1: 
-                ratStats.currentHungerLavel = hungerLevel.Starving;
+                ratStats.currentHungerLevel = hungerLevel.Starving;
                 ratStats.staminaCap = 0.5f;
 
                 break;
             case 2: 
-                ratStats.currentHungerLavel = hungerLevel.Hungry;
+                ratStats.currentHungerLevel = hungerLevel.Hungry;
                 ratStats.staminaCap = 0.65f;
 
                 break;
             case 3: 
-                ratStats.currentHungerLavel = hungerLevel.Peckish;
+                ratStats.currentHungerLevel = hungerLevel.Peckish;
                 ratStats.staminaCap = 0.8f;
 
                 break;  
             case 4: 
-                ratStats.currentHungerLavel = hungerLevel.Content;
+                ratStats.currentHungerLevel = hungerLevel.Content;
                 ratStats.staminaCap = 0.9f;
 
                 break;
             case 5: 
-                ratStats.currentHungerLavel = hungerLevel.Full;
+                ratStats.currentHungerLevel = hungerLevel.Full;
                 ratStats.staminaCap = 1f;
                 break;
             default:
-                ratStats.currentHungerLavel = hungerLevel.Ravenous;
+                ratStats.currentHungerLevel = hungerLevel.Ravenous;
                 ratStats.staminaCap = 0.4f;
                 break;
+        }
+        
+        if (ratStats.currentHungerLevel != previousHungerLevel)
+        {
+            ratMov.RefreshStats();
+            ratMov.AdjustStatsToHunger();
         }
 
         changeStamina(0);

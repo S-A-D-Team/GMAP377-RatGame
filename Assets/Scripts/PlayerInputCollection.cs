@@ -4,104 +4,62 @@ using UnityEngine;
 
 public class PlayerInputCollection : MonoBehaviour
 {
-    /*[Header("Running")]
-    private bool running;
-
-    [Header("Jumping")]
-    private bool canJump;
-    [SerializeField]
-    private float jumpCooldown;
-    [SerializeField]
-    private float minJumpForce;
-    [SerializeField]
-    private float maxJumpForce;
-    private float currentJump;
-
+    //Input key states
+    public Vector2 MoveInput { get; private set; }
+    public bool RunHeld { get; private set; }
+    public bool JumpPressed { get; private set; }
+    public bool JumpHeld { get; private set; }
+    public bool ClimbPressed { get; private set; }
+    //Mostly for testing stats
+    public bool RefreshPressed { get; private set; }
+    
     [Header("Movement Inputs")]
     private float horInput;
     private float vertInput;
+
+    [Header("Jump Input Buffering")]
+    [SerializeField]
+    private float jumpBuffer = 0.1f;
+    private float lastJumpPress = -100f;
 
     [Header("Key Bindings")]
     [SerializeField]
     private KeyCode jumpKey = KeyCode.Space;
     [SerializeField]
     private KeyCode runKey = KeyCode.LeftShift;
+    [SerializeField]
+    private KeyCode refreshStatsKey = KeyCode.R;
+    [SerializeField]
+    private KeyCode climbKey = KeyCode.F;
 
-    private PlayerMovement player;
-
-    public float HorInput
+    private void Update()
     {
-        get { return horInput;  }
-    }
-
-    public float VertInput
-    {
-        get { return vertInput;  }
-    }
-
-    public bool Running
-    {
-        get { return running; }
-    }
-
-    public float CurrentJump
-    {
-        get { return currentJump; }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        canJump = true;
-        currentJump = minJumpForce;
-        player = GetComponent<PlayerMovement>();
-    }
-
-    public void CollectInputs(bool grounded)
-    {
-        //Take in inputs
         horInput = Input.GetAxisRaw("Horizontal");
         vertInput = Input.GetAxisRaw("Vertical");
+        MoveInput = new Vector2(horInput, vertInput);
 
-        //Jump Input Check
-        if (Input.GetKey(jumpKey) && grounded && canJump)
+        ClimbPressed = Input.GetKeyDown(climbKey);
+        RefreshPressed = Input.GetKeyDown(refreshStatsKey);
+        RunHeld = Input.GetKey(runKey);
+        JumpHeld = Input.GetKey(jumpKey);
+        JumpPressed = Input.GetKeyDown(jumpKey);
+        if (JumpPressed)
         {
-            if (currentJump < maxJumpForce)
-            {
-                currentJump += Time.deltaTime * player.JumpForce;
-            }
-            else
-            {
-                currentJump = maxJumpForce;
-            }
+            lastJumpPress = Time.time;
         }
-        //Check if jump key has been pressed, jump if so.
-        else
+        //if (Input.GetKeyDown(KeyCode.Escape) && !UIManager.Instance.isTutorialActive)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (currentJump > minJumpForce)
-            {
-                canJump = false;
-
-                player.Jump();
-
-                Invoke(nameof(ResetJump), jumpCooldown);
-            }
-        }
-
-        //Running Check
-        if (Input.GetKey(runKey) && grounded)
-        {
-            running = true;
-        }
-        else
-        {
-            running = false;
+            UIManager.Instance.onPause();
+            Time.timeScale = 0.0f;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
         }
     }
 
-    public void ResetJump()
+    public bool BufferedJump()
     {
-        currentJump = minJumpForce;
-        canJump = true;
-    }*/
+        return Time.time < lastJumpPress + jumpBuffer;
+    }
+
 }
