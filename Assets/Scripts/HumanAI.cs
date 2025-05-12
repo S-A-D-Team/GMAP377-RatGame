@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class HumanAI : EnemyAi
 {
@@ -40,7 +41,13 @@ public class HumanAI : EnemyAi
 
     private Vector3 prevTask;
 
+
+    private KeyCode killKey = KeyCode.Z;
+
+    public UnityEvent humanDeath;
+
     [SerializeField] private bool playerSpottedFirstTime = false;
+
 
 
     // Start is called before the first frame update
@@ -53,11 +60,16 @@ public class HumanAI : EnemyAi
         prevTask = new Vector3(0,0,0);
         reactionCanvas.SetActive(false);
         playerMoving = false;
+        humanDeath = new UnityEvent();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKey(killKey))
+        {
+            //StartCoroutine(EatInfected());
+        }
         if (!isReacting)
         {
             playerFound = base.isPlayerSighted(player);
@@ -142,4 +154,32 @@ public class HumanAI : EnemyAi
         }
         playerMoving = false;
     }
+
+    /*IEnumerator EatInfected()
+    {
+        GameObject infectedItem = GameObject.FindWithTag("Kill Food");
+        Vector3 infectedPosition = infectedItem.transform.position;
+        agent.SetDestination(infectedPosition);
+        isReacting = true;
+
+        yield return new WaitUntil(ReachedDestination);
+
+        Destroy(infectedItem);
+        humanDeath.Invoke();
+    }
+
+    private bool ReachedDestination()
+    {
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                if(!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }*/
 }

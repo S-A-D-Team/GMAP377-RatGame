@@ -18,7 +18,7 @@ public class EnemyAi : MonoBehaviour
 
         if(Mathf.Abs(playerAngle) > 90 && Mathf.Abs(playerAngle) < 270)
         {
-            return true;
+            return isSightClear(player);
         }
         return false;
     }
@@ -34,7 +34,6 @@ public class EnemyAi : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 
