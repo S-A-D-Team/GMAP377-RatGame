@@ -67,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
     private bool climbing = false;
     [SerializeField]
     private int climbCooldown = 10;
+    public ParticleSystem climbingEffect;
 
     [Header("Jumping")]
     [SerializeField]
@@ -489,6 +490,10 @@ public class PlayerMovement : MonoBehaviour
             if (currentPositional == positionalState.Climbing)
             {
                 climbing = false;
+                if (climbingEffect != null)
+                {
+                   climbingEffect.Stop();
+                }
                 StartCoroutine(ClimbCooldown());
                 currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
 
@@ -503,13 +508,21 @@ public class PlayerMovement : MonoBehaviour
         //Auto-update as a defensive measure
         if (currentPositional != positionalState.Climbing)
         {
+            if (climbingEffect != null)
+            {
+                climbingEffect.Stop();
+            }
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
 
         //Wall jump, edge case where contact with climbable surface is lost, and running out of stamina
-        if (currentPositional == positionalState.Climbing && (!NearClimbable() || currentVertical == verticalAction.WallJumping || hasStamina(climbStamDrain)))
+        if (currentPositional == positionalState.Climbing && (!NearClimbable() || currentVertical == verticalAction.WallJumping || !hasStamina(climbStamDrain)))
         {
             climbing = false;
+            if (climbingEffect != null)
+            {
+                climbingEffect.Stop();
+            }
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
 
@@ -602,7 +615,24 @@ public class PlayerMovement : MonoBehaviour
                 {
                     //Can only climb vertically, not horizontally
                     moveDirection = climbDirection * playerInput.MoveInput.y;
+                    if (climbingEffect != null)
+                    {
+                        if (!climbingEffect.isPlaying)
+                        {
+                            climbingEffect.Play();
+                        }
+                    }
                     rb.AddForce(moveDirection.normalized * climbSpeed * 3f, ForceMode.Force);
+                }
+                else if (currentLateral == lateralAction.Idle)
+                {
+                    if (climbingEffect != null)
+                    {
+                        if (climbingEffect.isPlaying)
+                        {
+                            climbingEffect.Pause();
+                        }
+                    }
                 }
                 if (currentVertical == verticalAction.WallJumping)
                 {
