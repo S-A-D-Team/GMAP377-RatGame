@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour
 
         xRotate -= mouseY;
         //Limits Verticle rotation
-        xRotate = Mathf.Clamp(xRotate, -90f, 0f);
+        xRotate = Mathf.Clamp(xRotate, -90f, 45f);
 
         // Rotate cam and adjust orientation
         transform.rotation = Quaternion.Euler(xRotate, yRotate, 0);

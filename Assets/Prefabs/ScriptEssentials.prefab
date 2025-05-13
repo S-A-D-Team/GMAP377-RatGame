@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theRat: {fileID: 0}
+  winConThreshold: 0
   ratStats: {fileID: 0}
   mutationLibrary: {fileID: 0}
 --- !u!114 &3429569208074652711
@@ -162,19 +163,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87bc19297bc412141a8f22378e97006e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  introNarration: 'Hello There!
+  introNarration: '
+
+    Hello There!
 
     Welcome to RAT.
 
-    A game of cat and mouse
-    chase and the mischief of spreading all the nasty infections.
+    A game of cat and
+    mouse chase and the mischief of spreading all the nasty infections.
 
 
 
-    Before we
-    jump you in to the gameplay, let me explain you some basic mechanics.'
-  hungerNarration: 'This is your hunger. If you are are hungry for too long, you
-    will starve to death.
+    Before
+    we jump you in to the gameplay, let me explain you some basic mechanics.'
+  hungerNarration: '
+
+    This is your hunger. If you are are hungry for too long,
+    you will starve to death.
 
 
     Higher the value, the more well-fed you are.
@@ -188,24 +193,30 @@ MonoBehaviour:
     well-fed, look for food sources highlighted in orange when you play the game.
 
 '
-  staminaNarration: 'This is your stamina. You need this to sprint and climb.
+  staminaNarration: '
+
+    This is your stamina. You need this to sprint and climb.
 
     Remember!
     Being hungry means you will have less stamina overall. '
-  mutationNarration: 'These are your mutations. Greyed out ones are the ones you
-    have not unlocked.
+  mutationNarration: '
+
+    These are your mutations. Greyed out ones are the ones
+    you have not unlocked.
 
 
-    You  start with the ''BITE'' and ''CLAW'' mutation for
-    now. When the game is paused, you will be able to see the descriptions of each
-    mutation.'
-  endTutorialNarration: "These are the basics. \nYou are now dropped in an apartment.
+    You  start with the ''BITE'' and ''CLAW'' mutation
+    for now. When the game is paused, you will be able to see the descriptions of
+    each mutation.'
+  endTutorialNarration: "\nThese are the basics. \nYou are now dropped in an apartment.
     Seek food, seek havok, spread infections, the goal is to deteriorate the environment
     till the human and his pet cat dies.\n\nTry not to get caught, watch out for
     traps, and fear that cat."
-  humanNarration: Oh no! The human has seen you. The human will alert the cat now!
-    Quick! Scramble away from this zone!
-  catNarration: "Oh no no no. That wretched cat has seen you. Cat will chase you
+  humanNarration: '
+
+    Oh no! The human has seen you. The human will alert the
+    cat now! Quick! Scramble away from this zone!'
+  catNarration: "\nOh no no no. That wretched cat has seen you. Cat will chase you
     down, you cannot outrun it. \n\nThe only safe zone is behind the walls, so find
     a way to get back there!"
   tutorialStage: 0
