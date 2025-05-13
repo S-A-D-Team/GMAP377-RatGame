@@ -256,6 +256,7 @@ public class GameManager : MonoBehaviour
             GameManager.Instance.onPlayerTrapped();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
             Debug.Log("STARVATION");
+            //AudioManager.Instance.playDeath();
         }
 
     }
