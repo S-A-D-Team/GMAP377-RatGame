@@ -2,17 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    public static void PlayGame()
+    public GameObject controlsScreen;
+    public GameObject loadingScreen;
+    public Image loadingBarFill;
+
+    void Start()
     {
-        SceneManager.LoadScene("main");
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+
+    IEnumerator LoadSceneAsyncly(string _scenename)
+    {
+        AsyncOperation operation = SceneManager.LoadSceneAsync(_scenename);
+
+        loadingScreen.SetActive(true);
+
+        while (!operation.isDone)
+        {
+            float _progressValue = Mathf.Clamp01(operation.progress / 0.99f);
+            loadingBarFill.fillAmount = _progressValue;
+            yield return null;
+        }
+    }
+
+    public void PlayGame()
+    {
+        StartCoroutine(LoadSceneAsyncly("Main"));
     }
 
     public static void Settings()
     {
         
+    }
+
+    public void Controls()
+    {
+        controlsScreen.SetActive(true);
+    }
+    public void ControlsBack()
+    {
+        controlsScreen.SetActive(false);
     }
 
     public static void QuitGame()

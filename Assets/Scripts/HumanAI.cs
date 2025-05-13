@@ -6,14 +6,9 @@ using UnityEngine.Events;
 
 public class HumanAI : EnemyAi
 {
-    [SerializeField]
-    protected Transform[] tasks;
 
-    [SerializeField]
-    private int minTaskTime;
-
-    [SerializeField]
-    private int maxTaskTime;
+    private int minTaskTime = 10;
+    private int maxTaskTime = 20;
 
     [SerializeField]
     private int runawayTime;
@@ -47,7 +42,8 @@ public class HumanAI : EnemyAi
 
     [SerializeField] private bool playerSpottedFirstTime = false;
 
-
+    [Space]
+    public List<TaskInfo> HumanTasks;
 
     // Start is called before the first frame update
     void Start()
@@ -92,7 +88,10 @@ public class HumanAI : EnemyAi
             }
             else if (!isInTask)
             {
-                prevTask = base.changeLocation(tasks, agent, prevTask);
+                (Vector3, float) _holderVar = base.changeLocation(HumanTasks, agent, prevTask);
+                prevTask = _holderVar.Item1;
+                minTaskTime = (int)_holderVar.Item2 + 1;
+                minTaskTime = (int)_holderVar.Item2 + 1;
                 locationTime = Random.Range(minTaskTime, maxTaskTime);
                 taskTimer = 0;
                 isInTask = true;
