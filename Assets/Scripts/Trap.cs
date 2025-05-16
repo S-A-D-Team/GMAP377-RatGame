@@ -13,6 +13,8 @@ public class Trap : MonoBehaviour
 		if(other.tag.ToLower().Contains("player"))
 		{
 			Destroy(other.gameObject);
+			GameManager.Instance.onPlayerTrapped();
+			StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
 			snapAudio.Play();
 		}
 	}
