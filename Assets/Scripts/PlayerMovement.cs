@@ -267,11 +267,27 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
+            
             //Limit the speed based on movement state
             float contextSpeedCap = running ? runSpeed : speed;
 
             //Limits the max speed that the player can reach
             Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+            //Adjust air handling based on speed
+            //Harder to steer at high speed, more precise at lower speed
+            if (!grounded)
+            {
+                Vector3 airDrift = GetInputDirection();
+                float lateralSpeed = flatVelocity.magnitude;
+
+                float airControl = Mathf.Lerp(1.2f, 0.4f, lateralSpeed / runSpeed);
+
+                float adjustedHandling = airControl * (running ? 0.9f : 1.2f);
+
+                Vector3 adjustedAirForce = airDrift * airMovement * adjustedHandling;
+                rb.AddForce(adjustedAirForce, ForceMode.Force);
+            }
 
             //Checks if speed exceeds max
             if (flatVelocity.magnitude > contextSpeedCap)
@@ -664,14 +680,14 @@ public class PlayerMovement : MonoBehaviour
                 if (currentLateral == lateralAction.Walking)
                 {
                     running = false;
-                    moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
-                    rb.AddForce(moveDirection * airMovement * 3f, ForceMode.Force);
+                    moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
+                    rb.AddForce(moveDirection * airMovement, ForceMode.Acceleration);
                 }
                 else if (currentLateral == lateralAction.Running)
                 {
                     running = true;
-                    moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
-                    rb.AddForce(moveDirection * (airMovement * 1.25f * 3f), ForceMode.Force);
+                    moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
+                    rb.AddForce(moveDirection * (airMovement * 1.25f), ForceMode.Acceleration);
                 }
                 else
                 {
