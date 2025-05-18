@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class UIManagerTWOOOOO : MonoBehaviour
 {
+    public GameObject controlsScreen;
     public IEnumerator startReload(float time)
     {
         yield return new WaitForSeconds(time);
@@ -28,8 +29,22 @@ public class UIManagerTWOOOOO : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void Quit()
+    public void quitGame()
     {
-        Application.Quit();
+        // Destroy singletons if needed
+        GameManager.Instance?.SelfDestroy();
+        UIManager.Instance?.SelfDestroy();
+        GameTimer.Instance?.SelfDestroy();
+        ContaminationManager.Instance?.SelfDestroy();
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void Controls()
+    {
+        controlsScreen.SetActive(true);
+    }
+    public void ControlsBack()
+    {
+        controlsScreen.SetActive(false);
     }
 }

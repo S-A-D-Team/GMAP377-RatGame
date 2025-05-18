@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 6398189281160355245}
   - component: {fileID: 3429569208074652711}
   - component: {fileID: 7218541586542324789}
+  - component: {fileID: 8562539769043811959}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -95,7 +96,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25adf62942dc0204d92023ad6f456e54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testThreshold: 25
+  theRat: {fileID: 0}
+  winConThreshold: 0
+  ratStats: {fileID: 0}
+  mutationLibrary: {fileID: 0}
 --- !u!114 &3429569208074652711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,14 +114,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameTime: {fileID: 0}
   gameDay: {fileID: 0}
+  isTutorialActive: 0
+  tutorialManager: {fileID: 0}
+  tutorialParent: {fileID: 0}
+  tutorialCaption: {fileID: 0}
+  hungerHighlight: {fileID: 0}
+  staminaHighlight: {fileID: 0}
+  mutationHighlight: {fileID: 0}
+  tutorialContinueButton: {fileID: 0}
   deathSet: {fileID: 0}
   deathNoise: {fileID: 0}
   deathRed: {fileID: 0}
-  Parameters_UI_Object: {fileID: 0}
-  template_InputField: {fileID: 0}
-  template_Dropdown: {fileID: 0}
-  template_ToggleBox: {fileID: 0}
   pauseScreens: []
+  hungerBar: {fileID: 0}
+  StaminaBar: {fileID: 0}
+  InteractUI: {fileID: 0}
+  InfectUI: {fileID: 0}
+  mutationPointsGainCueText: {fileID: 0}
+  mutationPointsGainCue: {fileID: 0}
+  Parameters_UI_Object: {fileID: 0}
+  biteToggle: {fileID: 0}
+  ClimbToggle: {fileID: 0}
+  jumpStack: {fileID: 0}
+  speedStack: {fileID: 0}
 --- !u!114 &7218541586542324789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,6 +151,75 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: f32264f347aa0d6479b1c97bac5f0e12, type: 2}
   level: 0
+--- !u!114 &8562539769043811959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3129960194719436932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87bc19297bc412141a8f22378e97006e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  introNarration: '
+
+    Hello There!
+
+    Welcome to RAT.
+
+    A game of cat and
+    mouse chase and the mischief of spreading all the nasty infections.
+
+
+
+    Before
+    we jump you in to the gameplay, let me explain you some basic mechanics.'
+  hungerNarration: '
+
+    This is your hunger. If you are are hungry for too long,
+    you will starve to death.
+
+
+    Higher the value, the more well-fed you are.
+
+    Hunger
+    depletes every in-game minute by a small value. If you skip the day, you will
+    lose a chunk of hunger, potentially risking starvation.
+
+
+    To keep youself
+    well-fed, look for food sources highlighted in orange when you play the game.
+
+'
+  staminaNarration: '
+
+    This is your stamina. You need this to sprint and climb.
+
+    Remember!
+    Being hungry means you will have less stamina overall. '
+  mutationNarration: '
+
+    These are your mutations. Greyed out ones are the ones
+    you have not unlocked.
+
+
+    You  start with the ''BITE'' and ''CLAW'' mutation
+    for now. When the game is paused, you will be able to see the descriptions of
+    each mutation.'
+  endTutorialNarration: "\nThese are the basics. \nYou are now dropped in an apartment.
+    Seek food, seek havok, spread infections, the goal is to deteriorate the environment
+    till the human and his pet cat dies.\n\nTry not to get caught, watch out for
+    traps, and fear that cat."
+  humanNarration: '
+
+    Oh no! The human has seen you. The human will alert the
+    cat now! Quick! Scramble away from this zone!'
+  catNarration: "\nOh no no no. That wretched cat has seen you. Cat will chase you
+    down, you cannot outrun it. \n\nThe only safe zone is behind the walls, so find
+    a way to get back there!"
+  tutorialStage: 0
 --- !u!1 &4196633381828397414
 GameObject:
   m_ObjectHideFlags: 0

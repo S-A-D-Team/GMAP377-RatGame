@@ -3,8 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[System.Serializable]
+public struct TaskInfo
+{
+    public Transform location;
+    public float time;
+    public float weight;
+
+    public TaskInfo(Transform _location, float _time, float _weight)
+    {
+        this.location = _location;
+        this.time = _time;
+        this.weight = _weight;
+    }
+
+}
+
 public class EnemyAi : MonoBehaviour
 {
+
     // Start is called before the first frame update
     protected Transform findPlayer()
     {
@@ -37,14 +54,41 @@ public class EnemyAi : MonoBehaviour
         return false;
     }
 
-    protected Vector3 changeLocation(Transform[] tasks, NavMeshAgent agent, Vector3 prevTask)
+    protected (Vector3, float) changeLocation(List<TaskInfo> tasks, NavMeshAgent agent, Vector3 prevTask)
     {
+        int _index = 0;
         Vector3 task = prevTask;
-        while (task == prevTask)
+
+        while (task == prevTask && tasks.Count > 1)
         {
-            task = tasks[Random.Range(0, tasks.Length)].position;
+            float totalWeight = 0f;
+
+            // Calculate total weight excluding the previous task
+            foreach (var t in tasks)
+            {
+                if (t.location.position != prevTask)
+                    totalWeight += t.weight;
+            }
+
+            float randomValue = Random.Range(0, totalWeight);
+            float currentSum = 0f;
+
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                if (tasks[i].location.position == prevTask)
+                    continue;
+
+                currentSum += tasks[i].weight;
+                if (randomValue <= currentSum)
+                {
+                    _index = i;
+                    task = tasks[_index].location.position;
+                    break;
+                }
+            }
         }
+
         agent.SetDestination(task);
-        return task;
-    }      
+        return (task, tasks[_index].time );
+    }  
 }

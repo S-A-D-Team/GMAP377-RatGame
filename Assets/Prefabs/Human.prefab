@@ -283,6 +283,7 @@ GameObject:
   - component: {fileID: 4900844735679393000}
   - component: {fileID: 6454577317459181780}
   - component: {fileID: 634294603598769737}
+  - component: {fileID: 1952503492988922077}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -343,17 +344,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9cc8833eaeb1ad4cbfe4023b7918c7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tasks:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  minTaskTime: 10
-  maxTaskTime: 20
   runawayTime: 3
   cat: {fileID: 0}
   ratTrap: {fileID: 7026748828972373902, guid: 8bdc0d6d69418234fb8e8d369ce4cb81, type: 3}
   reactionCanvas: {fileID: 4626283889386643395}
+  humanDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  playerSpottedFirstTime: 0
+  HumanTasks: []
+--- !u!136 &1952503492988922077
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4032392547473592015}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2.7102578
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.2867316, z: 0}
 --- !u!1 &4626283889386643395
 GameObject:
   m_ObjectHideFlags: 0
