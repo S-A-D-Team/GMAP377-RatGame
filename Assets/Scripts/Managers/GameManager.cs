@@ -200,9 +200,9 @@ public class GameManager : MonoBehaviour
         ratStats.hunger += _change;
 
         float _value = Mathf.Clamp01(ratStats.hunger);
-        int index = Mathf.FloorToInt(_value * 6f);
+        int index = Mathf.FloorToInt(_value * 5f);
         hungerLevel previousHungerLevel = ratStats.currentHungerLevel;
-        switch (5 - index)
+        switch (index)
         {
             case 0: 
                 ratStats.currentHungerLevel = hungerLevel.Ravenous;
@@ -231,10 +231,6 @@ public class GameManager : MonoBehaviour
             case 5: 
                 ratStats.currentHungerLevel = hungerLevel.Full;
                 ratStats.staminaCap = 1f;
-                break;
-            default:
-                ratStats.currentHungerLevel = hungerLevel.Ravenous;
-                ratStats.staminaCap = 0.4f;
                 break;
         }
         

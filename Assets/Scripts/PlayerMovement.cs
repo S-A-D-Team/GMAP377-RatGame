@@ -66,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
     private float playerWidth;
     private bool climbing = false;
     [SerializeField]
-    private int climbCooldown = 10;
+    private int climbCooldown = 8;
     public ParticleSystem climbingEffect;
 
     [Header("Jumping")]
@@ -78,6 +78,8 @@ public class PlayerMovement : MonoBehaviour
     private float maxJumpForce;
     [SerializeField]
     private int jumpCooldown = 10;
+    [SerializeField]
+    private float fixedWallJumpForce = 4f;
     [SerializeField]
     private float airMovement;
     private bool canJump;
@@ -207,12 +209,10 @@ public class PlayerMovement : MonoBehaviour
             if (!running && !climbing && Time.time - lastStamUse >= regenDelay && stamina < maxStamina)
             {
                 regenStamina();
-                Debug.Log("Regaining stam");
             }
             else if (running)
             {
                 useStamina(runStamDrain * Time.deltaTime);
-                Debug.Log("Using run stam");
             }
             else if (climbing)
             {
@@ -331,7 +331,6 @@ public class PlayerMovement : MonoBehaviour
         if (playerInput.JumpHeld)
         {
             currentVertical = verticalAction.FullHopping;
-            Debug.Log("Full");
             StartCoroutine(FullHop());
         }
         else
@@ -389,7 +388,7 @@ public class PlayerMovement : MonoBehaviour
         climbing = false;
         rb.velocity = Vector3.zero;
         //Modify this to use some sort of variable for the kick off force and vertical force later
-        Vector3 wallJumpForce = wallJumpDirection * (maxJumpForce / 2f) + Vector3.up * minJumpForce;
+        Vector3 wallJumpForce = wallJumpDirection * fixedWallJumpForce + Vector3.up * minJumpForce;
         rb.AddForce(wallJumpForce, ForceMode.Impulse);
         StartCoroutine(ClimbCooldown());
         StartCoroutine(JumpCooldown());
@@ -661,13 +660,13 @@ public class PlayerMovement : MonoBehaviour
                 {
                     running = false;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
-                    rb.AddForce(moveDirection * speed * 3f, ForceMode.Force);
+                    rb.AddForce(moveDirection * speed * 2.5f, ForceMode.Force);
                 }
                 else if (currentLateral == lateralAction.Running)
                 {
                     running = true;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
-                    rb.AddForce(moveDirection * runSpeed * 3f, ForceMode.Force);
+                    rb.AddForce(moveDirection * runSpeed * 2.5f, ForceMode.Force);
                 }
                 else
                 {
@@ -701,7 +700,7 @@ public class PlayerMovement : MonoBehaviour
     //Make sure player has the stamina to use an intended action
     private bool hasStamina(float stamCost)
     {
-        if (stamina - stamCost >= 0) { Debug.Log("Need more stam"); }
+        if (stamina - stamCost <= 0) { Debug.Log("Need more stam"); }
         return stamina - stamCost >= 0;
     }
 
