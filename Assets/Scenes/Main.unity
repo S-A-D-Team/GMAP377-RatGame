@@ -11357,6 +11357,11 @@ PrefabInstance:
       objectReference: {fileID: 317614488}
     - target: {fileID: 634294603598769737, guid: 3d102225beae4fc48a51218190e088e0,
         type: 3}
+      propertyPath: trapsToPlace
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 634294603598769737, guid: 3d102225beae4fc48a51218190e088e0,
+        type: 3}
       propertyPath: tasks.Array.size
       value: 7
       objectReference: {fileID: 0}
@@ -21103,6 +21108,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 94584266095333339, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 133921979982680778, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -21904,6 +21914,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318546847367130058, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6415950081379860155, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
