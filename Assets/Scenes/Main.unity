@@ -9537,6 +9537,7 @@ GameObject:
   - component: {fileID: 991121861}
   - component: {fileID: 991121860}
   - component: {fileID: 991121859}
+  - component: {fileID: 991121863}
   m_Layer: 11
   m_Name: Wall (5)
   m_TagString: Untagged
@@ -9622,6 +9623,19 @@ Transform:
   - {fileID: 1618948545}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: -269.986}
+--- !u!114 &991121863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991121858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13f7dc9eeb46da4597693867fe2b47b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasStamCost: 1
 --- !u!1 &999749268
 GameObject:
   m_ObjectHideFlags: 0
@@ -17690,6 +17704,7 @@ MonoBehaviour:
   staminaCap: 1
   stamRegen: 0.1
   stamRegenDelay: 1
+  mutationLevel: 0
   currentHungerLevel: 110
   hungerPenalty: 100
   hungerTolerance: 0
@@ -21103,6 +21118,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 94584266095333339, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 133921979982680778, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -21905,6 +21925,11 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6318546847367130058, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6415950081379860155, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_IsActive
@@ -21954,6 +21979,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7085970025227863147, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.90112305
       objectReference: {fileID: 0}
     - target: {fileID: 7161508941920870845, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
@@ -22321,6 +22351,7 @@ GameObject:
   - component: {fileID: 6192294089263372781}
   - component: {fileID: 187416449032189629}
   - component: {fileID: 1278461252144054761}
+  - component: {fileID: 8164133212088520594}
   m_Layer: 11
   m_Name: Wall (4)
   m_TagString: Untagged
@@ -22328,6 +22359,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8164133212088520594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8164133212088520593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13f7dc9eeb46da4597693867fe2b47b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasStamCost: 1
 --- !u!114 &8253101686928596810
 MonoBehaviour:
   m_ObjectHideFlags: 0
