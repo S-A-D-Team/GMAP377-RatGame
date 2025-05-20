@@ -16,6 +16,12 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     private float initialWalkSpeed;
     private float initialRunSpeed;
     private float initialDrag;
+
+    [Header("Messages for first and subsequent gains of this mutation")]
+    [SerializeField]
+    private string obtainedStr = "You feel a hurry to your scurry (Speed Up!)";
+    [SerializeField]
+    private string stackStr = "You feel slippier (Drag Down!)";
   
 
     // Start is called before the first frame update
@@ -94,6 +100,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     }
     public override void onMutate()
     {
+        UIManager.Instance.mutationPointsGainCueText.text = obtainedStr;
         stackMutation();
     }
 
@@ -122,5 +129,6 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
             }
         }
         stacks++;
+        UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
     }
 }

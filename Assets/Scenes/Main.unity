@@ -9948,6 +9948,7 @@ GameObject:
   - component: {fileID: 991121861}
   - component: {fileID: 991121860}
   - component: {fileID: 991121859}
+  - component: {fileID: 991121863}
   m_Layer: 11
   m_Name: Wall (5)
   m_TagString: Untagged
@@ -10033,6 +10034,19 @@ Transform:
   - {fileID: 1618948545}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: -269.986}
+--- !u!114 &991121863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991121858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13f7dc9eeb46da4597693867fe2b47b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasStamCost: 1
 --- !u!1 &999749268
 GameObject:
   m_ObjectHideFlags: 0
@@ -13368,13 +13382,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
+      propertyPath: speed
+      value: 3.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
+      propertyPath: runSpeed
+      value: 4.675
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
       propertyPath: jumpForce
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
+      propertyPath: groundDrag
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
       propertyPath: airMovement
-      value: 0.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
@@ -13389,12 +13418,12 @@ PrefabInstance:
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
       propertyPath: maxJumpForce
-      value: 7
+      value: 6.5
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
       propertyPath: minJumpForce
-      value: 3.5
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
@@ -18278,21 +18307,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7786677d14f037549a6f8967f49ba1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runSpeed: 10
-  walkSpeed: 6
+  runSpeed: 4.675
+  walkSpeed: 3.25
   climbSpeed: 2
-  airSpeed: 0.5
+  airSpeed: 2
   jumpChargeRate: 10
-  maxJumpForce: 10
+  maxJumpForce: 6.5
   canBite: 1
   canClimb: 0
-  groundDrag: 4
-  hunger: 100
+  groundDrag: 3
+  hunger: 1
   stamina: 1
   staminaCap: 1
   stamRegen: 0.1
   stamRegenDelay: 1
-  currentHungerLevel: 110
+  mutationLevel: 0
+  currentHungerLevel: 100
   hungerPenalty: 100
   hungerTolerance: 0
 --- !u!114 &2014804301
@@ -23118,6 +23148,7 @@ GameObject:
   - component: {fileID: 6192294089263372781}
   - component: {fileID: 187416449032189629}
   - component: {fileID: 1278461252144054761}
+  - component: {fileID: 8164133212088520594}
   m_Layer: 11
   m_Name: Wall (4)
   m_TagString: Untagged
@@ -23125,6 +23156,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8164133212088520594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8164133212088520593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13f7dc9eeb46da4597693867fe2b47b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasStamCost: 1
 --- !u!114 &8253101686928596810
 MonoBehaviour:
   m_ObjectHideFlags: 0

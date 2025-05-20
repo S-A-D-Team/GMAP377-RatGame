@@ -13,9 +13,19 @@ public class Contaminable : MonoBehaviour
     protected float contaminationBuildup = 0;
     [SerializeField]
     [Tooltip("Mutation Points granted on Infection")]
-    //Set to 3 by default to hard code all infected items giving enough to mutate
-    protected int mutationYield = 3;
+    protected int mutationYield = 1;
+    [SerializeField]
     protected bool canGrantPoints = true;
+
+    //Determine mutation yield/hunger modifier
+    public enum potencyLevel
+    {
+        LOW = 1,
+        MEDIUM = 2,
+        HIGH = 3
+    }
+
+    public potencyLevel potency;
 
     [Space]
     [Header("Contamination Material")]
@@ -64,7 +74,7 @@ public class Contaminable : MonoBehaviour
             
             UIManager.Instance.mutationPointsGainCueText.text = "You gained " + mutationYield.ToString() + " mutation points";
             StartCoroutine(UIManager.Instance.cueMutation());
-            ContaminationManager.Instance.AddMutationPoints(mutationYield);
+            ContaminationManager.Instance.AddMutationPoints(mutationYield * (int)potency);
 
             if (isWinCondition)
             {

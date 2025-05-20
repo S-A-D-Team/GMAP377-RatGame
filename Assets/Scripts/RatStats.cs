@@ -23,6 +23,7 @@ public class RatStats : MonoBehaviour
     public float staminaCap;
     public float stamRegen;
     public float stamRegenDelay;
+    public int mutationLevel;
     public hungerLevel currentHungerLevel;
     public enum hungerLevel
     {

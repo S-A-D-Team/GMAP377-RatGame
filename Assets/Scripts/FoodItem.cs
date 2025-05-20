@@ -33,7 +33,7 @@ public class FoodItem : Contaminable
                     EatItem();
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.F))
+            else if (Input.GetKeyDown(KeyCode.F) && !poisoned)
             {
                 if (poisoningEffect == null)
                 {
@@ -105,7 +105,7 @@ public class FoodItem : Contaminable
     protected virtual void EatItem()
     {
         isEaten = true;
-        UIManager.Instance.changeHungerBar(0.1f);
+        UIManager.Instance.changeHungerBar(0.1f * (int)potency);
         //Prefab should simply play a chomp animation on spawn and have the object despawn when it's finished
         if (chompEffect != null)
         {
