@@ -103,12 +103,12 @@ MonoBehaviour:
     AfterOpaque: 0
     Source: 1
     NormalSamples: 1
-    Intensity: 0.88
-    DirectLightingStrength: 0.393
-    Radius: 0.25
+    Intensity: 0.38
+    DirectLightingStrength: 0.39
+    Radius: 1.41
     Samples: 0
     BlurQuality: 0
-    Falloff: 100
+    Falloff: 44.1
     SampleCount: -1
   m_BlueNoise256Textures:
   - {fileID: 2800000, guid: 36f118343fc974119bee3d09e2111500, type: 3}
@@ -141,7 +141,8 @@ MonoBehaviour:
   - {fileID: 3048276378413317845}
   - {fileID: -8848529641718555234}
   - {fileID: -8498923342350975451}
-  m_RendererFeatureMap: adc0de57c6d2eee562da792e3c2b9214d53e8a3837a74d2a9eddd9202cb5338525fee4d53fc20d8a
+  - {fileID: 1879736616412170611}
+  m_RendererFeatureMap: adc0de57c6d2eee562da792e3c2b9214d53e8a3837a74d2a9eddd9202cb5338525fee4d53fc20d8a73c98a4c7e2a161a
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -226,6 +227,26 @@ MonoBehaviour:
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60
+--- !u!114 &1879736616412170611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
+  m_Name: FullScreenPassRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  injectionPoint: 600
+  fetchColorBuffer: 1
+  requirements: 0
+  passMaterial: {fileID: 2100000, guid: 09eca9685f8fe534e81b61f31c8bb9b4, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &3048276378413317845
 MonoBehaviour:
   m_ObjectHideFlags: 0

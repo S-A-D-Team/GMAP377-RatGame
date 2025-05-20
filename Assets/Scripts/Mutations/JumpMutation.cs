@@ -12,6 +12,12 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
 
     private float initialJumpForce;
 
+    [Header("Messages for first and subsequent gains of this mutation")]
+    [SerializeField]
+    private string obtainedStr = "You feel lighter (Jump Up!)";
+    [SerializeField]
+    private string stackStr = "You feel EVEN lighter (Jump Up!)";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -82,7 +88,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
 
     public override void onMutate()
     {
-        //Currently just applies the stat bonus, this should also apply the proper UI elements and/or other front-end requirements when available
+        UIManager.Instance.mutationPointsGainCueText.text = obtainedStr;
         stackMutation();
     }
 
@@ -108,5 +114,6 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
             rat.maxJumpForce *= finalMultiplier;
         }
         stacks++;
+        UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
     }
 }

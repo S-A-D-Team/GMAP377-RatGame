@@ -97,7 +97,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theRat: {fileID: 0}
-  winConThreshold: 0
   ratStats: {fileID: 0}
   mutationLibrary: {fileID: 0}
 --- !u!114 &3429569208074652711
@@ -125,9 +124,17 @@ MonoBehaviour:
   deathSet: {fileID: 0}
   deathNoise: {fileID: 0}
   deathRed: {fileID: 0}
+  deathCat: {fileID: 0}
+  deathHunger: {fileID: 0}
+  deathTrap: {fileID: 0}
+  deathText: {fileID: 0}
+  deathCaption_Cat: The Cat got you. Pity.
+  deathCaption_Hunger: 'Starved to death. '
+  deathCaption_Trap: Caught in a trap. Skill Issue
   pauseScreens: []
   hungerBar: {fileID: 0}
   StaminaBar: {fileID: 0}
+  ContaminationBar: {fileID: 0}
   InteractUI: {fileID: 0}
   InfectUI: {fileID: 0}
   mutationPointsGainCueText: {fileID: 0}
@@ -151,6 +158,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: f32264f347aa0d6479b1c97bac5f0e12, type: 2}
   level: 0
+  useRandomPotency: 0
+  mutationRequirements: 3
 --- !u!114 &8562539769043811959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,10 +217,10 @@ MonoBehaviour:
     You  start with the ''BITE'' and ''CLAW'' mutation
     for now. When the game is paused, you will be able to see the descriptions of
     each mutation.'
-  endTutorialNarration: "\nThese are the basics. \nYou are now dropped in an apartment.
-    Seek food, seek havok, spread infections, the goal is to deteriorate the environment
-    till the human and his pet cat dies.\n\nTry not to get caught, watch out for
-    traps, and fear that cat."
+  endTutorialNarration: "\nThese are the basics. \nYou are now dropped in a random
+    spot in this apartment. Seek food, seek havok, spread infections, the goal is
+    to deteriorate the environment till the human and his pet cat dies.\n\nTry not
+    to get caught, watch out for traps, and fear that cat."
   humanNarration: '
 
     Oh no! The human has seen you. The human will alert the
