@@ -30,7 +30,7 @@ public class LoadSceneAdditive : MonoBehaviour
 
             foreach (var op in operations)
             {
-                float progress = Mathf.Clamp01(op.progress / 0.88f); //unity considers 0.9 as done, so we put a bit ahead of it
+                float progress = Mathf.Clamp01(op.progress / 0.99f); 
                 totalProgress += progress;
                 if (op.progress < 0.9f)
                     allDone = false;

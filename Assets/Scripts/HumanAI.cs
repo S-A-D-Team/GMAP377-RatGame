@@ -96,8 +96,8 @@ public class HumanAI : EnemyAi
             {
                 (Vector3, float) _holderVar = base.changeLocation(HumanTasks, agent, prevTask);
                 prevTask = _holderVar.Item1;
-                minTaskTime = (int)_holderVar.Item2 + 1;
-                minTaskTime = (int)_holderVar.Item2 + 1;
+                minTaskTime = (int)_holderVar.Item2 - 1;
+                maxTaskTime = (int)_holderVar.Item2 + 1;
                 locationTime = Random.Range(minTaskTime, maxTaskTime);
                 taskTimer = 0;
                 isInTask = true;
@@ -200,5 +200,19 @@ public class HumanAI : EnemyAi
             }
         }
         return false;
+    }
+
+    protected override void taskEndAction()
+    {
+        base.taskEndAction();
+        Debug.Log("taking end action");
+        Vector3 _temp = trapPos;
+        //trap pos becomes the current position
+        trapPos = transform.position + Vector3.up;
+        //just place 1 trap
+        StartCoroutine(placeTraps(1));
+
+        //change it back so that it stays clean (not affected by this)
+        trapPos = _temp;
     }
 }

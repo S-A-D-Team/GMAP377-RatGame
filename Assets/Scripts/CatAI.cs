@@ -56,7 +56,6 @@ public class CatAI : EnemyAi
             transform.position = Vector3.MoveTowards(transform.position, player.position, 4f * Time.deltaTime);
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 5f * Time.deltaTime);
-            //Chase(player.position);
 
             if(player.gameObject.GetComponent<PlayerSafeZone>().isTouchingWallBack)
             {
@@ -89,8 +88,8 @@ public class CatAI : EnemyAi
                 {
                     (Vector3, float) _holderVar = base.changeLocation(CatTasks, agent, prevTask);
                     prevTask = _holderVar.Item1;
-                    minTaskTime = (int)_holderVar.Item2 + 1;
-                    minTaskTime = (int)_holderVar.Item2 + 1;
+                    minTaskTime = (int)_holderVar.Item2 - 1;
+                    maxTaskTime = (int)_holderVar.Item2 + 1;
                 }
                 locationTime = Random.Range(minTaskTime, maxTaskTime);
                 taskTimer = 0;
@@ -110,17 +109,19 @@ public class CatAI : EnemyAi
             if (!playerFound)
             {
                 agent.speed = 1;
+                agent.stoppingDistance = 2;
                 anim.SetFloat("WalkSpeed", 0f);
                 isReacting = false;
             }
             else
             {
-                agent.speed = 3;
+                agent.speed = 2.5f;
+                agent.stoppingDistance = 0;
+
                 anim.SetFloat("WalkSpeed", 1.0f);
-                Debug.Log("TRUIHIHasfnlausdhfuilahfuklhfuklsghafliuaghef");
+                Debug.Log("Chasing the player w NavMesh");
 
                 agent.SetDestination(player.position);
-                //Chase(player.position);
             }
         }
     }
@@ -131,7 +132,8 @@ public class CatAI : EnemyAi
         taskTimer = 0;
     }
 
-    public void Chase(Vector3 playerPosition)
+    //depricated as Cat chase will use NavMesh
+    /*public void Chase(Vector3 playerPosition)
     {
         Debug.Log("CHASING");
         if (TryGetValidNavMeshPosition(player.position))
@@ -181,7 +183,7 @@ public class CatAI : EnemyAi
                 }
             }
         }
-    }
+    }*/
 
     //Thanks chatG
     private bool TryGetValidNavMeshPosition(Vector3 targetPosition)
@@ -202,9 +204,9 @@ public class CatAI : EnemyAi
         if (other.gameObject.CompareTag("player"))
         {
             Destroy(other.gameObject);
-            GameManager.Instance.onPlayerTrapped();
+            GameManager.Instance.onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
-            print("Cat Kill");
+            UIManager.Instance.cueDeathUI(1);
         }
     }
     /*

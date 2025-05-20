@@ -8,7 +8,7 @@ public class PlayerSafeZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("WallBack"))
+        if (other.gameObject.CompareTag("SafeZone"))
         {
             isTouchingWallBack = true;
         }
@@ -16,7 +16,7 @@ public class PlayerSafeZone : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("WallBack"))
+        if (other.gameObject.CompareTag("SafeZone"))
         {
             isTouchingWallBack = false;
         }
