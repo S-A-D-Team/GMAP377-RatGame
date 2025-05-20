@@ -15,12 +15,15 @@ public class FoodItem : Contaminable
     private bool isEaten = false;
     [SerializeField] private bool isColliding = false;
 
+    AudioSource audioData;
+
     protected override void Start()
 	{
 		base.Start();
 		//make sure the fx is not playing 
 		poisonedEffect.Stop();
         if (poisoningEffect != null) { poisoningEffect.Stop(); }
+        audioData = GetComponent<AudioSource>();
 	}
     private void Update()
     {
@@ -105,7 +108,12 @@ public class FoodItem : Contaminable
     protected virtual void EatItem()
     {
         isEaten = true;
+<<<<<<< Updated upstream
         UIManager.Instance.changeHungerBar(0.1f);
+=======
+        UIManager.Instance.changeHungerBar(0.1f * (int)potency);
+        audioData.Play(0);
+>>>>>>> Stashed changes
         //Prefab should simply play a chomp animation on spawn and have the object despawn when it's finished
         if (chompEffect != null)
         {

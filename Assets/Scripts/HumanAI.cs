@@ -45,6 +45,8 @@ public class HumanAI : EnemyAi
     [Space]
     public List<TaskInfo> HumanTasks;
 
+    AudioSource audioData;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,6 +58,11 @@ public class HumanAI : EnemyAi
         reactionCanvas.SetActive(false);
         playerMoving = false;
         humanDeath = new UnityEvent();
+<<<<<<< Updated upstream
+=======
+        placingTraps = false;
+        audioData = GetComponent<AudioSource>();
+>>>>>>> Stashed changes
     }
 
     // Update is called once per frame
@@ -70,6 +77,7 @@ public class HumanAI : EnemyAi
             playerFound = base.isPlayerSighted(player);
             if (playerFound)
             {
+                audioData.Play(0);
                 checkMoving();
                 if (!playerMoving)
                 {
