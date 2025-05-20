@@ -67,7 +67,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6609223878201811832}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_Radius: 0.7
   m_Speed: 0.8
   m_Acceleration: 8
@@ -93,14 +93,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6288ceedad540474098fe6d86c0f6a06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tasks:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  minTaskTime: 5
-  maxTaskTime: 10
+  playerFound: 0
+  isInTask: 0
+  isReacting: 0
   anim: {fileID: 8595894632377030733}
+  playerLockedOn: 0
+  playerSpottedFirstTime: 0
+  offNavMeshTrail: []
+  CatTasks: []
 --- !u!65 &7108192133677860809
 BoxCollider:
   m_ObjectHideFlags: 0
