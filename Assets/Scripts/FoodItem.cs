@@ -113,6 +113,9 @@ public class FoodItem : Contaminable
 =======
         UIManager.Instance.changeHungerBar(0.1f * (int)potency);
         audioData.Play(0);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         //Prefab should simply play a chomp animation on spawn and have the object despawn when it's finished
         if (chompEffect != null)

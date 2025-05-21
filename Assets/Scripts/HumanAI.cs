@@ -62,6 +62,9 @@ public class HumanAI : EnemyAi
 =======
         placingTraps = false;
         audioData = GetComponent<AudioSource>();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 
