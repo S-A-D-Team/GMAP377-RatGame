@@ -8,6 +8,11 @@ public class FoodItem : Contaminable
     [Header("Food Details")]
     public bool poisoned;
 	public ParticleSystem poisonedEffect;
+    public ParticleSystem poisoningEffect;
+    public GameObject chompEffect;
+    public float chompAnimLength;
+    private bool isPoisoning = false;
+    private bool isEaten = false;
     [SerializeField] private bool isColliding = false;
 
     protected override void Start()
@@ -15,6 +20,7 @@ public class FoodItem : Contaminable
 		base.Start();
 		//make sure the fx is not playing 
 		poisonedEffect.Stop();
+        if (poisoningEffect != null) { poisoningEffect.Stop(); }
 	}
     private void Update()
     {
@@ -22,17 +28,63 @@ public class FoodItem : Contaminable
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                EatItem();
+                if (!poisoned && !isEaten)
+                {
+                    EatItem();
+                }
             }
-            else if (Input.GetKeyDown(KeyCode.F))
+            else if (Input.GetKeyDown(KeyCode.F) && !poisoned)
             {
-                ContaminateItem();
+                if (poisoningEffect == null)
+                {
+                    ContaminateItem();
+                }
+                else if (!isPoisoning)
+                {
+                    StartCoroutine(Contaminating());
+                }
+                
             }
         }
+    }
+
+    IEnumerator Contaminating()
+    {
+        isPoisoning = true;
+        //Minimum input held window to start infecting
+        float holdWindow = 0.1f;
+        while (holdWindow > 0f)
+        {
+            if (!Input.GetKey(KeyCode.F) || Input.GetKeyUp(KeyCode.F))
+            {
+                yield break;
+            }
+            holdWindow -= Time.deltaTime;
+        }
+        //Must hold the input for a certain amount of time to apply contamination build up, with particle system to visualize the charge
+        poisoningEffect.Play();
+        float chargeWindow = 2f;
+        while (Input.GetKey(KeyCode.F) && chargeWindow > 0f)
+        {
+            if (!Input.GetKey(KeyCode.F) || Input.GetKeyUp(KeyCode.F))
+            {
+                break;
+            }
+            chargeWindow -= Time.deltaTime;
+            yield return null;
+        }
+        //If action fully charged, apply contamination
+        poisoningEffect.Stop();
+        if (chargeWindow <= 0f)
+        {
+            ContaminateItem();
+        }
+        isPoisoning = false;
     }
     protected virtual void onPoisoned()
 	{
 		poisonedEffect.Play();
+        poisoned = true;
 
 		//Always show contaminated
         //mat.SetFloat(lerpProperty, 100);
@@ -52,8 +104,20 @@ public class FoodItem : Contaminable
 
     protected virtual void EatItem()
     {
-        GameManager.Instance.changeHunger(0.1f);
-        Destroy(gameObject);
+        isEaten = true;
+        UIManager.Instance.changeHungerBar(0.1f);
+        //Prefab should simply play a chomp animation on spawn and have the object despawn when it's finished
+        if (chompEffect != null)
+        {
+            Instantiate(chompEffect, transform.position, Quaternion.identity);
+            Destroy(gameObject, chompAnimLength);
+
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
     }
 
     void OnCollisionEnter(Collision collision)

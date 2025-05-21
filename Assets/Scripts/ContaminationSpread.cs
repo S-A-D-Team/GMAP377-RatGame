@@ -76,7 +76,7 @@ public class ContaminationSpread : MonoBehaviour
 
 	private void OnTriggerExit(Collider other)
 	{
-        Debug.Log(gameObject + " REMOVING " + other.gameObject + " to list");
+        //Debug.Log(gameObject + " REMOVING " + other.gameObject + " to list");
         // Check if the object has the Contaminate script
         Contaminable _contamTest = other.GetComponent<Contaminable>();
         if (_contamTest)

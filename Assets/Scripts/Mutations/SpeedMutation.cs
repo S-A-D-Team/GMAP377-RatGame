@@ -59,17 +59,30 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
             return;
         }
 
-        int stackDiff = s > stacks ? (s - stacks) : s;
-        
-        if (s < stacks)
+        RecalculateStacks(s);
+    }
+
+    private void RecalculateStacks(int newStacks)
+    {
+        if (newStacks == 1)
         {
-            ResetStacks();
+            rat.runSpeed *= runSpeedMultiplier;
+            rat.walkSpeed *= walkSpeedMultiplier;
+        }
+        else
+        {
+            if (!useEditorCurve)
+            {
+                rat.groundDrag = MutationUtils.ApplyMultiplicativeDecay(maxDrag, newStacks, minDrag, decay);
+
+            }
+            else
+            {
+                rat.groundDrag = MutationUtils.ApplyMultiplicativeDecay(decayCurve, maxDrag, newStacks, minDrag);
+            }
         }
 
-        for (int i = 0; i < stackDiff; i++)
-        {
-            stackMutation();
-        }
+        stacks = newStacks;
     }
 
     private void ResetStacks()

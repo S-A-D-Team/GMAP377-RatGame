@@ -5,14 +5,8 @@ using UnityEngine.AI;
 
 public class CatAI : EnemyAi
 {
-    [SerializeField]
-    protected Transform[] tasks;
-
-    [SerializeField]
-    private int minTaskTime;
-
-    [SerializeField]
-    private int maxTaskTime;
+    private int minTaskTime = 5;
+    private int maxTaskTime = 10;
 
     protected NavMeshAgent agent;
 
@@ -37,6 +31,9 @@ public class CatAI : EnemyAi
     private int frameCounter = 0;
     private bool followingTrail = false, playerInZone = true;
     private int trailIndex = 0;
+
+    [Space]
+    public List<TaskInfo> CatTasks;
 
 
     // Start is called before the first frame update
@@ -87,7 +84,14 @@ public class CatAI : EnemyAi
             }
             else if (!isInTask)
             {
-                if(!playerLockedOn) prevTask = base.changeLocation(tasks, agent, prevTask);
+                
+                if (!playerLockedOn)
+                {
+                    (Vector3, float) _holderVar = base.changeLocation(CatTasks, agent, prevTask);
+                    prevTask = _holderVar.Item1;
+                    minTaskTime = (int)_holderVar.Item2 + 1;
+                    minTaskTime = (int)_holderVar.Item2 + 1;
+                }
                 locationTime = Random.Range(minTaskTime, maxTaskTime);
                 taskTimer = 0;
                 isInTask = true;
