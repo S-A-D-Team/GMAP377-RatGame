@@ -58,14 +58,10 @@ public class HumanAI : EnemyAi
         reactionCanvas.SetActive(false);
         playerMoving = false;
         humanDeath = new UnityEvent();
-<<<<<<< Updated upstream
-=======
+
         placingTraps = false;
         audioData = GetComponent<AudioSource>();
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
     }
 
     // Update is called once per frame
