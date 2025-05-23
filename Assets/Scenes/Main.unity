@@ -12884,18 +12884,12 @@ MonoBehaviour:
   statNames:
   - Speed
   - Jump
-  - Stamina
-  - Hunger
   statMinValues:
-  - 1
-  - 1
-  - 50
-  - 50
+  - 0
+  - 0
   statMaxValues:
-  - 20
-  - 20
-  - 150
-  - 150
+  - 1
+  - 1
   togglePrefab: {fileID: 8647362594000430076, guid: d4d6c24201f5c0e4ca4266dc55ef56c9,
     type: 3}
   sliderPrefab: {fileID: 7124069056329239189, guid: 5d0d2196438ca2a48b141ab7e5936d94,
@@ -15296,7 +15290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -26.300003, y: -116.65}
+  m_AnchoredPosition: {x: 264, y: -116}
   m_SizeDelta: {x: 273.16, y: 216.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1569970535
