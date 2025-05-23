@@ -47,7 +47,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     public void SetStacks(int s)
     {
         //Refactor this into the interface or the Utils maybe since the code is the same between Jump and Speed
-        if (s < 0)
+        if (s <= 0)
         {
             //0 out stacks for negative values
             ResetStacks();
@@ -66,8 +66,8 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     {
         if (newStacks == 1)
         {
-            rat.runSpeed *= runSpeedMultiplier;
-            rat.walkSpeed *= walkSpeedMultiplier;
+            rat.runSpeed = initialRunSpeed * runSpeedMultiplier;
+            rat.walkSpeed = initialWalkSpeed * walkSpeedMultiplier;
         }
         else
         {

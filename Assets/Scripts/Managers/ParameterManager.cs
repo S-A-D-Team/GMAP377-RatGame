@@ -63,23 +63,26 @@ public class ParameterManager : MonoBehaviour
         foreach (string mutation in mutations)
         {
             Toggle newToggle = Instantiate(togglePrefab, mutationPanel.transform);
+            newToggle.onValueChanged.RemoveAllListeners(); // Avoid prefab listener bugs
             newToggle.GetComponentInChildren<Text>().text = mutation;
-            newToggle.onValueChanged.AddListener((isOn) => HandleMutationToggle(mutation, isOn));
+            newToggle.onValueChanged.AddListener((isOn) => {
+                Debug.Log($"Toggle for {mutation} set to {isOn}");
+                HandleMutationToggle(mutation, isOn);
+            });
         }
 
         ForceLayoutRebuild(mutationPanel);
     }
+
 
     void HandleMutationToggle(string mutation, bool isOn)
     {
         switch (mutation)
         {
             case "Bite":
-                var player = GameObject.FindWithTag("player");
-                var hole = player != null ? player.GetComponent<Hole>() : null;
-                if (hole != null)
-                    hole.isEnabled = isOn;
-                break;
+                ratStats.canBite = isOn;
+            break;
+            
             case "Climb":
                 GameManager.Instance.onClimbToggle(isOn);
                 break;
@@ -138,13 +141,10 @@ public class ParameterManager : MonoBehaviour
         switch (statName)
         {
             case "Jump":
-                // Set both min and max jump force to the slider value, or adjust as needed
-                ratStats.maxJumpForce = val;
+                GameManager.Instance.onJumpStackChange((int)val);
                 break;
             case "Speed":
-                // Set both base and running speed to the slider value, or adjust as needed
-                ratStats.walkSpeed = val;
-                ratStats.runSpeed = val+3;
+                GameManager.Instance.onSpeedStackChange((int)val);
                 break;
             case "Hunger":
                 // hunger logic 
@@ -157,6 +157,7 @@ public class ParameterManager : MonoBehaviour
                 break;
         }
     }
+
 
     private void ForceLayoutRebuild(GameObject target)
     {
