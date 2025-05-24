@@ -13742,6 +13742,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3377198739701718355, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3377198739701718355, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
       propertyPath: spawnDistance
       value: 0
       objectReference: {fileID: 0}
@@ -22881,7 +22886,7 @@ PrefabInstance:
     - target: {fileID: 3655683275233976287, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3671527399607375800, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
@@ -22928,6 +22933,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4154221854017713709, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_FillAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4160150493296865906, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -22946,7 +22956,7 @@ PrefabInstance:
     - target: {fileID: 4277189983340825798, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 52.437622
+      value: 52.429504
       objectReference: {fileID: 0}
     - target: {fileID: 4302410347969582660, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
@@ -23422,6 +23432,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7908537151640893443, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8198252756188652617, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
