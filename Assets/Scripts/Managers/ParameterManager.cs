@@ -9,17 +9,17 @@ public class ParameterManager : MonoBehaviour
     public List<string> mutations = new List<string> { "Bite", "Climb", "Jump Boost", "Speed Boost" };
 
     [Header("Stat Sliders")]
-    public List<string> statNames = new List<string> { "Jump", "Speed", "Hunger", "Stamina" };
-    public List<float> statMinValues = new List<float> { 1, 1, 50, 50 };
-    public List<float> statMaxValues = new List<float> { 20, 20, 150, 150 };
+    public List<string> statNames = new List<string> { "Jump", "Speed", "AirSpeed" };
+    public List<float> statMinValues = new List<float> { 5, 5, 1 };
+    public List<float> statMaxValues = new List<float> { 20, 20, 10 };
 
     [Header("Prefabs")]
     public Toggle togglePrefab;
     public Slider sliderPrefab;
 
     [Header("UI Parents")]
-    public GameObject mutationPanel;  // Parent for mutation toggles
-    public GameObject statsPanel;     // Parent for stat sliders
+    public GameObject mutationPanel;
+    public GameObject statsPanel;
 
     [Header("UI Buttons")]
     public Button mutationButton;
@@ -29,17 +29,17 @@ public class ParameterManager : MonoBehaviour
 
     private void Start()
     {
-        // Wire up buttons to toggle panels
+        // Attach panel toggle listeners to buttons
         if (mutationButton != null)
             mutationButton.onClick.AddListener(ToggleMutationPanel);
         if (statsButton != null)
             statsButton.onClick.AddListener(ToggleStatsPanel);
 
-        // Optionally start with panels hidden
+        // Hide panels at start
         mutationPanel.SetActive(false);
         statsPanel.SetActive(false);
 
-        // Get ratStats reference from player
+        // Cache reference to RatStats on player
         var player = GameObject.FindWithTag("player");
         if (player != null)
             ratStats = player.GetComponent<RatStats>();
@@ -63,17 +63,45 @@ public class ParameterManager : MonoBehaviour
         foreach (string mutation in mutations)
         {
             Toggle newToggle = Instantiate(togglePrefab, mutationPanel.transform);
-            newToggle.onValueChanged.RemoveAllListeners(); // Avoid prefab listener bugs
+            newToggle.onValueChanged.RemoveAllListeners(); // Prevent duplicate listeners from prefab
             newToggle.GetComponentInChildren<Text>().text = mutation;
-            newToggle.onValueChanged.AddListener((isOn) => {
-                Debug.Log($"Toggle for {mutation} set to {isOn}");
-                HandleMutationToggle(mutation, isOn);
+
+            // Set toggle state based on current player RatStats or GameManager
+            bool isOn = false;
+            if (ratStats != null)
+            {
+                switch (mutation)
+                {
+                    case "Bite":
+                        isOn = ratStats.canBite;
+                        break;
+                    case "Climb":
+                        GameManager.Instance.onClimbToggle(isOn);
+                        break;
+                    // Add more cases if you want to reflect other mutations
+                    /*
+                    case "Speed Boost":
+                        Add Speed Boost logic here (Just a way to apply a mutation)
+                        break;
+                    case "Jump Boost":
+                        Add Jump Boost logic here (Just a way to apply a mutation)
+                        break;
+                    */ 
+                }
+            }
+            newToggle.isOn = isOn;
+
+            // Immediately apply the state to the rat
+            HandleMutationToggle(mutation, isOn);
+
+            newToggle.onValueChanged.AddListener((toggleState) => {
+                Debug.Log($"Toggle for {mutation} set to {toggleState}");
+                HandleMutationToggle(mutation, toggleState);
             });
         }
 
         ForceLayoutRebuild(mutationPanel);
     }
-
 
     void HandleMutationToggle(string mutation, bool isOn)
     {
@@ -81,12 +109,11 @@ public class ParameterManager : MonoBehaviour
         {
             case "Bite":
                 ratStats.canBite = isOn;
-            break;
-            
+                break;
             case "Climb":
                 GameManager.Instance.onClimbToggle(isOn);
                 break;
-            /* 
+            /*
             case "Jump Boost":
                 GameManager.Instance.onJumpBoostToggle(isOn);
                 break;
@@ -111,16 +138,34 @@ public class ParameterManager : MonoBehaviour
 
             newSlider.minValue = minValue;
             newSlider.maxValue = maxValue;
-            newSlider.value = minValue;
+
+            // Always use current RatStats value if available, otherwise use min
+            float statValue = minValue;
+            if (ratStats != null)
+            {
+                switch (statNames[i])
+                {
+                    case "Jump":
+                        statValue = Mathf.Clamp(ratStats.maxJumpForce, minValue, maxValue);
+                        break;
+                    case "Speed":
+                        statValue = Mathf.Clamp(ratStats.runSpeed, minValue, maxValue);
+                        break;
+                    case "AirSpeed":
+                        statValue = Mathf.Clamp(ratStats.airSpeed, minValue, maxValue);
+                        break;
+                }
+            }
+            newSlider.value = statValue;
 
             var texts = newSlider.GetComponentsInChildren<TextMeshProUGUI>();
             if (texts.Length >= 2)
             {
                 texts[0].text = statNames[i];
-                texts[1].text = minValue.ToString("0");
+                texts[1].text = statValue.ToString("0");
             }
 
-            string statName = statNames[i]; // capture variable for closure
+            string statName = statNames[i]; // Capture for closure
             newSlider.onValueChanged.AddListener((val) => HandleStatSlider(statName, val, texts));
         }
 
@@ -129,6 +174,7 @@ public class ParameterManager : MonoBehaviour
 
     void HandleStatSlider(string statName, float val, TextMeshProUGUI[] texts)
     {
+        // Update value label
         if (texts.Length >= 2)
             texts[1].text = val.ToString("0");
 
@@ -141,24 +187,32 @@ public class ParameterManager : MonoBehaviour
         switch (statName)
         {
             case "Jump":
-                GameManager.Instance.onJumpStackChange((int)val);
+                //GameManager.Instance.onJumpStackChange((int)val);
+                ratStats.maxJumpForce = val;
                 break;
             case "Speed":
-                GameManager.Instance.onSpeedStackChange((int)val);
+                //GameManager.Instance.onSpeedStackChange((int)val);
+                ratStats.runSpeed = val;
+                ratStats.walkSpeed = val * 0.6f; // Walk speed is always 60% of run speed
                 break;
+            case "AirSpeed":
+                ratStats.airSpeed = val;
+                break;
+            /*
             case "Hunger":
-                // hunger logic 
+                // Add hunger logic here if needed
                 break;
             case "Stamina":
-                // stamina logic 
-                break;
+                // Add stamina logic here if needed
+                break; 
+            */
             default:
                 Debug.LogWarning($"No handler for stat '{statName}'");
                 break;
         }
     }
 
-
+    // Forces a layout rebuild so UI updates immediately
     private void ForceLayoutRebuild(GameObject target)
     {
         bool wasActive = target.activeSelf;

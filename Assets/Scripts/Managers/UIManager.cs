@@ -205,6 +205,7 @@ public class UIManager : MonoBehaviour
         {
             _uis.SetActive(false);
         }
+        HideParameterPanel();
         Time.timeScale = 1.0f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -222,6 +223,7 @@ public class UIManager : MonoBehaviour
         {
             _uis.SetActive(true);
         }
+        ShowParameterPanel();
         //SetupParamUIListeners();
     }
 
@@ -489,6 +491,21 @@ public class UIManager : MonoBehaviour
 
     }
 
+    [Header("Parameter UI")]
+    [SerializeField] private GameObject parameterPanel; // Assign your parameter panel in the inspector
 
+    public void ShowParameterPanel()
+    {
+        if (parameterPanel != null)
+            parameterPanel.SetActive(true);
+    }
 
+    public void HideParameterPanel()
+    {
+        if (parameterPanel != null)
+            parameterPanel.SetActive(false);
+    }
 }
+
+// New ParameterUI system for showing/hiding parameter panel with pause menu
+

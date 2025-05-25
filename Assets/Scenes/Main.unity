@@ -12797,7 +12797,7 @@ GameObject:
   - component: {fileID: 1273523925}
   - component: {fileID: 1273523926}
   m_Layer: 5
-  m_Name: Parameter
+  m_Name: ParameterContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12823,8 +12823,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.99998474, y: -0.0005950928}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.99998474, y: 0.000289917}
+  m_SizeDelta: {x: -113.16, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1273523922
 MonoBehaviour:
@@ -12884,12 +12884,15 @@ MonoBehaviour:
   statNames:
   - Speed
   - Jump
+  - AirSpeed
   statMinValues:
-  - 0
-  - 0
+  - 5
+  - 5
+  - 1
   statMaxValues:
-  - 1
-  - 1
+  - 20
+  - 20
+  - 10
   togglePrefab: {fileID: 8647362594000430076, guid: d4d6c24201f5c0e4ca4266dc55ef56c9,
     type: 3}
   sliderPrefab: {fileID: 7124069056329239189, guid: 5d0d2196438ca2a48b141ab7e5936d94,
@@ -13945,7 +13948,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 124.495605}
+  m_AnchoredPosition: {x: 0, y: 105.7}
   m_SizeDelta: {x: 273.16, y: 33.5912}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1405865937
@@ -15265,12 +15268,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1567995799}
   m_Layer: 5
-  m_Name: GameObject (1)
+  m_Name: ParameterUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1567995799
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15571,8 +15574,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: 0}
-  m_SizeDelta: {x: 273.16, y: 216.7}
+  m_AnchoredPosition: {x: -0, y: -9.2738}
+  m_SizeDelta: {x: 273.16, y: 198.1524}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1595634369
 MonoBehaviour:
@@ -17186,9 +17189,9 @@ RectTransform:
   - {fileID: 1746580805}
   m_Father: {fileID: 1273523921}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 80, y: -20}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1792825987
@@ -17511,6 +17514,16 @@ PrefabInstance:
       propertyPath: ClimbToggle
       value: 
       objectReference: {fileID: 2142257099}
+    - target: {fileID: 3429569208074652711, guid: d3122e841a998c841abddaa1b3dc90b6,
+        type: 3}
+      propertyPath: ParameterUI
+      value: 
+      objectReference: {fileID: 1567995798}
+    - target: {fileID: 3429569208074652711, guid: d3122e841a998c841abddaa1b3dc90b6,
+        type: 3}
+      propertyPath: parameterPanel
+      value: 
+      objectReference: {fileID: 1567995798}
     - target: {fileID: 3429569208074652711, guid: d3122e841a998c841abddaa1b3dc90b6,
         type: 3}
       propertyPath: tutorialParent
@@ -20962,9 +20975,9 @@ RectTransform:
   - {fileID: 1465564823}
   m_Father: {fileID: 1273523921}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 80, y: -55}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2087532166
@@ -21114,7 +21127,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 135.7}
+  m_AnchoredPosition: {x: 0, y: 116.90437}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2115770549
@@ -23689,6 +23702,11 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1447182540009123356, guid: e542447d9f8ed4c42812e281b794e334,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640055696738917105, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_IsActive
       value: 0
