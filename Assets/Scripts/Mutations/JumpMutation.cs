@@ -45,7 +45,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
 
     public void SetStacks(int s)
     {
-        if (s < 0)
+        if (s <= 0)
         {
             //0 out stacks for negative values
             ResetStacks();
@@ -73,14 +73,14 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
         if (!useEditorCurve)
         {
             float finalMultiplier = MutationUtils.ApplyStackedMultiplier(newStacks, minJumpMultiplier, maxJumpMultiplier, decay);
-            rat.maxJumpForce *= finalMultiplier;
+            rat.maxJumpForce = initialJumpForce * finalMultiplier;
         }
         //Designer friendly version if the editor option is toggled on and a specific, visualized curving option is required
         //min/max changes still affect this but decay does not
         else
         {
             float finalMultiplier = MutationUtils.ApplyStackedMultiplier(decayCurve, newStacks, minJumpMultiplier, maxJumpMultiplier);
-            rat.maxJumpForce *= finalMultiplier;
+            rat.maxJumpForce = initialJumpForce * finalMultiplier;
         }
 
         stacks = newStacks;
