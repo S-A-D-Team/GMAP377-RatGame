@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void onPlayerTrapped()
+    public void onPlayerDead()
     {
         //more thngs to do when player dies
         UIManager.Instance.TriggerDeathEffect();
@@ -246,9 +246,9 @@ public class GameManager : MonoBehaviour
         {
 
             Destroy(GameObject.FindWithTag("player").gameObject);
-            GameManager.Instance.onPlayerTrapped();
+            GameManager.Instance.onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
-            Debug.Log("STARVATION");
+            UIManager.Instance.cueDeathUI(2);
         }
 
     }

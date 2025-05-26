@@ -95,6 +95,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 4:
                 PlayEndTutorialNarration();
+                GameObject.FindGameObjectWithTag("player").GetComponent<PlayerMovement>().spawnRandom();
                 tutorialStage = 9;
                 break;
             case 5:

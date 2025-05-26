@@ -68,11 +68,20 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject tutorialContinueButton;
     [Space]
 
+    [Header("Death")]
     [SerializeField] private GameObject deathSet;
     [SerializeField] private Image deathNoise;
     [SerializeField] private Image deathRed;
+    [Space]
+    [SerializeField] private GameObject deathCat;
+    [SerializeField] private GameObject deathHunger;
+    [SerializeField] private GameObject deathTrap;
+    [SerializeField] private TextMeshProUGUI deathText;
+    [SerializeField] private string deathCaption_Cat;
+    [SerializeField] private string deathCaption_Hunger;
+    [SerializeField] private string deathCaption_Trap;
 
-    
+
     //[SerializeField] private GameObject template_InputField;
     //[SerializeField] private GameObject template_Dropdown;
     //[SerializeField] private GameObject template_Toggle;
@@ -86,8 +95,11 @@ public class UIManager : MonoBehaviour
     [Space]
     [SerializeField] private Image hungerBar;
     [SerializeField] private Image StaminaBar;
+    [SerializeField] private Image ContaminationBar;
     [SerializeField] private GameObject InteractUI;
     [SerializeField] private GameObject InfectUI;
+
+
 
     [Space]
     public TextMeshProUGUI mutationPointsGainCueText;
@@ -155,6 +167,36 @@ public class UIManager : MonoBehaviour
         deathSet.SetActive(true);
         //indefinately pulse the red
         StartCoroutine(PulseDeathRed());
+    }
+
+    /// <summary>
+    /// 1 - Cat,
+    /// 2 - Hunger,
+    /// 3 - Trap
+    /// </summary>
+    /// <param name="_deathIndex"></param>
+    public void cueDeathUI(int _deathIndex)
+    {
+        deathCat.SetActive(false);
+        deathHunger.SetActive(false);
+        deathTrap.SetActive(false);
+        switch (_deathIndex)
+        {
+            case 1:
+                deathCat.SetActive(true);
+                deathText.text = deathCaption_Cat;
+                break;
+            case 2:
+                deathHunger.SetActive(true);
+                deathText.text = deathCaption_Hunger;
+                break;
+            case 3:
+                deathTrap.SetActive(true);
+                deathText.text = deathCaption_Trap;
+                break;
+            default:
+                break;
+        }
     }
 
     //Replace with tween later
@@ -238,6 +280,10 @@ public class UIManager : MonoBehaviour
     public void changeStaminaBar(float _newvalue)
     {
         StaminaBar.fillAmount = _newvalue;
+    }
+    public void changeContaminationBar(float _newvalue)
+    {
+        ContaminationBar.fillAmount = _newvalue;
     }
 
     public void changeHungerBar(float _change)

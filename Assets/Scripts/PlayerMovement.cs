@@ -109,6 +109,11 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 wallJumpDirection;
     private Vector3 jumpDirection = Vector3.up;
 
+    [Space]
+    [Header("RandomSpawn")]
+    [SerializeField]
+    private List<Transform> spawnAreas;
+
     //States determined by input and relative positioning of player
 
     //Movement away from surfaces
@@ -170,6 +175,16 @@ public class PlayerMovement : MonoBehaviour
         playerStats = GameManager.Instance.ratStats;
         //Initialize stats from rat stats
         RefreshStats();
+    }
+
+    //called at the end of tutorial
+    public void spawnRandom()
+    {
+        if (spawnAreas.Count > 0)
+        {
+            Debug.Log("RANDO SPAWNJHI");
+            transform.position = spawnAreas[(int)Random.Range(0, spawnAreas.Count - 1)].position;
+        }
     }
 
     //Updates values for the player stats

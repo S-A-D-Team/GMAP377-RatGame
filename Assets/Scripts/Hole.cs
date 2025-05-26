@@ -51,7 +51,10 @@ public class Hole : MonoBehaviour
         localPos.y = 0;
         newObj.transform.localPosition = localPos;
 
-        // 4. hole bounds to wall
+        // 4. Let the hole obj know the wall it is attached to 
+        newObj.GetComponent<Hole_Task>().attachedWall = wall.GetComponent<WallsHole>();
+
+        // 5. hole bounds to wall
         StartCoroutine(DelayRegisterHole(newObj, wall));
     }
     private IEnumerator DelayRegisterHole(GameObject newObj, Transform wall)
