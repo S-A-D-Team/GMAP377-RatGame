@@ -17,7 +17,9 @@ public class TutorialManager : MonoBehaviour
 
     private void Start()
     {
-        UIManager.Instance.beginTutorial(0);
+        if(tutorialStage == 0){
+            UIManager.Instance.beginTutorial(0);
+        }
     }
 
 
