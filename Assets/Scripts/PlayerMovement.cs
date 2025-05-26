@@ -80,7 +80,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private int jumpCooldown = 10;
     [SerializeField]
-    private float fixedWallJumpForce = 4f;
+    [Tooltip("Perpendicular kick off from a wall jump")]
+    private float horizontalBounce = 6f;
+    [SerializeField]
+    [Tooltip("Wall jump height factor to arc the movement")]
+    private float verticalGain = 4f;
     [SerializeField]
     private float airMovement;
     private bool canJump;
@@ -93,12 +97,13 @@ public class PlayerMovement : MonoBehaviour
     private float coyoteInterval = 0.15f;
     private float lastGrounded;
 
-
+    
     //Collects movement inputs
     private PlayerInputCollection playerInput;
 
     private Vector3 moveDirection;
     private Rigidbody rb;
+    private CapsuleCollider ratCollider;
 
     private Vector3 groundNormal = Vector3.up;
     private Vector3 climbDirection;
@@ -155,6 +160,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         playerInput = GetComponent<PlayerInputCollection>();
+        ratCollider = GetComponent<CapsuleCollider>();
     }
     // Start is called before the first frame update
     void Start()
@@ -235,8 +241,6 @@ public class PlayerMovement : MonoBehaviour
                 useStamina(climbStamDrain * Time.deltaTime);
             }
         }
-        
-
     }
 
 
@@ -403,9 +407,9 @@ public class PlayerMovement : MonoBehaviour
     {
         climbing = false;
         rb.velocity = Vector3.zero;
-        //Modify this to use some sort of variable for the kick off force and vertical force later
-        Vector3 wallJumpForce = wallJumpDirection * fixedWallJumpForce + Vector3.up * minJumpForce;
+        Vector3 wallJumpForce = wallJumpDirection * horizontalBounce + Vector3.up * (verticalGain + minJumpForce);
         rb.AddForce(wallJumpForce, ForceMode.Impulse);
+        Debug.DrawRay(transform.position, wallJumpForce, Color.magenta, 1f);
         StartCoroutine(ClimbCooldown());
         StartCoroutine(JumpCooldown());
     }
@@ -413,9 +417,11 @@ public class PlayerMovement : MonoBehaviour
     //Update grounded state and direction of grounded movement for sloped movement
     private void CheckGround() 
     {
-        //Checks for both even and uneven ground
-        Ray groundCheck = new(transform.position, Vector3.down);
-        if (Physics.Raycast(groundCheck, out RaycastHit hit, playerHeight * 0.075f, whatIsGround))
+        float castRadius = ratCollider.radius * 0.9f;
+        float castDistance = playerHeight * 0.075f;
+        Vector3 offsetOrigin = transform.position + Vector3.up * (castRadius + 0.01f);
+        //Checks for both even and uneven ground based off the current player collider's geometry
+        if (Physics.SphereCast(offsetOrigin, castRadius, Vector3.down, out RaycastHit hit, castDistance, whatIsGround))
         {
             //Check to see if the hit surface is too steep to traverse by ground movement
             grounded = Vector3.Angle(hit.normal, Vector3.up) <= maxInclination;
@@ -426,17 +432,18 @@ public class PlayerMovement : MonoBehaviour
         {
             grounded = false;
         }
-
     }
 
     private void OnDrawGizmos()
     {
-        Vector3 origin = transform.position;
-        Vector3 direction = Vector3.down;
-        float distance = playerHeight * 0.075f;
+        float gizmoRadius = ratCollider.radius * 0.9f;
+        float castDistance = playerHeight * 0.075f;
+        Vector3 origin = transform.position + Vector3.up * (gizmoRadius + 0.01f);
+        Vector3 endpoint = origin + Vector3.down * castDistance;
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(origin, direction * distance);
+        Gizmos.color = grounded ? Color.green : Color.red;
+        Gizmos.DrawLine(origin, endpoint);
+        Gizmos.DrawWireSphere(endpoint, gizmoRadius);
     }
 
     private bool NearClimbable()
@@ -606,7 +613,7 @@ public class PlayerMovement : MonoBehaviour
                         currentLateral = playerInput.RunHeld ? lateralAction.Running : lateralAction.Walking;
                     }
                 }
-                else if (playerInput.MoveInput.y > 0f)
+                else if (playerInput.MoveInput.y != 0f)
                 {
                     currentLateral = lateralAction.Scaling;
                 }
