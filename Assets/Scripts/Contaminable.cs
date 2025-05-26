@@ -106,6 +106,7 @@ public class Contaminable : MonoBehaviour
 
     //Considering this might be used elsewhere too, 
     //I might consider moving this to a big utility functions script file later
+    //NOT ALL 
     private IEnumerator LerpRoutine(Material _material)
     {
         float _halfDuration = 1f;
@@ -114,7 +115,7 @@ public class Contaminable : MonoBehaviour
         for (float t = 0; t < _halfDuration; t += Time.deltaTime)
         {
             float lerpValue = t / _halfDuration;
-            _material.SetFloat(lerpProperty, lerpValue);
+            //_material.SetFloat(lerpProperty, lerpValue);
             yield return null;
         }
 
@@ -122,11 +123,11 @@ public class Contaminable : MonoBehaviour
         for (float t = 0; t < _halfDuration; t += Time.deltaTime)
         {
             float lerpValue = 1 - (t / _halfDuration);
-            _material.SetFloat(lerpProperty, lerpValue);
+            //_material.SetFloat(lerpProperty, lerpValue);
             yield return null;
         }
 
-        _material.SetFloat(lerpProperty, 0f); // just to be sure it ends at 0
+        //_material.SetFloat(lerpProperty, 0f); // just to be sure it ends at 0
     }
 }
 
