@@ -66,8 +66,14 @@ public class UIManager : MonoBehaviour
     public Image staminaHighlight;
     public Image mutationHighlight;
     [SerializeField] private GameObject tutorialContinueButton;
-    [Space]
 
+    [Space]
+    [Header("Indicators")]
+    [SerializeField] private Image biteIncicator;
+    [SerializeField] private Image climbIndicator; 
+    [SerializeField] private Image contaminationIndicator;
+
+    [Space]
     [Header("Death")]
     [SerializeField] private GameObject deathSet;
     [SerializeField] private Image deathNoise;
@@ -160,6 +166,24 @@ public class UIManager : MonoBehaviour
     {
         Instance = null;
         Destroy(gameObject);
+    }
+
+    public void showBiteBuildUp(bool _active, float _completion)
+    {
+        biteIncicator.gameObject.SetActive(_active);
+        biteIncicator.transform.GetChild(0).gameObject.SetActive(_active);
+        biteIncicator.transform.GetChild(0).gameObject.GetComponent<Image>().fillAmount = _completion;
+    }
+
+    public void showClimb(bool _active)
+    {
+        climbIndicator.gameObject.SetActive(_active);
+    }
+    public void showContainationBuildUp(bool _active, float _completion)
+    {
+        contaminationIndicator.gameObject.SetActive(_active);
+        contaminationIndicator.transform.GetChild(0).gameObject.SetActive(_active);
+        contaminationIndicator.transform.GetChild(0).gameObject.GetComponent<Image>().fillAmount = _completion;
     }
 
     public void TriggerDeathEffect()
