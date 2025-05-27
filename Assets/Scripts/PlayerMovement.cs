@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 
 //TODO/Consideration: Move player behavior unrelated to movement (such as biting) to separate script (PlayerAbilities.cs?), with each ability toggled by a mutation
