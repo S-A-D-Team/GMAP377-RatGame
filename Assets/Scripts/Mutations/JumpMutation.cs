@@ -114,6 +114,10 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
             rat.maxJumpForce *= finalMultiplier;
         }
         stacks++;
-        UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
+        if (stacks > 1)
+        {
+            UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
+        }
+        
     }
 }
