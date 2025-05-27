@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
 
     private PlayerMovement ratMov;
 
+    private int contaminationLevel = 0;
+
     public RatStats ratStats;
     [Tooltip("Drag the generated library asset here, attempts to load from runtime resources otherwise")]
     public MutationLibrary mutationLibrary;
@@ -79,12 +81,21 @@ public class GameManager : MonoBehaviour
     public void OnThresholdTrigger(float threshold, bool winCon)
     {
         Debug.Log("Threshold " + threshold + "% reached.");
+        contaminationLevel++;
         //Handle mutation and potential environment updates from here
         if (winCon)
         {
-            //TODO: SIGNAL A WIN SCREEN
-            Debug.Log("Win condition triggered.");
+            winTheGame();
         }
+    }
+
+    public void winTheGame()
+    {
+        //Time.timeScale = 0.0f;
+        //Cursor.lockState = CursorLockMode.Confined;
+        //Cursor.visible = true;
+        UIManager.Instance.cueWinUI();
+        StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().winCaseQuitToMenu(4f));
     }
    
     public void RandomMutate()
@@ -196,8 +207,10 @@ public class GameManager : MonoBehaviour
 
     public void changeHunger(float _change)
     {
-        UIManager.Instance.changeHungerBar(_change);
-        ratStats.hunger += _change;
+        float scaledChange = _change * MutationUtils.ApplyStackedMultiplier(contaminationLevel, 1f, 2f, 3f);
+
+        UIManager.Instance.changeHungerBar(scaledChange);
+        ratStats.hunger += scaledChange;
 
         float _value = Mathf.Clamp01(ratStats.hunger);
         int index = Mathf.FloorToInt(_value * 5f);
@@ -246,7 +259,7 @@ public class GameManager : MonoBehaviour
         {
 
             Destroy(GameObject.FindWithTag("player").gameObject);
-            GameManager.Instance.onPlayerDead();
+            onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
             UIManager.Instance.cueDeathUI(2);
         }

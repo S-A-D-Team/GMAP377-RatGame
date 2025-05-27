@@ -17,10 +17,12 @@ public class ContaminationManager : MonoBehaviour
     //In cases where there would need to be a repeat threshold value, that could be replaced by just triggering multiple behaviors elsewhere upon hitting the threshold
     //Defensive measure in the event that designers do not enter (n1, n2, n3 ... , nk) values in the settings where n_(i+1) > n_i
     private SortedSet<float> thresholds;
+    private int thresholdsToWin;
+    private int thresholdsPassed;
 
     [SerializeField]
     [Tooltip("Leave contaminable potency up to level design or randomness")]
-    private bool useRandomPotency = false;
+    private bool useRandomPotency = true;
     
 
     //Each contaminable object will be registered with an individual contamination level
@@ -57,6 +59,8 @@ public class ContaminationManager : MonoBehaviour
         {
             level = settings.initialContaminationLevel;
             thresholds = new SortedSet<float>(settings.contaminationThresholds);
+            thresholdsToWin = thresholds.Count;
+            thresholdsPassed = 0;
         }
         //Defensive measure for the dict contents
         contaminables.Clear();
@@ -96,18 +100,17 @@ public class ContaminationManager : MonoBehaviour
         }
     }
 
-    //Deprecated for now
     public void CalculateContaminationLevel(Contaminable c, float v)
     {
         //Add the change in value to the flat contamination level before updating the object's entry
         flatLevel += v - contaminables[c];
         if (flatLevel > totalFlatLevel) flatLevel = Mathf.Clamp(flatLevel, 0f, totalFlatLevel);
         contaminables[c] = v;
-        level = flatLevel / totalFlatLevel;
+        level = (flatLevel / totalFlatLevel) * 7.5f;
+        UIManager.Instance.changeContaminationBar(level);
         CheckThresholds();
     }
 
-    //Deprecated for now
     //Ensures that checkpoints can be passed simultaneously but only ever once
     //Gameplay effects of passing these thresholds is defined elsewhere
     public void CheckThresholds()
@@ -115,7 +118,7 @@ public class ContaminationManager : MonoBehaviour
         Queue<float> passedThresholds = new Queue<float>();
         foreach(float checkpoint in thresholds)
         {
-            if (level >= checkpoint)
+            if (level >= (checkpoint / 100f))
             {
                 passedThresholds.Enqueue(checkpoint);
             }
@@ -123,14 +126,14 @@ public class ContaminationManager : MonoBehaviour
             {
                 break;
             }
-
-            while (passedThresholds.Count > 0)
-            {
-                float passed = passedThresholds.Dequeue();
-                thresholds.Remove(passed);
-                bool winConPassed = passedThresholds.Count == 0;
-                thresholdPassed?.Invoke(passed, winConPassed);
-            }
+        }
+        while (passedThresholds.Count > 0)
+        {
+            float passed = passedThresholds.Dequeue();
+            thresholds.Remove(passed);
+            thresholdsPassed++;
+            bool winConPassed = thresholdsPassed == thresholdsToWin;
+            thresholdPassed?.Invoke(passed, winConPassed);
         }
     }
 
