@@ -71,10 +71,10 @@ public class Contaminable : MonoBehaviour
         if (contaminationValue >= 100f && canGrantPoints)
         {
             canGrantPoints = false;
-            
-            UIManager.Instance.mutationPointsGainCueText.text = "You gained " + mutationYield.ToString() + " mutation points";
+            int trueMutationYield = mutationYield * (int)potency;
+            UIManager.Instance.mutationPointsGainCueText.text = "You gained " + trueMutationYield.ToString() + " mutation points";
             StartCoroutine(UIManager.Instance.cueMutation());
-            ContaminationManager.Instance.AddMutationPoints(mutationYield * (int)potency);
+            ContaminationManager.Instance.AddMutationPoints(trueMutationYield);
 
             if (isWinCondition)
             {

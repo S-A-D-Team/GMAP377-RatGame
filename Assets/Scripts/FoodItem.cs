@@ -136,7 +136,7 @@ public class FoodItem : Contaminable
         if (collision.gameObject.tag.ToLower().Contains("player"))
         {
             isColliding = true;
-            Debug.Log("FOODING");
+            //Debug.Log("FOODING");
             UIManager.Instance.showInteractCue(true);
             UIManager.Instance.showInfectionCue(true);
         }
