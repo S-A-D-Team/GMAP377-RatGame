@@ -85,9 +85,17 @@ public class GameManager : MonoBehaviour
         //Handle mutation and potential environment updates from here
         if (winCon)
         {
-            //TODO: SIGNAL A WIN SCREEN
-            Debug.Log("Win condition triggered.");
+            winTheGame();
         }
+    }
+
+    public void winTheGame()
+    {
+        //Time.timeScale = 0.0f;
+        //Cursor.lockState = CursorLockMode.Confined;
+        //Cursor.visible = true;
+        UIManager.Instance.cueWinUI();
+        StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().winCaseQuitToMenu(4f));
     }
    
     public void RandomMutate()
@@ -251,7 +259,7 @@ public class GameManager : MonoBehaviour
         {
 
             Destroy(GameObject.FindWithTag("player").gameObject);
-            GameManager.Instance.onPlayerDead();
+            onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
             UIManager.Instance.cueDeathUI(2);
         }

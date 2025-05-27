@@ -86,6 +86,7 @@ public class FoodItem : Contaminable
         if (chargeWindow <= 0f)
         {
             ContaminateItem();
+            onPoisoned();
         }
         isPoisoning = false;
     }
@@ -98,15 +99,20 @@ public class FoodItem : Contaminable
         //mat.SetFloat(lerpProperty, 100);
     }
 
-	//tick
-	//ater we update the contamination and buildup values
+    protected virtual void onFullyContaminated()
+    {
+        //change the contam to differeft color ig
+    }
+
+    //tick
+    //ater we update the contamination and buildup values
     protected override void atMinutePass()
     {
         base.atMinutePass();
 		//if we exceed value,
-		if(contaminationValue >= 100 && !poisonedEffect.isPlaying)
+		if(contaminationValue >= 100 && poisonedEffect.isPlaying)
 		{
-            onPoisoned();
+            onFullyContaminated();
         }
     }
 

@@ -242,6 +242,11 @@ public class PlayerMovement : MonoBehaviour
                 useStamina(climbStamDrain * Time.deltaTime);
             }
         }
+
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            GameManager.Instance.winTheGame();
+        }
     }
 
 

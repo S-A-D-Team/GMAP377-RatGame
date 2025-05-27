@@ -35,6 +35,11 @@ public class MainMenu : MonoBehaviour
         StartCoroutine(LoadSceneAsyncly("Main"));
     }
 
+    public void PlayDemo()
+    {
+        StartCoroutine(LoadSceneAsyncly("Demo"));
+    }
+
     public static void Settings()
     {
         

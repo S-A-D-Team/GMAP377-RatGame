@@ -74,6 +74,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image contaminationIndicator;
 
     [Space]
+    [Header("Win")]
+    [SerializeField] private GameObject WinSet;
+    [SerializeField] private List<GameObject> everythingElseToHide;
+
+    [Space]
     [Header("Death")]
     [SerializeField] private GameObject deathSet;
     [SerializeField] private Image deathNoise;
@@ -184,6 +189,15 @@ public class UIManager : MonoBehaviour
         contaminationIndicator.gameObject.SetActive(_active);
         contaminationIndicator.transform.GetChild(0).gameObject.SetActive(_active);
         contaminationIndicator.transform.GetChild(0).gameObject.GetComponent<Image>().fillAmount = _completion;
+    }
+
+    public void cueWinUI()
+    {
+        WinSet.SetActive(true);
+        foreach (GameObject _uiItem in everythingElseToHide)
+        {
+            _uiItem.SetActive(false);
+        }
     }
 
     public void TriggerDeathEffect()
