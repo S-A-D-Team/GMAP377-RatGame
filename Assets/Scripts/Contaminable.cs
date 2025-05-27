@@ -82,7 +82,7 @@ public class Contaminable : MonoBehaviour
             }
         }
         //Update its entry in the manager
-        //ContaminationManager.Instance.CalculateContaminationLevel(this, contaminationValue);
+        ContaminationManager.Instance.CalculateContaminationLevel(this, contaminationValue);
         if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;
     }
 
