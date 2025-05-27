@@ -20,7 +20,7 @@ public class ContaminationManager : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Leave contaminable potency up to level design or randomness")]
-    private bool useRandomPotency = false;
+    private bool useRandomPotency = true;
     
 
     //Each contaminable object will be registered with an individual contamination level
@@ -96,14 +96,14 @@ public class ContaminationManager : MonoBehaviour
         }
     }
 
-    //Deprecated for now
     public void CalculateContaminationLevel(Contaminable c, float v)
     {
         //Add the change in value to the flat contamination level before updating the object's entry
         flatLevel += v - contaminables[c];
         if (flatLevel > totalFlatLevel) flatLevel = Mathf.Clamp(flatLevel, 0f, totalFlatLevel);
         contaminables[c] = v;
-        level = flatLevel / totalFlatLevel;
+        level = (flatLevel / totalFlatLevel) * 7.5f;
+        UIManager.Instance.changeContaminationBar(level);
         CheckThresholds();
     }
 
@@ -115,7 +115,7 @@ public class ContaminationManager : MonoBehaviour
         Queue<float> passedThresholds = new Queue<float>();
         foreach(float checkpoint in thresholds)
         {
-            if (level >= checkpoint)
+            if (level >= (checkpoint / 100f))
             {
                 passedThresholds.Enqueue(checkpoint);
             }
@@ -123,14 +123,13 @@ public class ContaminationManager : MonoBehaviour
             {
                 break;
             }
-
-            while (passedThresholds.Count > 0)
-            {
-                float passed = passedThresholds.Dequeue();
-                thresholds.Remove(passed);
-                bool winConPassed = passedThresholds.Count == 0;
-                thresholdPassed?.Invoke(passed, winConPassed);
-            }
+        }
+        while (passedThresholds.Count > 0)
+        {
+            float passed = passedThresholds.Dequeue();
+            thresholds.Remove(passed);
+            bool winConPassed = passedThresholds.Count == 0;
+            thresholdPassed?.Invoke(passed, winConPassed);
         }
     }
 

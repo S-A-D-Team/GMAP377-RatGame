@@ -129,6 +129,10 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
             }
         }
         stacks++;
-        UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
+        if(stacks > 1)
+        {
+            UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
+        }
+        
     }
 }
