@@ -17,6 +17,8 @@ public class ContaminationManager : MonoBehaviour
     //In cases where there would need to be a repeat threshold value, that could be replaced by just triggering multiple behaviors elsewhere upon hitting the threshold
     //Defensive measure in the event that designers do not enter (n1, n2, n3 ... , nk) values in the settings where n_(i+1) > n_i
     private SortedSet<float> thresholds;
+    private int thresholdsToWin;
+    private int thresholdsPassed;
 
     [SerializeField]
     [Tooltip("Leave contaminable potency up to level design or randomness")]
@@ -57,6 +59,8 @@ public class ContaminationManager : MonoBehaviour
         {
             level = settings.initialContaminationLevel;
             thresholds = new SortedSet<float>(settings.contaminationThresholds);
+            thresholdsToWin = thresholds.Count;
+            thresholdsPassed = 0;
         }
         //Defensive measure for the dict contents
         contaminables.Clear();
@@ -107,7 +111,6 @@ public class ContaminationManager : MonoBehaviour
         CheckThresholds();
     }
 
-    //Deprecated for now
     //Ensures that checkpoints can be passed simultaneously but only ever once
     //Gameplay effects of passing these thresholds is defined elsewhere
     public void CheckThresholds()
@@ -128,7 +131,8 @@ public class ContaminationManager : MonoBehaviour
         {
             float passed = passedThresholds.Dequeue();
             thresholds.Remove(passed);
-            bool winConPassed = passedThresholds.Count == 0;
+            thresholdsPassed++;
+            bool winConPassed = thresholdsPassed == thresholdsToWin;
             thresholdPassed?.Invoke(passed, winConPassed);
         }
     }
