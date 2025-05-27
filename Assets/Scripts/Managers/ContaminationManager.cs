@@ -142,7 +142,7 @@ public class ContaminationManager : MonoBehaviour
         mutationPoints += points;
         if (mutationPoints >= mutationRequirements)
         {
-            flatLevel -= mutationRequirements;
+            mutationPoints -= mutationRequirements;
             GameManager.Instance.RandomMutate();
             MutationLevelUp();
         }

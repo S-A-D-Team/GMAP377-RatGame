@@ -100,7 +100,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     }
     public override void onMutate()
     {
-        UIManager.Instance.mutationPointsGainCueText.text = obtainedStr;
+        UIManager.Instance.cueMutation(obtainedStr);
         stackMutation();
     }
 
@@ -131,7 +131,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
         stacks++;
         if(stacks > 1)
         {
-            UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
+            UIManager.Instance.cueMutation(stackStr + " x" + stacks.ToString());
         }
         
     }

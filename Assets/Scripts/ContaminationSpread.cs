@@ -34,7 +34,7 @@ public class ContaminationSpread : MonoBehaviour
         contamizationZone.isTrigger = true;
 
         //initial trigger query
-
+        //TODO: Fix proximity checking of contaminable objects
         Collider[] _initialTriggerEnter = Physics.OverlapSphere(contamizationZone.center, contamizationZone.radius);
         foreach (Collider _col in _initialTriggerEnter)
         {
@@ -54,9 +54,10 @@ public class ContaminationSpread : MonoBehaviour
 
     private void atMinutePass()
 	{
+        //TODO: Scale buildup value depending on number of contaminables in proximity (lower value spread over many targets, high value concentrated on few targets)
         foreach (Contaminable _contamObj in otherContaminationsInZone)
         {
-            //_contamObj.AddBuildUp(contaminationRate);
+            _contamObj.AddBuildUp(contaminationRate * 25f);
         }
     }
 

@@ -115,6 +115,9 @@ public class UIManager : MonoBehaviour
     [Space]
     public TextMeshProUGUI mutationPointsGainCueText;
     public GameObject mutationPointsGainCue;
+    private Queue<string> pendingMutationCues;
+    private bool cueRunning = false;
+    
     //public event System.Action<List<int>> updateParams;
 
 
@@ -128,6 +131,7 @@ public class UIManager : MonoBehaviour
 
         Instance = this;
         parameters = new List<Parameter>();
+        pendingMutationCues = new Queue<string>();
     }
     //Thanks ChatG
     private void Start()
@@ -336,8 +340,29 @@ public class UIManager : MonoBehaviour
         tutorialCaption.text = _narration;
     }
 
-    public IEnumerator cueMutation()
+    public void cueMutation(string cueText)
     {
+        pendingMutationCues.Enqueue(cueText);
+        if (!cueRunning)
+        {
+            StartCoroutine(_cueMutationProcessor());
+        }
+    }
+
+    private IEnumerator _cueMutationProcessor()
+    {
+        cueRunning = true; 
+        while (pendingMutationCues.Count > 0)
+        {
+            yield return _cueMutation();
+        }
+        cueRunning = false;
+        
+    }
+
+    private IEnumerator _cueMutation()
+    {
+        mutationPointsGainCueText.text = pendingMutationCues.Dequeue();
         mutationPointsGainCue.SetActive(true);
         yield return new WaitForSeconds(2f);
         mutationPointsGainCue.SetActive(false);
