@@ -12,6 +12,12 @@ public class UIManagerTWOOOOO : MonoBehaviour
         ReloadScene();
     }
 
+    public IEnumerator winCaseQuitToMenu(float time)
+    {
+        yield return new WaitForSeconds(time);
+        quitGame();
+    }
+
     public static void ReloadScene()
     {
         Time.timeScale = 1f;

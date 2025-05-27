@@ -16,6 +16,12 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     private float initialWalkSpeed;
     private float initialRunSpeed;
     private float initialDrag;
+
+    [Header("Messages for first and subsequent gains of this mutation")]
+    [SerializeField]
+    private string obtainedStr = "You feel a hurry to your scurry (Speed Up!)";
+    [SerializeField]
+    private string stackStr = "You feel slippier (Drag Down!)";
   
 
     // Start is called before the first frame update
@@ -47,7 +53,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     public void SetStacks(int s)
     {
         //Refactor this into the interface or the Utils maybe since the code is the same between Jump and Speed
-        if (s < 0)
+        if (s <= 0)
         {
             //0 out stacks for negative values
             ResetStacks();
@@ -66,8 +72,8 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     {
         if (newStacks == 1)
         {
-            rat.runSpeed *= runSpeedMultiplier;
-            rat.walkSpeed *= walkSpeedMultiplier;
+            rat.runSpeed = initialRunSpeed * runSpeedMultiplier;
+            rat.walkSpeed = initialWalkSpeed * walkSpeedMultiplier;
         }
         else
         {
@@ -94,6 +100,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     }
     public override void onMutate()
     {
+        UIManager.Instance.mutationPointsGainCueText.text = obtainedStr;
         stackMutation();
     }
 
@@ -122,5 +129,10 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
             }
         }
         stacks++;
+        if(stacks > 1)
+        {
+            UIManager.Instance.mutationPointsGainCueText.text = stackStr + " x" + stacks.ToString();
+        }
+        
     }
 }

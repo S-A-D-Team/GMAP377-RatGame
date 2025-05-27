@@ -9,19 +9,21 @@ public struct TaskInfo
     public Transform location;
     public float time;
     public float weight;
+    public bool endTask;
 
-    public TaskInfo(Transform _location, float _time, float _weight)
+    public TaskInfo(Transform _location, float _time, float _weight, bool _endTask = false)
     {
         this.location = _location;
         this.time = _time;
         this.weight = _weight;
+        this.endTask = _endTask;
     }
 
 }
 
 public class EnemyAi : MonoBehaviour
 {
-
+    private bool shouldDoTask = false;
     // Start is called before the first frame update
     protected Transform findPlayer()
     {
@@ -59,6 +61,13 @@ public class EnemyAi : MonoBehaviour
         int _index = 0;
         Vector3 task = prevTask;
 
+        //at the end of previous task, do the task action if we need
+        if(shouldDoTask)
+        {
+            shouldDoTask = false;
+            taskEndAction();
+        }
+
         while (task == prevTask && tasks.Count > 1)
         {
             float totalWeight = 0f;
@@ -87,8 +96,11 @@ public class EnemyAi : MonoBehaviour
                 }
             }
         }
-
+        shouldDoTask = tasks[_index].endTask;
         agent.SetDestination(task);
         return (task, tasks[_index].time );
     }  
+
+    //will get overridden by child classes
+    protected virtual void taskEndAction(){}
 }

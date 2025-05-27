@@ -193,27 +193,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83d78f350d7dfb647b1309ae9b92d8c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runStamDrain: 0.1
+  climbStamDrain: 0.1
+  biteStamDrain: 0.25
   speed: 6
   orientation: {fileID: 6699762171020344878}
   groundDrag: 4
+  maxInclination: 45
   runSpeed: 8
   playerHeight: 2
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  playerWidth: 0
-  whatIsClimbable:
-    serializedVersion: 2
-    m_Bits: 0
-  jumpForce: 4.5
+  playerWidth: 4
+  climbCooldown: 10
+  climbingEffect: {fileID: 0}
+  jumpChargeRate: 0
   minJumpForce: 0
   maxJumpForce: 0
-  jumpCooldown: 0.8
+  jumpCooldown: 0
+  verticalBounce: 0.75
+  horizontalBounce: 6
   airMovement: 0.2
-  jumpKey: 32
-  runKey: 304
-  refreshStatsKey: 114
-  climbKey: 102
+  coyoteInterval: 0.15
+  spawnAreas: []
 --- !u!136 &7607355011323265677
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -229,7 +232,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -260,7 +263,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5058273188919755049}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 1239d38f3156d4641bd5d386613a99a5, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -268,7 +271,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2

@@ -17,15 +17,24 @@ public class ContaminationManager : MonoBehaviour
     //In cases where there would need to be a repeat threshold value, that could be replaced by just triggering multiple behaviors elsewhere upon hitting the threshold
     //Defensive measure in the event that designers do not enter (n1, n2, n3 ... , nk) values in the settings where n_(i+1) > n_i
     private SortedSet<float> thresholds;
+    private int thresholdsToWin;
+    private int thresholdsPassed;
+
+    [SerializeField]
+    [Tooltip("Leave contaminable potency up to level design or randomness")]
+    private bool useRandomPotency = true;
     
 
     //Each contaminable object will be registered with an individual contamination level
     private Dictionary<Contaminable, float> contaminables = new Dictionary<Contaminable, float>();
     private float flatLevel = 0;
     private float totalFlatLevel = 0;
+    private int mutationPoints = 0;
+    [SerializeField]
+    [Tooltip("Baseline point requirement to gain a mutation (scales)")]
     private int mutationRequirements = 3;
 
-    public event System.Action<float> thresholdPassed;
+    public event System.Action<float, bool> thresholdPassed;
     //Subscribe the human agent to this so they go toward a designated infected item to trigger a win
     public event System.Action<Contaminable> winConActive;
     public static ContaminationManager Instance { get; private set; }
@@ -50,6 +59,8 @@ public class ContaminationManager : MonoBehaviour
         {
             level = settings.initialContaminationLevel;
             thresholds = new SortedSet<float>(settings.contaminationThresholds);
+            thresholdsToWin = thresholds.Count;
+            thresholdsPassed = 0;
         }
         //Defensive measure for the dict contents
         contaminables.Clear();
@@ -80,21 +91,26 @@ public class ContaminationManager : MonoBehaviour
             contaminables.Add(c, v);
             //Every contaminable object adds another 100 capacity of true contamination to the total
             totalFlatLevel += 100f;
+            //Reassign a random potency value to the contaminable if toggled on
+            if (useRandomPotency)
+            {
+                int rn = Random.Range(1, 4);
+                c.potency = (Contaminable.potencyLevel)rn;
+            }
         }
     }
 
-    //Deprecated for now
     public void CalculateContaminationLevel(Contaminable c, float v)
     {
         //Add the change in value to the flat contamination level before updating the object's entry
         flatLevel += v - contaminables[c];
         if (flatLevel > totalFlatLevel) flatLevel = Mathf.Clamp(flatLevel, 0f, totalFlatLevel);
         contaminables[c] = v;
-        level = flatLevel / totalFlatLevel;
+        level = (flatLevel / totalFlatLevel) * 7.5f;
+        UIManager.Instance.changeContaminationBar(level);
         CheckThresholds();
     }
 
-    //Deprecated for now
     //Ensures that checkpoints can be passed simultaneously but only ever once
     //Gameplay effects of passing these thresholds is defined elsewhere
     public void CheckThresholds()
@@ -102,7 +118,7 @@ public class ContaminationManager : MonoBehaviour
         Queue<float> passedThresholds = new Queue<float>();
         foreach(float checkpoint in thresholds)
         {
-            if (level >= checkpoint)
+            if (level >= (checkpoint / 100f))
             {
                 passedThresholds.Enqueue(checkpoint);
             }
@@ -110,28 +126,64 @@ public class ContaminationManager : MonoBehaviour
             {
                 break;
             }
-
-            while (passedThresholds.Count > 0)
-            {
-                float passed = passedThresholds.Dequeue();
-                thresholds.Remove(passed);
-                thresholdPassed?.Invoke(passed);
-            }
+        }
+        while (passedThresholds.Count > 0)
+        {
+            float passed = passedThresholds.Dequeue();
+            thresholds.Remove(passed);
+            thresholdsPassed++;
+            bool winConPassed = thresholdsPassed == thresholdsToWin;
+            thresholdPassed?.Invoke(passed, winConPassed);
         }
     }
 
     public void AddMutationPoints(int points)
     {
-        flatLevel += points;
-        if (flatLevel >= mutationRequirements)
+        mutationPoints += points;
+        if (mutationPoints >= mutationRequirements)
         {
             flatLevel -= mutationRequirements;
             GameManager.Instance.RandomMutate();
+            MutationLevelUp();
         }
     }
 
     public void ActivateWinCondition(Contaminable c)
     {
         winConActive?.Invoke(c);
+    }
+
+    /*Scale the mutation reqs based on level tiers
+     * Level 1-3: 3, 6, 9
+     * Level 4-6: 15, 21, 27
+     * Level 7-9: 37, 47, 57
+     * Level 10: 70
+     * Level 11+: 70 + ((Level - 10) * 15) //15 for each level beyond 10
+     */
+    public void MutationLevelUp()
+    {
+        int mutationLevel = GameManager.Instance.ratStats.mutationLevel;
+        mutationLevel++;
+        if (mutationLevel >= 1 && mutationLevel <= 3)
+        {
+            mutationRequirements += 3;
+        }
+        else if (mutationLevel >= 4 && mutationLevel <= 6)
+        {
+            mutationRequirements += 6;
+        }
+        else if (mutationLevel >= 7 && mutationLevel <= 8)
+        {
+            mutationRequirements += 10;
+        }
+        else if (mutationLevel == 9)
+        {
+            mutationRequirements += 13;
+        }
+        else
+        {
+            mutationRequirements += (mutationLevel - 10) * 15;
+        }
+
     }
 }
