@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -4060897612195694254}
   - component: {fileID: 4103111502470954747}
   - component: {fileID: 8109826236316869053}
+  - component: {fileID: 3055342276971678112}
   m_Layer: 0
   m_Name: Pizza Slice
   m_TagString: Untagged
@@ -173,6 +174,27 @@ MonoBehaviour:
   contaminationRate: 0
   contamizationZone: {fileID: -4060897612195694254}
   otherContaminationsInZone: []
+--- !u!65 &3055342276971678112
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40194118417656445}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.6944503, y: 0.38514435, z: 4.4496336}
+  m_Center: {x: 0.003508418, y: -0.00000080396853, z: -0.60247433}
 --- !u!1 &288454861884497304
 GameObject:
   m_ObjectHideFlags: 0
@@ -5325,7 +5347,7 @@ RectTransform:
   m_GameObject: {fileID: 4017935613948558550}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.144}
-  m_LocalScale: {x: 0.40944216, y: 0.4094421, z: 0.40944216}
+  m_LocalScale: {x: 0.78065944, y: 0.7806593, z: 0.78065944}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8562667649707371020}
@@ -5334,7 +5356,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.226, y: 0.585}
+  m_AnchoredPosition: {x: 0.226, y: 0.87}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4344174516581487632

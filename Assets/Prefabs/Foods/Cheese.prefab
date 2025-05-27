@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -4060897612195694254}
   - component: {fileID: 4103111502470954747}
   - component: {fileID: 8109826236316869053}
+  - component: {fileID: 1983981422387194597}
   m_Layer: 0
   m_Name: Cheese
   m_TagString: Untagged
@@ -97,6 +98,27 @@ MonoBehaviour:
   contaminationRate: 0
   contamizationZone: {fileID: -4060897612195694254}
   otherContaminationsInZone: []
+--- !u!65 &1983981422387194597
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40194118417656445}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.0928266, y: 1.2467667, z: 1.6486466}
+  m_Center: {x: -0.08108023, y: -0.37720174, z: 0.32432342}
 --- !u!1 &563050692718660104
 GameObject:
   m_ObjectHideFlags: 0

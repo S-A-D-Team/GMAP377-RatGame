@@ -29,7 +29,7 @@ public class Contaminable : MonoBehaviour
 
     [Space]
     [Header("Contamination Material")]
-    protected Material mat; // Assign your material with the shader
+    //protected Material mat; // Assign your material with the shader
     [SerializeField]
     protected string lerpProperty = "_Contamination_Lerp";
 
@@ -55,7 +55,7 @@ public class Contaminable : MonoBehaviour
         ContaminationManager.Instance.AddContaminable(this, contaminationValue);
         //if it exists, then true, otherwise false
         canSpread = _contamSpreadCheck;
-        mat = GetComponent<Renderer>().material;
+        //mat = GetComponent<Renderer>().material;
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class Contaminable : MonoBehaviour
         //tick it
         atMinutePass();
         //Visual feedback
-        StartCoroutine(LerpRoutine(mat));
+        //StartCoroutine(LerpRoutine(mat));
     }
     
 
