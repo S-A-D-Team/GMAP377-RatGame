@@ -96,7 +96,6 @@ public class ContaminationManager : MonoBehaviour
         }
     }
 
-    //Deprecated for now
     public void CalculateContaminationLevel(Contaminable c, float v)
     {
         //Add the change in value to the flat contamination level before updating the object's entry
