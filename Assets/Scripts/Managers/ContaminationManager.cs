@@ -20,7 +20,7 @@ public class ContaminationManager : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Leave contaminable potency up to level design or randomness")]
-    private bool useRandomPotency = false;
+    private bool useRandomPotency = true;
     
 
     //Each contaminable object will be registered with an individual contamination level
@@ -102,7 +102,8 @@ public class ContaminationManager : MonoBehaviour
         flatLevel += v - contaminables[c];
         if (flatLevel > totalFlatLevel) flatLevel = Mathf.Clamp(flatLevel, 0f, totalFlatLevel);
         contaminables[c] = v;
-        level = flatLevel / totalFlatLevel;
+        level = (flatLevel / totalFlatLevel) * 5f;
+        UIManager.Instance.changeContaminationBar(level);
         CheckThresholds();
     }
 
