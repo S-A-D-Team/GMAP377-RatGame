@@ -79,11 +79,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private int jumpCooldown = 10;
     [SerializeField]
-    [Tooltip("Perpendicular kick off from a wall jump")]
-    private float horizontalBounce = 6f;
+    [Tooltip("Affects wall jump height")]
+    private float verticalBounce = 0.75f;
     [SerializeField]
-    [Tooltip("Wall jump height factor to arc the movement")]
-    private float verticalGain = 4f;
+    [Tooltip("Affects push from wall")]
+    private float horizontalBounce = 6f;
     [SerializeField]
     private float airMovement;
     private bool canJump;
@@ -168,6 +168,7 @@ public class PlayerMovement : MonoBehaviour
         rb.useGravity = true;
         canJump = true;
         jumpStarted = false;
+        climbing = false;
         groundNormal = orientation.up;
         climbDirection = orientation.up;
         wallJumpDirection = -orientation.forward;
@@ -406,7 +407,9 @@ public class PlayerMovement : MonoBehaviour
     {
         climbing = false;
         rb.velocity = Vector3.zero;
-        Vector3 wallJumpForce = wallJumpDirection * horizontalBounce + Vector3.up * (verticalGain + minJumpForce);
+        Vector3 wallJumpForce = wallJumpDirection * horizontalBounce + Vector3.up * ((minJumpForce + maxJumpForce) / 2f);
+        Debug.Log(wallJumpForce);
+        Debug.Log(Physics.gravity.y > wallJumpForce.y);
         rb.AddForce(wallJumpForce, ForceMode.Impulse);
         Debug.DrawRay(transform.position, wallJumpForce, Color.magenta, 1f);
         StartCoroutine(ClimbCooldown());
@@ -435,6 +438,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
         float gizmoRadius = ratCollider.radius * 0.9f;
         float castDistance = playerHeight * 0.075f;
         Vector3 origin = transform.position + Vector3.up * (gizmoRadius + 0.01f);
@@ -450,22 +457,28 @@ public class PlayerMovement : MonoBehaviour
         float rayDistance = playerWidth * 0.5f + 0.01f;
         RaycastHit hit;
 
-        //Checks both slightly behind and in front of player for climbables (currently needed given that the rat doesn't rotate)
+        //Checks in cardinal directions of player orientation transform for climbables (currently needed given that the rat doesn't rotate)
         if (Physics.Raycast(transform.position + Vector3.up * 0.5f, orientation.forward, out hit, rayDistance) ||
-            Physics.Raycast(transform.position + Vector3.up * 0.5f, -orientation.forward, out hit, rayDistance))
+            Physics.Raycast(transform.position + Vector3.up * 0.5f, -orientation.forward, out hit, rayDistance) ||
+            Physics.Raycast(transform.position + Vector3.up * 0.5f, orientation.right, out hit, rayDistance) ||
+            Physics.Raycast(transform.position + Vector3.up * 0.5f, -orientation.right, out hit, rayDistance))
         {
             //Secondary check to make sure the object is even marked as climbable instead of using a Layer Mask
             if (hit.collider.TryGetComponent<ClimbableSurface>(out var _))
             {
+                Debug.Log("Yep near climbable");
                 float contactAngle = Vector3.Angle(hit.normal, Vector3.up);
                 //Surface must be sufficiently steep, climb must be unlocked (mutation) and not on cooldown
                 bool validAngle = (contactAngle > maxInclination && contactAngle <= 90f) && canClimb;
                 if (validAngle)
                 {
-                    wallJumpDirection = hit.normal;
+                    Debug.Log("Yep valid angle");
+                    wallJumpDirection = (hit.normal + Vector3.up * verticalBounce).normalized;
+                    Debug.Log(wallJumpDirection);
                     //Inner cross product is a vector perpendicular to both Vector3.up and the surface normal
                     //This causes the outer cross product to produce a vector as far aligned upward along the way as possible
                     climbDirection = Vector3.Cross(hit.normal, Vector3.Cross(Vector3.up, hit.normal)).normalized;
+                    
                     return true;
                 }
                 else
@@ -539,6 +552,7 @@ public class PlayerMovement : MonoBehaviour
             else if (NearClimbable() && canClimb && hasStamina(climbStamDrain))
             {
                 climbing = true;
+                Debug.Log("You're climbing");
                 currentPositional = positionalState.Climbing;
             }
         }
@@ -553,8 +567,9 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Wall jump, edge case where contact with climbable surface is lost, and running out of stamina
-        if (currentPositional == positionalState.Climbing && (!NearClimbable() || currentVertical == verticalAction.WallJumping || !hasStamina(climbStamDrain)))
+        if (currentPositional == positionalState.Climbing && (!NearClimbable() || !canClimb || !hasStamina(climbStamDrain)))
         {
+            Debug.Log("You lost climb contact");
             climbing = false;
             if (climbingEffect != null)
             {
@@ -604,6 +619,7 @@ public class PlayerMovement : MonoBehaviour
                 
                 if (playerInput.JumpPressed && canJump)
                 {
+                    Debug.Log("Wall jump intended");
                     currentVertical = verticalAction.WallJumping;
                     if (playerInput.MoveInput != Vector2.zero)
                     {
