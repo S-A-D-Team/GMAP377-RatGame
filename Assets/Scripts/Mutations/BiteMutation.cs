@@ -5,6 +5,8 @@ using UnityEngine;
 public class BiteMutation : PhysicalMutation, IMutation, IToggleable
 {
     private Hole biteLogic;
+    [SerializeField]
+    private string obtainedStr = "You feel like walls may only be a suggestion (Bite Unlocked!)";
     public void Initialize()
     {
         rat = GameManager.Instance.ratStats;
@@ -14,6 +16,12 @@ public class BiteMutation : PhysicalMutation, IMutation, IToggleable
 
     public override void onMutate()
     {
+        UIManager.Instance.cueMutation(obtainedStr);
+        GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "BiteMutation");
+        if (toRemove != null)
+        {
+            GameManager.Instance.mutationPool.Remove(toRemove);
+        }
         rat.canBite = true;
         notifyFlag();
     }

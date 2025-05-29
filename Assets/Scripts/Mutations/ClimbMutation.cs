@@ -5,6 +5,8 @@ using UnityEngine;
 public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
 {
     private PlayerMovement climbLogic;
+    [SerializeField]
+    private string obtainedStr = "You feel like inclines can no longer decline you (Climb Unlocked!)";
     public void Initialize()
     {
         rat = GameManager.Instance.ratStats;
@@ -14,6 +16,13 @@ public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
 
     public override void onMutate()
     {
+        UIManager.Instance.cueMutation(obtainedStr);
+        //One-and-done mutation, removed from mutation pool after unlocked
+        GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "ClimbMutation");
+        if (toRemove != null)
+        {
+            GameManager.Instance.mutationPool.Remove(toRemove);
+        }
         rat.canClimb = true;
         notifyFlag();
     }

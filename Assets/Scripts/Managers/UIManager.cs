@@ -66,13 +66,35 @@ public class UIManager : MonoBehaviour
     public Image staminaHighlight;
     public Image mutationHighlight;
     [SerializeField] private GameObject tutorialContinueButton;
-    [Space]
 
+    [Space]
+    [Header("Indicators")]
+    [SerializeField] private Image biteIncicator;
+    [SerializeField] private Image climbIndicator; 
+    [SerializeField] private Image contaminationIndicator;
+
+    private Animator climbAnimator;
+
+    [Space]
+    [Header("Win")]
+    [SerializeField] private GameObject WinSet;
+    [SerializeField] private List<GameObject> everythingElseToHide;
+
+    [Space]
+    [Header("Death")]
     [SerializeField] private GameObject deathSet;
     [SerializeField] private Image deathNoise;
     [SerializeField] private Image deathRed;
+    [Space]
+    [SerializeField] private GameObject deathCat;
+    [SerializeField] private GameObject deathHunger;
+    [SerializeField] private GameObject deathTrap;
+    [SerializeField] private TextMeshProUGUI deathText;
+    [SerializeField] private string deathCaption_Cat;
+    [SerializeField] private string deathCaption_Hunger;
+    [SerializeField] private string deathCaption_Trap;
 
-    
+
     //[SerializeField] private GameObject template_InputField;
     //[SerializeField] private GameObject template_Dropdown;
     //[SerializeField] private GameObject template_Toggle;
@@ -86,12 +108,18 @@ public class UIManager : MonoBehaviour
     [Space]
     [SerializeField] private Image hungerBar;
     [SerializeField] private Image StaminaBar;
+    [SerializeField] private Image ContaminationBar;
     [SerializeField] private GameObject InteractUI;
     [SerializeField] private GameObject InfectUI;
+
+
 
     [Space]
     public TextMeshProUGUI mutationPointsGainCueText;
     public GameObject mutationPointsGainCue;
+    private Queue<string> pendingMutationCues;
+    private bool cueRunning = false;
+    
     //public event System.Action<List<int>> updateParams;
 
 
@@ -105,6 +133,8 @@ public class UIManager : MonoBehaviour
 
         Instance = this;
         parameters = new List<Parameter>();
+        pendingMutationCues = new Queue<string>();
+        climbAnimator = climbIndicator.gameObject.GetComponent<Animator>();
     }
     //Thanks ChatG
     private void Start()
@@ -150,11 +180,84 @@ public class UIManager : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void showBiteBuildUp(bool _active, float _completion)
+    {
+        biteIncicator.gameObject.SetActive(_active);
+        biteIncicator.transform.GetChild(0).gameObject.SetActive(_active);
+        biteIncicator.transform.GetChild(0).gameObject.GetComponent<Image>().fillAmount = _completion;
+    }
+
+    public void showClimb(bool _active)
+    {
+        climbIndicator.gameObject.SetActive(_active);
+    }
+
+    public void playClimb()
+    {
+        if (climbAnimator.speed == 0f)
+        {
+            climbAnimator.speed = 1f;
+        }
+    }
+
+    public void pauseClimb()
+    {
+        if (climbAnimator.speed != 0f)
+        {
+            climbAnimator.speed = 0f;
+        }
+    }
+    public void showContainationBuildUp(bool _active, float _completion)
+    {
+        contaminationIndicator.gameObject.SetActive(_active);
+        contaminationIndicator.transform.GetChild(0).gameObject.SetActive(_active);
+        contaminationIndicator.transform.GetChild(0).gameObject.GetComponent<Image>().fillAmount = _completion;
+    }
+
+    public void cueWinUI()
+    {
+        WinSet.SetActive(true);
+        foreach (GameObject _uiItem in everythingElseToHide)
+        {
+            _uiItem.SetActive(false);
+        }
+    }
+
     public void TriggerDeathEffect()
     {
         deathSet.SetActive(true);
         //indefinately pulse the red
         StartCoroutine(PulseDeathRed());
+    }
+
+    /// <summary>
+    /// 1 - Cat,
+    /// 2 - Hunger,
+    /// 3 - Trap
+    /// </summary>
+    /// <param name="_deathIndex"></param>
+    public void cueDeathUI(int _deathIndex)
+    {
+        deathCat.SetActive(false);
+        deathHunger.SetActive(false);
+        deathTrap.SetActive(false);
+        switch (_deathIndex)
+        {
+            case 1:
+                deathCat.SetActive(true);
+                deathText.text = deathCaption_Cat;
+                break;
+            case 2:
+                deathHunger.SetActive(true);
+                deathText.text = deathCaption_Hunger;
+                break;
+            case 3:
+                deathTrap.SetActive(true);
+                deathText.text = deathCaption_Trap;
+                break;
+            default:
+                break;
+        }
     }
 
     //Replace with tween later
@@ -241,6 +344,10 @@ public class UIManager : MonoBehaviour
     {
         StaminaBar.fillAmount = _newvalue;
     }
+    public void changeContaminationBar(float _newvalue)
+    {
+        ContaminationBar.fillAmount = _newvalue;
+    }
 
     public void changeHungerBar(float _change)
     {
@@ -254,8 +361,29 @@ public class UIManager : MonoBehaviour
         tutorialCaption.text = _narration;
     }
 
-    public IEnumerator cueMutation()
+    public void cueMutation(string cueText)
     {
+        pendingMutationCues.Enqueue(cueText);
+        if (!cueRunning)
+        {
+            StartCoroutine(_cueMutationProcessor());
+        }
+    }
+
+    private IEnumerator _cueMutationProcessor()
+    {
+        cueRunning = true; 
+        while (pendingMutationCues.Count > 0)
+        {
+            yield return _cueMutation();
+        }
+        cueRunning = false;
+        
+    }
+
+    private IEnumerator _cueMutation()
+    {
+        mutationPointsGainCueText.text = pendingMutationCues.Dequeue();
         mutationPointsGainCue.SetActive(true);
         yield return new WaitForSeconds(2f);
         mutationPointsGainCue.SetActive(false);

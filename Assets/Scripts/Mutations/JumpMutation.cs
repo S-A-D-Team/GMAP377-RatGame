@@ -12,6 +12,12 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
 
     private float initialJumpForce;
 
+    [Header("Messages for first and subsequent gains of this mutation")]
+    [SerializeField]
+    private string obtainedStr = "You feel lighter (Jump Up!)";
+    [SerializeField]
+    private string stackStr = "You feel EVEN lighter (Jump Up!)";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +45,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
 
     public void SetStacks(int s)
     {
-        if (s < 0)
+        if (s <= 0)
         {
             //0 out stacks for negative values
             ResetStacks();
@@ -74,7 +80,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
         else
         {
             float finalMultiplier = MutationUtils.ApplyStackedMultiplier(decayCurve, newStacks, minJumpMultiplier, maxJumpMultiplier);
-            rat.maxJumpForce *= finalMultiplier;
+            rat.maxJumpForce = initialJumpForce * finalMultiplier;
         }
 
         stacks = newStacks;
@@ -82,7 +88,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
 
     public override void onMutate()
     {
-        //Currently just applies the stat bonus, this should also apply the proper UI elements and/or other front-end requirements when available
+        UIManager.Instance.cueMutation(obtainedStr);
         stackMutation();
     }
 
@@ -108,5 +114,10 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
             rat.maxJumpForce *= finalMultiplier;
         }
         stacks++;
+        if (stacks > 1)
+        {
+            UIManager.Instance.cueMutation(stackStr + " x" + stacks.ToString());
+        }
+        
     }
 }

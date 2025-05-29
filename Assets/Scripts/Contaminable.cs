@@ -10,16 +10,26 @@ public class Contaminable : MonoBehaviour
     protected float contaminationValue = 0;
     [SerializeField]
     [Tooltip("Contamination buildup of this item (per hour)")]
-    protected float contaminationBuildup = 0;
+    protected float contaminationBuildup = 0f;
     [SerializeField]
     [Tooltip("Mutation Points granted on Infection")]
-    //Set to 3 by default to hard code all infected items giving enough to mutate
-    protected int mutationYield = 3;
+    protected int mutationYield = 1;
+    [SerializeField]
     protected bool canGrantPoints = true;
+
+    //Determine mutation yield/hunger modifier
+    public enum potencyLevel
+    {
+        LOW = 1,
+        MEDIUM = 2,
+        HIGH = 3
+    }
+
+    public potencyLevel potency;
 
     [Space]
     [Header("Contamination Material")]
-    protected Material mat; // Assign your material with the shader
+    //protected Material mat; // Assign your material with the shader
     [SerializeField]
     protected string lerpProperty = "_Contamination_Lerp";
 
@@ -45,7 +55,7 @@ public class Contaminable : MonoBehaviour
         ContaminationManager.Instance.AddContaminable(this, contaminationValue);
         //if it exists, then true, otherwise false
         canSpread = _contamSpreadCheck;
-        mat = GetComponent<Renderer>().material;
+        //mat = GetComponent<Renderer>().material;
     }
 
     /// <summary>
@@ -56,15 +66,16 @@ public class Contaminable : MonoBehaviour
     /// </summary>
     protected virtual void atMinutePass()
     {
-        contaminationValue += contaminationBuildup / 60f;
+        //higher potency items have higher buildup resistance
+        contaminationValue += contaminationBuildup / (60f * (int)potency);
         contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
         if (contaminationValue >= 100f && canGrantPoints)
         {
             canGrantPoints = false;
-            
-            UIManager.Instance.mutationPointsGainCueText.text = "You gained " + mutationYield.ToString() + " mutation points";
-            StartCoroutine(UIManager.Instance.cueMutation());
-            ContaminationManager.Instance.AddMutationPoints(mutationYield);
+            int trueMutationYield = mutationYield * (int)potency;
+            string pointsGained = "You gained " + trueMutationYield.ToString() + " mutation points";
+            UIManager.Instance.cueMutation(pointsGained);
+            ContaminationManager.Instance.AddMutationPoints(trueMutationYield);
 
             if (isWinCondition)
             {
@@ -72,7 +83,7 @@ public class Contaminable : MonoBehaviour
             }
         }
         //Update its entry in the manager
-        //ContaminationManager.Instance.CalculateContaminationLevel(this, contaminationValue);
+        ContaminationManager.Instance.CalculateContaminationLevel(this, contaminationValue);
         if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;
     }
 
@@ -84,18 +95,19 @@ public class Contaminable : MonoBehaviour
     protected virtual void ContaminateItem()
 	{
         //HEre we can add more buildup based on perks?
-        contaminationValue += 20f;
+        contaminationValue += 100f;
         contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
-        AddBuildUp(5f);
+        AddBuildUp(25f);
         //tick it
         atMinutePass();
         //Visual feedback
-        StartCoroutine(LerpRoutine(mat));
+        //StartCoroutine(LerpRoutine(mat));
     }
     
 
     //Considering this might be used elsewhere too, 
     //I might consider moving this to a big utility functions script file later
+    //NOT ALL 
     private IEnumerator LerpRoutine(Material _material)
     {
         float _halfDuration = 1f;
@@ -104,7 +116,7 @@ public class Contaminable : MonoBehaviour
         for (float t = 0; t < _halfDuration; t += Time.deltaTime)
         {
             float lerpValue = t / _halfDuration;
-            _material.SetFloat(lerpProperty, lerpValue);
+            //_material.SetFloat(lerpProperty, lerpValue);
             yield return null;
         }
 
@@ -112,11 +124,11 @@ public class Contaminable : MonoBehaviour
         for (float t = 0; t < _halfDuration; t += Time.deltaTime)
         {
             float lerpValue = 1 - (t / _halfDuration);
-            _material.SetFloat(lerpProperty, lerpValue);
+            //_material.SetFloat(lerpProperty, lerpValue);
             yield return null;
         }
 
-        _material.SetFloat(lerpProperty, 0f); // just to be sure it ends at 0
+        //_material.SetFloat(lerpProperty, 0f); // just to be sure it ends at 0
     }
 }
 

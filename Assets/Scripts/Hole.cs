@@ -7,6 +7,8 @@ public class Hole : MonoBehaviour
     public bool isEnabled = false;
     string wallLayerName = "Walls";
     public GameObject holePrefab;
+    private float biteHeldTimer = 0f;
+    [SerializeField] private float timeToBite = 1f;
 
     public List<GameObject> wallsInContact = new List<GameObject>();
 
@@ -14,10 +16,25 @@ public class Hole : MonoBehaviour
     {
         if (!isEnabled) return;
 
-        if (Input.GetKeyDown(KeyCode.E)) // change later
+        if (GetComponent<PlayerInputCollection>().BiteHeld)
         {
-            TryHole();
+            biteHeldTimer += Time.deltaTime;
+            //show are 0.35 extra seconds after doing full time
+            UIManager.Instance.showBiteBuildUp(biteHeldTimer < 150.35f, biteHeldTimer);
+            //we only need to try hole once so....
+            if (biteHeldTimer > timeToBite && biteHeldTimer < 100f)
+            {
+                TryHole();
+                //..lets do this
+                biteHeldTimer = 150f;
+            }
         }
+        if (GetComponent<PlayerInputCollection>().BiteReleased)
+        {
+            biteHeldTimer = 0f;
+            UIManager.Instance.showBiteBuildUp(false, 0f);
+        }
+
     }
 
     private void TryHole()
@@ -51,7 +68,10 @@ public class Hole : MonoBehaviour
         localPos.y = 0;
         newObj.transform.localPosition = localPos;
 
-        // 4. hole bounds to wall
+        // 4. Let the hole obj know the wall it is attached to 
+        newObj.GetComponent<Hole_Task>().attachedWall = wall.GetComponent<WallsHole>();
+
+        // 5. hole bounds to wall
         StartCoroutine(DelayRegisterHole(newObj, wall));
     }
     private IEnumerator DelayRegisterHole(GameObject newObj, Transform wall)
@@ -59,6 +79,8 @@ public class Hole : MonoBehaviour
         // wait a 2 frames so collider bounds gets updated properly
         yield return null;
         yield return null;
+
+
 
         wall.GetComponent<WallsHole>().AddHole(newObj);
         wallsInContact.Clear();

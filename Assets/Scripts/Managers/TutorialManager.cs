@@ -17,7 +17,9 @@ public class TutorialManager : MonoBehaviour
 
     private void Start()
     {
-        UIManager.Instance.beginTutorial(0);
+        if(tutorialStage == 0){
+            UIManager.Instance.beginTutorial(0);
+        }
     }
 
 
@@ -95,6 +97,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 4:
                 PlayEndTutorialNarration();
+                GameObject.FindGameObjectWithTag("player").GetComponent<PlayerMovement>().spawnRandom();
                 tutorialStage = 9;
                 break;
             case 5:
