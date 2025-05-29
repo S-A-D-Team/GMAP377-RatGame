@@ -201,13 +201,10 @@ MonoBehaviour:
   groundDrag: 4
   maxInclination: 45
   runSpeed: 8
-  playerHeight: 2
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  playerWidth: 4
   climbCooldown: 10
-  climbingEffect: {fileID: 0}
   jumpChargeRate: 0
   minJumpForce: 0
   maxJumpForce: 0
@@ -216,6 +213,8 @@ MonoBehaviour:
   horizontalBounce: 6
   airMovement: 0.2
   coyoteInterval: 0.15
+  noFriction: {fileID: 13400000, guid: 1239d38f3156d4641bd5d386613a99a5, type: 2}
+  idleFriction: {fileID: 13400000, guid: c61d75a288172da4ea008632e7c8259c, type: 2}
   spawnAreas: []
 --- !u!136 &7607355011323265677
 CapsuleCollider:
@@ -255,6 +254,7 @@ MonoBehaviour:
   isEnabled: 1
   holePrefab: {fileID: 951443655088883837, guid: cfa96835ef785284a9435b09fa26d7ae,
     type: 3}
+  timeToBite: 1
   wallsInContact: []
 --- !u!136 &7701203519220823874
 CapsuleCollider:
@@ -263,7 +263,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5058273188919755049}
-  m_Material: {fileID: 13400000, guid: 1239d38f3156d4641bd5d386613a99a5, type: 2}
+  m_Material: {fileID: 13400000, guid: c61d75a288172da4ea008632e7c8259c, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

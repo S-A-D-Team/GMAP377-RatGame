@@ -73,6 +73,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image climbIndicator; 
     [SerializeField] private Image contaminationIndicator;
 
+    private Animator climbAnimator;
+
     [Space]
     [Header("Win")]
     [SerializeField] private GameObject WinSet;
@@ -132,6 +134,7 @@ public class UIManager : MonoBehaviour
         Instance = this;
         parameters = new List<Parameter>();
         pendingMutationCues = new Queue<string>();
+        climbAnimator = climbIndicator.gameObject.GetComponent<Animator>();
     }
     //Thanks ChatG
     private void Start()
@@ -187,6 +190,22 @@ public class UIManager : MonoBehaviour
     public void showClimb(bool _active)
     {
         climbIndicator.gameObject.SetActive(_active);
+    }
+
+    public void playClimb()
+    {
+        if (climbAnimator.speed == 0f)
+        {
+            climbAnimator.speed = 1f;
+        }
+    }
+
+    public void pauseClimb()
+    {
+        if (climbAnimator.speed != 0f)
+        {
+            climbAnimator.speed = 0f;
+        }
     }
     public void showContainationBuildUp(bool _active, float _completion)
     {

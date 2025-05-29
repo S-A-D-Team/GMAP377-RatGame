@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 //TODO/Consideration: Move player behavior unrelated to movement (such as biting) to separate script (PlayerAbilities.cs?), with each ability toggled by a mutation
 //Extend controls for these to input handler and separately determine behavior in PlayerAbilities
@@ -55,19 +56,14 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Ground Check")]
     [SerializeField]
-    private float playerHeight;
-    [SerializeField]
     private LayerMask whatIsGround;
     private bool grounded;
     private bool wasGroundedLastFrame = false;
 
     [Header("Climb Check")]
-    [SerializeField]
-    private float playerWidth;
     private bool climbing = false;
     [SerializeField]
     private int climbCooldown = 8;
-    public ParticleSystem climbingEffect;
 
     [Header("Jumping")]
     [SerializeField]
@@ -96,17 +92,24 @@ public class PlayerMovement : MonoBehaviour
     private float coyoteInterval = 0.15f;
     private float lastGrounded;
 
-    
+    [Header("State Materials")]
+    [SerializeField]
+    private PhysicMaterial noFriction;
+    [SerializeField]
+    private PhysicMaterial idleFriction;
+
     //Collects movement inputs
     private PlayerInputCollection playerInput;
 
     private Vector3 moveDirection;
     private Rigidbody rb;
     private CapsuleCollider ratCollider;
-
+    private float playerWidth;
+    private float playerHeight;
     private Vector3 groundNormal = Vector3.up;
     private Vector3 climbDirection;
     private Vector3 wallJumpDirection;
+    private Vector3 attachDirection;
     private Vector3 jumpDirection = Vector3.up;
 
     [Space]
@@ -159,7 +162,11 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         playerInput = GetComponent<PlayerInputCollection>();
-        ratCollider = GetComponent<CapsuleCollider>();
+        //Make sure to grab the collider relevant to physics
+        ratCollider = GetComponents<CapsuleCollider>().FirstOrDefault(col => !col.isTrigger);
+        //These values have swapped x,y because the rat's current object is rotated 90 degrees
+        playerHeight = ratCollider.radius * 2;
+        playerWidth = ratCollider.height;
     }
     // Start is called before the first frame update
     void Start()
@@ -172,6 +179,9 @@ public class PlayerMovement : MonoBehaviour
         groundNormal = orientation.up;
         climbDirection = orientation.up;
         wallJumpDirection = -orientation.forward;
+        attachDirection = orientation.forward;
+        
+
         GameManager.Instance.RegisterPlayer(gameObject);
         playerStats = GameManager.Instance.ratStats;
         //Initialize stats from rat stats
@@ -183,8 +193,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (spawnAreas.Count > 0)
         {
-            Debug.Log("RANDO SPAWNJHI");
-            transform.position = spawnAreas[(int)Random.Range(0, spawnAreas.Count - 1)].position;
+            transform.position = spawnAreas[Random.Range(0, spawnAreas.Count - 1)].position;
         }
     }
 
@@ -242,7 +251,9 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.V))
+        UIManager.Instance.showClimb(climbing);
+
+        if (Input.GetKeyDown(KeyCode.V))
         {
             GameManager.Instance.winTheGame();
         }
@@ -251,14 +262,30 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        wasGroundedLastFrame = grounded;
         //For movement along surfaces up to a certain steepness
         CheckGround();
         //Ascertain player positioning relative to surfaces
         PositionalStateUpdate();
+        //Smoothen forces on the player in an air-to-ground transition, reduces slipperyness and bounciness
+        bool isLanding = !wasGroundedLastFrame && grounded;
+        if (isLanding)
+        {
+            OnLanding();
+        }
+        
         //Apply movement based on the above combination of surface checks, input, current positional state
         MovePlayer();
         //Adjust true movement to valid ranges
         SpeedControl();
+        //Swap player material depending on physics needs
+        MaterialUpdate();
+
+        /*if (grounded && playerInput.MoveInput == Vector2.zero)
+        {
+            Vector3 currentVelocity = rb.velocity;
+            rb.velocity -= Vector3.ProjectOnPlane(currentVelocity, groundNormal);
+        }*/
     }
 
     public void AdjustStatsToHunger()
@@ -306,14 +333,14 @@ public class PlayerMovement : MonoBehaviour
                 Vector3 airDrift = GetInputDirection();
                 float lateralSpeed = flatVelocity.magnitude;
 
-                float airControl = Mathf.Lerp(1.2f, 0.4f, lateralSpeed / runSpeed);
+                float airControl = Mathf.Lerp(1.2f, 0.6f, lateralSpeed / runSpeed);
 
-                float adjustedHandling = airControl * (running ? 0.9f : 1.2f);
+                float adjustedHandling = airControl * (running ? 0.9f : 1.1f);
 
                 Vector3 adjustedAirForce = airDrift * airMovement * adjustedHandling;
                 rb.AddForce(adjustedAirForce, ForceMode.Force);
             }
-
+            
             //Checks if speed exceeds max
             if (flatVelocity.magnitude > contextSpeedCap)
             {
@@ -324,13 +351,70 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void MaterialUpdate()
+    {
+        //Suppress sliding around small mesh geometry (Because everyone hates the books and boxes)
+        if (grounded)
+        {
+            if (playerInput.MoveInput != Vector2.zero)
+            {
+                if (ratCollider.sharedMaterial != noFriction)
+                {
+                    ratCollider.sharedMaterial = noFriction;
+                }
+            }
+            else
+            {
+                if (ratCollider.sharedMaterial != idleFriction)
+                {
+                    ratCollider.sharedMaterial = idleFriction;
+                }
+            }
+        }
+        else
+        {
+            if (ratCollider.sharedMaterial != noFriction)
+            {
+                ratCollider.sharedMaterial = noFriction;
+            }
+        }
+    }
+
+    //Reset the player's jump and smoothen out their landing
+    //Calculation subject to scale based on movement parameters (So you can't precision platform with Mach 7 speed)
     private void OnLanding()
     {
         jumpStarted = false;
         canJump = true;
-        currentVertical = verticalAction.Idle;
+        //currentVertical = verticalAction.Idle;
 
         StopCoroutine(FullHop());
+
+        Vector3 smoothedVelocity = rb.velocity;
+        //Stops the rat from bouncing off slopes
+        float surfaceSpeed = Vector3.Dot(smoothedVelocity, groundNormal);
+        if (surfaceSpeed > 0f)
+        {
+            smoothedVelocity -= groundNormal * surfaceSpeed;
+        }
+        //Prevents sliding on idle landing
+        if (playerInput.MoveInput == Vector2.zero)
+        {
+            Vector3 lateralVelocity = Vector3.ProjectOnPlane(smoothedVelocity, groundNormal);
+            smoothedVelocity -= lateralVelocity;
+
+            //Defensive measure to prevent sliding along small, mostly flat mesh collision
+            if (Vector3.Angle(groundNormal, Vector3.up) < 10f)
+            {
+                smoothedVelocity.x = 0f;
+                smoothedVelocity.z = 0f;
+            }
+        }
+        
+        rb.velocity = smoothedVelocity;
+        //Lightly anchor the rat to the surface to counteract other uneven forces
+        rb.AddForce(-groundNormal * 100f, ForceMode.Acceleration);
+
     }
 
     IEnumerator HandleJump()
@@ -416,7 +500,7 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log(wallJumpForce);
         Debug.Log(Physics.gravity.y > wallJumpForce.y);
         rb.AddForce(wallJumpForce, ForceMode.Impulse);
-        Debug.DrawRay(transform.position, wallJumpForce, Color.magenta, 1f);
+        Debug.DrawRay(orientation.position, wallJumpForce, Color.magenta, 2f);
         StartCoroutine(ClimbCooldown());
         StartCoroutine(JumpCooldown());
     }
@@ -425,8 +509,8 @@ public class PlayerMovement : MonoBehaviour
     private void CheckGround() 
     {
         float castRadius = ratCollider.radius * 0.9f;
-        float castDistance = playerHeight * 0.075f;
-        Vector3 offsetOrigin = transform.position + Vector3.up * (castRadius + 0.01f);
+        float castDistance = playerHeight * 0.6f;
+        Vector3 offsetOrigin = transform.TransformPoint(ratCollider.center) + Vector3.up * (castRadius + 0.01f);
         //Checks for both even and uneven ground based off the current player collider's geometry
         if (Physics.SphereCast(offsetOrigin, castRadius, Vector3.down, out RaycastHit hit, castDistance, whatIsGround))
         {
@@ -447,26 +531,45 @@ public class PlayerMovement : MonoBehaviour
         {
             return;
         }
+        //For ground spherecasting
         float gizmoRadius = ratCollider.radius * 0.9f;
-        float castDistance = playerHeight * 0.075f;
-        Vector3 origin = transform.position + Vector3.up * (gizmoRadius + 0.01f);
+        float castDistance = playerHeight * 0.6f;
+        Vector3 origin = transform.TransformPoint(ratCollider.center) + Vector3.up * (gizmoRadius + 0.01f);
         Vector3 endpoint = origin + Vector3.down * castDistance;
 
         Gizmos.color = grounded ? Color.green : Color.red;
         Gizmos.DrawLine(origin, endpoint);
         Gizmos.DrawWireSphere(endpoint, gizmoRadius);
+
+        //For climb raycasting
+        Gizmos.color = climbing ? Color.blue : Color.red;
+        Vector3 climbOrigin = transform.TransformPoint(ratCollider.center);
+        Vector3 direction = climbing ? attachDirection : orientation.forward;
+        Vector3 climbEndpoint = climbOrigin + direction * (ratCollider.radius * 1.25f);
+        Gizmos.DrawLine(climbOrigin, climbEndpoint);
     }
 
     private bool NearClimbable()
     {
+        //For entering climb state, base off cardinal proximity
+        if (!climbing)
+        {
+            return IsValidClimbable();
+        }
+        //For exiting climb state, base off direction originally attached from
+        else
+        {
+            return !IsDetached();
+        }
+    }
+
+    private bool IsValidClimbable()
+    {
         float rayDistance = playerWidth * 0.5f + 0.01f;
         RaycastHit hit;
-
-        //Checks in cardinal directions of player orientation transform for climbables (currently needed given that the rat doesn't rotate)
-        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, orientation.forward, out hit, rayDistance) ||
-            Physics.Raycast(transform.position + Vector3.up * 0.5f, -orientation.forward, out hit, rayDistance) ||
-            Physics.Raycast(transform.position + Vector3.up * 0.5f, orientation.right, out hit, rayDistance) ||
-            Physics.Raycast(transform.position + Vector3.up * 0.5f, -orientation.right, out hit, rayDistance))
+        Vector3 lookDirection = orientation.forward;
+        //Checks in front of player orientation transform for climbables (orientation obj currently needed given that the rat doesn't rotate)
+        if (Physics.Raycast(transform.TransformPoint(ratCollider.center), lookDirection, out hit, rayDistance))
         {
             //Secondary check to make sure the object is even marked as climbable instead of using a Layer Mask
             if (hit.collider.TryGetComponent<ClimbableSurface>(out var _))
@@ -479,7 +582,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     Debug.Log("Yep valid angle");
                     wallJumpDirection = (hit.normal + Vector3.up * verticalBounce).normalized;
-                    Debug.Log(wallJumpDirection);
+                    attachDirection = lookDirection.normalized;
                     //Inner cross product is a vector perpendicular to both Vector3.up and the surface normal
                     //This causes the outer cross product to produce a vector as far aligned upward along the way as possible
                     climbDirection = Vector3.Cross(hit.normal, Vector3.Cross(Vector3.up, hit.normal)).normalized;
@@ -501,6 +604,25 @@ public class PlayerMovement : MonoBehaviour
             return false;
         }
     }
+
+    private bool IsDetached()
+    {
+        float rayDistance = playerWidth * 0.5f + 0.01f;
+        RaycastHit hit;
+        if(!Physics.Raycast(transform.TransformPoint(ratCollider.center), attachDirection, out hit, rayDistance))
+        {
+                return true;
+        }
+        else if (!hit.collider.TryGetComponent<ClimbableSurface>(out var _))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     //Grab the actual directional input to affect the final movement direction along a surface
     private Vector3 GetInputDirection()
@@ -545,10 +667,6 @@ public class PlayerMovement : MonoBehaviour
             if (currentPositional == positionalState.Climbing)
             {
                 climbing = false;
-                if (climbingEffect != null)
-                {
-                   climbingEffect.Stop();
-                }
                 StartCoroutine(ClimbCooldown());
                 currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
 
@@ -557,39 +675,29 @@ public class PlayerMovement : MonoBehaviour
             else if (NearClimbable() && canClimb && hasStamina(climbStamDrain))
             {
                 climbing = true;
-                Debug.Log("You're climbing");
                 currentPositional = positionalState.Climbing;
             }
-            //show UI
-            UIManager.Instance.showClimb(climbing);
         }
         //Auto-update as a defensive measure
         if (currentPositional != positionalState.Climbing)
         {
-            if (climbingEffect != null)
-            {
-                climbingEffect.Stop();
-            }
+            climbing = false;
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
 
         //Wall jump, edge case where contact with climbable surface is lost, and running out of stamina
-        if (currentPositional == positionalState.Climbing && (!NearClimbable() || !canClimb || !hasStamina(climbStamDrain)))
+        if (currentPositional == positionalState.Climbing && ((climbing && !NearClimbable()) || !canClimb || !hasStamina(climbStamDrain)))
         {
             Debug.Log("You lost climb contact");
             climbing = false;
-            if (climbingEffect != null)
+            //Make sure cooldown isn't triggered more than once per climbing state exit
+            if (canClimb)
             {
-                climbingEffect.Stop();
+                StartCoroutine(ClimbCooldown());
             }
+            
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
-
-        if (!wasGroundedLastFrame && grounded)
-        {
-            OnLanding();
-        }
-        wasGroundedLastFrame = grounded;
     }
 
     private void ActionStateUpdate()
@@ -620,7 +728,6 @@ public class PlayerMovement : MonoBehaviour
                 break;
 
             case positionalState.Climbing:
-
                 currentVertical = verticalAction.Idle;
                 currentLateral = lateralAction.Idle;
                 
@@ -630,7 +737,14 @@ public class PlayerMovement : MonoBehaviour
                     currentVertical = verticalAction.WallJumping;
                     if (playerInput.MoveInput != Vector2.zero)
                     {
-                        currentLateral = playerInput.RunHeld ? lateralAction.Running : lateralAction.Walking;
+                        if (playerInput.RunHeld && hasStamina(runStamDrain))
+                        {
+                            currentLateral = lateralAction.Running;
+                        }
+                        else
+                        {
+                            currentLateral = lateralAction.Walking;
+                        }
                     }
                 }
                 else if (playerInput.MoveInput.y != 0f)
@@ -675,29 +789,18 @@ public class PlayerMovement : MonoBehaviour
                 {
                     //Can only climb vertically, not horizontally
                     moveDirection = climbDirection * playerInput.MoveInput.y;
-                    if (climbingEffect != null)
-                    {
-                        if (!climbingEffect.isPlaying)
-                        {
-                            climbingEffect.Play();
-                        }
-                    }
-                    rb.AddForce(moveDirection.normalized * climbSpeed * 3f, ForceMode.Force);
+                    UIManager.Instance.playClimb();
+                    rb.AddForce(3f * climbSpeed * moveDirection.normalized, ForceMode.Force);
                 }
                 else if (currentLateral == lateralAction.Idle)
                 {
-                    if (climbingEffect != null)
-                    {
-                        if (climbingEffect.isPlaying)
-                        {
-                            climbingEffect.Pause();
-                        }
-                    }
+                    UIManager.Instance.pauseClimb();
                 }
                 if (currentVertical == verticalAction.WallJumping)
                 {
                     WallJump();
                 }
+
                 break;
             
             case positionalState.Grounded:
@@ -705,7 +808,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     running = false;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
-                    rb.AddForce(moveDirection * speed * 2.5f, ForceMode.Force);
+                    rb.AddForce(2.5f * speed * moveDirection, ForceMode.Force);
                 }
                 else if (currentLateral == lateralAction.Running)
                 {
