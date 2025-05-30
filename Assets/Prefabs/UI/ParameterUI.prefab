@@ -202,7 +202,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -142.5}
+  m_AnchoredPosition: {x: 80, y: -75}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8019878454947297030
@@ -1553,6 +1553,8 @@ MonoBehaviour:
   - 15
   - 15
   togglePrefab: {fileID: 8647362594000430076, guid: d4d6c24201f5c0e4ca4266dc55ef56c9,
+    type: 3}
+  togglestackPrefab: {fileID: 7408021065557630167, guid: 361750608f12fc34d89f08b22a95e322,
     type: 3}
   wholePrefab: {fileID: 7124069056329239189, guid: 5d0d2196438ca2a48b141ab7e5936d94,
     type: 3}

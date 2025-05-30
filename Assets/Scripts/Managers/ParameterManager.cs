@@ -28,6 +28,7 @@ public class ParameterManager : MonoBehaviour
 
     [Header("Prefabs")]
     public Toggle togglePrefab;
+    public GameObject togglestackPrefab;
     public Slider wholePrefab;
     public Slider floatPrefab;
 
@@ -63,6 +64,7 @@ public class ParameterManager : MonoBehaviour
         if (player != null)
             ratStats = player.GetComponent<RatStats>();
 
+        // Populate all UI panels
         PopulateMutationToggles();
         PopulateRatStatSliders();
         PopulateFoodStatSliders();
@@ -87,11 +89,51 @@ public class ParameterManager : MonoBehaviour
     {
         foreach (string mutation in mutations)
         {
-            Toggle newToggle = Instantiate(togglePrefab, mutationPanel.transform);
-            newToggle.onValueChanged.RemoveAllListeners(); // Prevent duplicate listeners from prefab
+            GameObject stackObj = null;
+            Toggle newToggle = null;
+            Slider stacksSlider = null;
+            TextMeshProUGUI[] sliderTexts = null;
+
+            // Use togglestackPrefab for boosts, togglePrefab for others
+            if (mutation == "Jump Boost" || mutation == "Speed Boost")
+            {
+                stackObj = Instantiate(togglestackPrefab, mutationPanel.transform);
+                newToggle = stackObj.GetComponentInChildren<Toggle>(true);
+                stacksSlider = stackObj.GetComponentInChildren<Slider>(true);
+
+                if (stacksSlider != null)
+                {
+                    stacksSlider.minValue = 1;
+                    stacksSlider.maxValue = 10;
+                    stacksSlider.value = 1;
+                    stacksSlider.wholeNumbers = true;
+                    stacksSlider.gameObject.SetActive(false);
+
+                    sliderTexts = stacksSlider.GetComponentsInChildren<TextMeshProUGUI>();
+                    if (sliderTexts.Length >= 2)
+                    {
+                        sliderTexts[0].text = "Stack";
+                        sliderTexts[1].text = "1";
+                    }
+
+                    stacksSlider.onValueChanged.AddListener((val) =>
+                    {
+                        if (sliderTexts != null && sliderTexts.Length >= 2)
+                            sliderTexts[1].text = ((int)val).ToString();
+                        HandleMutationStacksSlider(mutation, (int)val);
+                    });
+                }
+            }
+            else
+            {
+                newToggle = Instantiate(togglePrefab, mutationPanel.transform);
+            }
+
+            // Set toggle label
+            newToggle.onValueChanged.RemoveAllListeners();
             newToggle.GetComponentInChildren<Text>().text = mutation;
 
-            // Set toggle state based on current player RatStats or GameManager
+            // Set toggle state based on RatStats (if available)
             bool isOn = false;
             if (ratStats != null)
             {
@@ -115,14 +157,24 @@ public class ParameterManager : MonoBehaviour
                 }
             }
             newToggle.isOn = isOn;
-
-            // Immediately apply the state to the rat
             HandleMutationToggle(mutation, isOn);
 
-            newToggle.onValueChanged.AddListener((toggleState) => {
-                Debug.Log($"Toggle for {mutation} set to {toggleState}");
-                HandleMutationToggle(mutation, toggleState);
-            });
+            // Show/hide stack slider when toggled
+            if (stacksSlider != null)
+            {
+                newToggle.onValueChanged.AddListener((toggleState) =>
+                {
+                    stacksSlider.gameObject.SetActive(toggleState);
+                    HandleMutationToggle(mutation, toggleState);
+                });
+            }
+            else
+            {
+                newToggle.onValueChanged.AddListener((toggleState) =>
+                {
+                    HandleMutationToggle(mutation, toggleState);
+                });
+            }
         }
 
         ForceLayoutRebuild(mutationPanel);
@@ -150,6 +202,13 @@ public class ParameterManager : MonoBehaviour
                 Debug.LogWarning($"No handler for mutation '{mutation}'");
                 break;
         }
+    }
+
+    //Handles logic when a mutation stack slider is changed
+    void HandleMutationStacksSlider(string mutation, int stacks)
+    {
+        Debug.Log($"{mutation} stacks set to {stacks}");
+        // Apply stacks value to your logic as needed
     }
 
     void PopulateRatStatSliders()
