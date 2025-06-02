@@ -50,6 +50,9 @@ public class HumanAI : EnemyAi
     [Space]
     public List<TaskInfo> HumanTasks;
 
+    [SerializeField]
+    private GameObject eyes;
+
     // Start is called before the first frame update
     void Start()
     { 
@@ -73,7 +76,7 @@ public class HumanAI : EnemyAi
         }
         if (!isReacting)
         {
-            playerFound = base.isPlayerSighted(player);
+            playerFound = base.isPlayerSighted(player, eyes.transform);
             if (playerFound)
             {
                 checkMoving();
@@ -132,7 +135,8 @@ public class HumanAI : EnemyAi
         trapPos = new Vector3 (player.transform.position.x, 0.05f, player.transform.position.z);
         isInTask = false;
         taskTimer = 0;
-        //cat.FirstReaction(player.position);
+        cat.Reaction();
+        cat.Chase();
     }
 
     IEnumerator timeReaction()
@@ -155,7 +159,7 @@ public class HumanAI : EnemyAi
         isInTask = true;
         agent.SetDestination(trapPos);
         yield return new WaitUntil(ReachedDestination);
-        for(int i = 0; i < numToPlace; i++){
+        for(int i = 0; i < (numToPlace * aiLevel); i++){
             Vector3 pos = new Vector3(trapPos.x + Random.Range(-1.5f, 1.5f), 0.05f, trapPos.z + Random.Range(-1.5f, 1.5f));
             GameObject trapPlaced = Instantiate(ratTrap, pos, Quaternion.Euler(-90, 0, 0));
         }
