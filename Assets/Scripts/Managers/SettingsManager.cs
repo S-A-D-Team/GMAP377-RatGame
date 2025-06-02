@@ -15,16 +15,21 @@ public class SettingsManager : MonoBehaviour
 
     private AudioSource bgmAudioSource;
 
+    //public AudioSource sfxAudioSource; 
+
     void Start()
     {
         // Get AudioSource from BGM
         bgmAudioSource = BGM.GetComponent<AudioSource>();
 
+        musicslider.value = bgmAudioSource.volume * musicslider.maxValue;
+        //sfxslider.value = sfxAudioSource.volume * musicslider.maxValue;
+
         musicslider.onValueChanged.AddListener(UpdateMusicValueText);
-        sfxslider.onValueChanged.AddListener(UpdateSFXValueText);
+        //sfxslider.onValueChanged.AddListener(UpdateSFXValueText);
 
         UpdateMusicValueText(musicslider.value);
-        UpdateSFXValueText(sfxslider.value);
+        //UpdateSFXValueText(sfxslider.value);
     }
 
     void UpdateMusicValueText(float value)
@@ -36,8 +41,15 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
+    /*
     void UpdateSFXValueText(float value)
     {
         sfxValueText.text = value.ToString("0");
+        // Placeholder: Set SFX volume when ready
+        if (sfxAudioSource != null)
+        {
+            sfxAudioSource.volume = value / sfxslider.maxValue;
+        }
     }
+    */
 }
