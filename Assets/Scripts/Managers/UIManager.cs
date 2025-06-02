@@ -73,6 +73,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image climbIndicator; 
     [SerializeField] private Image contaminationIndicator;
 
+    private Animator climbAnimator;
+
     [Space]
     [Header("Win")]
     [SerializeField] private GameObject WinSet;
@@ -115,6 +117,9 @@ public class UIManager : MonoBehaviour
     [Space]
     public TextMeshProUGUI mutationPointsGainCueText;
     public GameObject mutationPointsGainCue;
+    private Queue<string> pendingMutationCues;
+    private bool cueRunning = false;
+    
     //public event System.Action<List<int>> updateParams;
 
 
@@ -128,6 +133,8 @@ public class UIManager : MonoBehaviour
 
         Instance = this;
         parameters = new List<Parameter>();
+        pendingMutationCues = new Queue<string>();
+        climbAnimator = climbIndicator.gameObject.GetComponent<Animator>();
     }
     //Thanks ChatG
     private void Start()
@@ -183,6 +190,22 @@ public class UIManager : MonoBehaviour
     public void showClimb(bool _active)
     {
         climbIndicator.gameObject.SetActive(_active);
+    }
+
+    public void playClimb()
+    {
+        if (climbAnimator.speed == 0f)
+        {
+            climbAnimator.speed = 1f;
+        }
+    }
+
+    public void pauseClimb()
+    {
+        if (climbAnimator.speed != 0f)
+        {
+            climbAnimator.speed = 0f;
+        }
     }
     public void showContainationBuildUp(bool _active, float _completion)
     {
@@ -336,8 +359,29 @@ public class UIManager : MonoBehaviour
         tutorialCaption.text = _narration;
     }
 
-    public IEnumerator cueMutation()
+    public void cueMutation(string cueText)
     {
+        pendingMutationCues.Enqueue(cueText);
+        if (!cueRunning)
+        {
+            StartCoroutine(_cueMutationProcessor());
+        }
+    }
+
+    private IEnumerator _cueMutationProcessor()
+    {
+        cueRunning = true; 
+        while (pendingMutationCues.Count > 0)
+        {
+            yield return _cueMutation();
+        }
+        cueRunning = false;
+        
+    }
+
+    private IEnumerator _cueMutation()
+    {
+        mutationPointsGainCueText.text = pendingMutationCues.Dequeue();
         mutationPointsGainCue.SetActive(true);
         yield return new WaitForSeconds(2f);
         mutationPointsGainCue.SetActive(false);

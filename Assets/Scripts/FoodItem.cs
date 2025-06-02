@@ -114,9 +114,10 @@ public class FoodItem : Contaminable
     {
         base.atMinutePass();
 		//if we exceed value,
-		if(contaminationValue >= 100 && poisonedEffect.isPlaying)
+		if(contaminationValue >= 100 && !poisonedEffect.isPlaying)
 		{
-            onFullyContaminated();
+            onPoisoned();
+            onFullyContaminated(); 
         }
     }
 

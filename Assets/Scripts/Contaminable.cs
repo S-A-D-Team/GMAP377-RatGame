@@ -10,7 +10,7 @@ public class Contaminable : MonoBehaviour
     protected float contaminationValue = 0;
     [SerializeField]
     [Tooltip("Contamination buildup of this item (per hour)")]
-    protected float contaminationBuildup = 0;
+    protected float contaminationBuildup = 0f;
     [SerializeField]
     [Tooltip("Mutation Points granted on Infection")]
     protected int mutationYield = 1;
@@ -66,14 +66,15 @@ public class Contaminable : MonoBehaviour
     /// </summary>
     protected virtual void atMinutePass()
     {
-        contaminationValue += contaminationBuildup / 60f;
+        //higher potency items have higher buildup resistance
+        contaminationValue += contaminationBuildup / (60f * (int)potency);
         contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
         if (contaminationValue >= 100f && canGrantPoints)
         {
             canGrantPoints = false;
             int trueMutationYield = mutationYield * (int)potency;
-            UIManager.Instance.mutationPointsGainCueText.text = "You gained " + trueMutationYield.ToString() + " mutation points";
-            StartCoroutine(UIManager.Instance.cueMutation());
+            string pointsGained = "You gained " + trueMutationYield.ToString() + " mutation points";
+            UIManager.Instance.cueMutation(pointsGained);
             ContaminationManager.Instance.AddMutationPoints(trueMutationYield);
 
             if (isWinCondition)
@@ -94,9 +95,9 @@ public class Contaminable : MonoBehaviour
     protected virtual void ContaminateItem()
 	{
         //HEre we can add more buildup based on perks?
-        contaminationValue += 20f;
+        contaminationValue += 100f;
         contaminationValue = Mathf.Clamp(contaminationValue, 0f, 100f);
-        AddBuildUp(5f);
+        AddBuildUp(25f);
         //tick it
         atMinutePass();
         //Visual feedback

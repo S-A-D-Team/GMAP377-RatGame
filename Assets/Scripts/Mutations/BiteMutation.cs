@@ -16,7 +16,7 @@ public class BiteMutation : PhysicalMutation, IMutation, IToggleable
 
     public override void onMutate()
     {
-        UIManager.Instance.mutationPointsGainCueText.text = obtainedStr;
+        UIManager.Instance.cueMutation(obtainedStr);
         GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "BiteMutation");
         if (toRemove != null)
         {

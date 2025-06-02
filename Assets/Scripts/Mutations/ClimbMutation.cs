@@ -16,7 +16,7 @@ public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
 
     public override void onMutate()
     {
-        UIManager.Instance.mutationPointsGainCueText.text = obtainedStr;
+        UIManager.Instance.cueMutation(obtainedStr);
         //One-and-done mutation, removed from mutation pool after unlocked
         GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "ClimbMutation");
         if (toRemove != null)
