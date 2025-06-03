@@ -52,6 +52,7 @@ public class HumanAI : EnemyAi
 
     [SerializeField]
     private GameObject eyes;
+    AudioSource audioData;
 
     // Start is called before the first frame update
     void Start()
@@ -65,6 +66,7 @@ public class HumanAI : EnemyAi
         playerMoving = false;
         humanDeath = new UnityEvent();
         placingTraps = false;
+        audioData = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -79,6 +81,7 @@ public class HumanAI : EnemyAi
             playerFound = base.isPlayerSighted(player, eyes.transform);
             if (playerFound)
             {
+                audioData.Play(0);
                 checkMoving();
                 if (!playerMoving && !placingTraps)
                 {
