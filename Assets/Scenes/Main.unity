@@ -3617,6 +3617,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
+      propertyPath: eyes
+      value: 
+      objectReference: {fileID: 473290746}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
       propertyPath: tasks.Array.size
       value: 11
       objectReference: {fileID: 0}
@@ -5223,6 +5228,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 469814250}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &473290746 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8695794918854729498, guid: 01832c9110ba56e44885512f6813cb0b,
+    type: 3}
+  m_PrefabInstance: {fileID: 317614487}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &492249598
 GameObject:
   m_ObjectHideFlags: 0
@@ -12334,6 +12345,16 @@ PrefabInstance:
       objectReference: {fileID: 317614488}
     - target: {fileID: 634294603598769737, guid: 3d102225beae4fc48a51218190e088e0,
         type: 3}
+      propertyPath: eyes
+      value: 
+      objectReference: {fileID: 1581954361}
+    - target: {fileID: 634294603598769737, guid: 3d102225beae4fc48a51218190e088e0,
+        type: 3}
+      propertyPath: trapsToPlace
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 634294603598769737, guid: 3d102225beae4fc48a51218190e088e0,
+        type: 3}
       propertyPath: tasks.Array.size
       value: 7
       objectReference: {fileID: 0}
@@ -14923,6 +14944,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1577399999}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1581954361 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4491897015356675100, guid: 3d102225beae4fc48a51218190e088e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1248979176}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1585123316
 GameObject:
   m_ObjectHideFlags: 0

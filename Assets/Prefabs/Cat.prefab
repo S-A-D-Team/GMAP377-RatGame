@@ -34,6 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4638816605367160766}
+  - {fileID: 1019029275074751439}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!136 &471993792247179293
@@ -55,10 +56,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.263224
-  m_Height: 1.0470996
+  m_Radius: 0.44306278
+  m_Height: 1.4177251
   m_Direction: 2
-  m_Center: {x: -0.0037257357, y: 0.4336275, z: -0.047361616}
+  m_Center: {x: -0.0037257357, y: 0.43605834, z: -0.030505741}
 --- !u!195 &69157498210176613
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -122,6 +123,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.31673995, y: 0.771406, z: 0.72210217}
   m_Center: {x: 0.012585626, y: 0.40564254, z: 0.26893407}
+--- !u!1 &8695794918854729498
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1019029275074751439}
+  m_Layer: 0
+  m_Name: Eyes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1019029275074751439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8695794918854729498}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.686, z: 0.483}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 828151557437959591}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5182194416284772437
 PrefabInstance:
   m_ObjectHideFlags: 0

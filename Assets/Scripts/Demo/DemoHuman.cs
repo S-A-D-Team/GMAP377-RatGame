@@ -4,17 +4,17 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
-public class HumanAI : EnemyAi
+public class DemoHuman : DemoEnemyAi
 {
 
     private int minTaskTime = 10;
-    private int maxTaskTime = 20;
+    private int maxTaskTime = 10;
 
     [SerializeField]
     private int runawayTime;
 
     [SerializeField]
-    private CatAI cat;
+    private DemoCat cat;
 
     [SerializeField]
     private GameObject ratTrap;

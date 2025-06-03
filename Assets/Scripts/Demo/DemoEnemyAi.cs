@@ -5,14 +5,14 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 
 [System.Serializable]
-public struct TaskInfo
+public struct DemoTaskInfo
 {
     public Transform location;
     public float time;
     public float weight;
     public bool endTask;
 
-    public TaskInfo(Transform _location, float _time, float _weight, bool _endTask = false)
+    public DemoTaskInfo(Transform _location, float _time, float _weight, bool _endTask = false)
     {
         this.location = _location;
         this.time = _time;
@@ -22,7 +22,7 @@ public struct TaskInfo
 
 }
 
-public class EnemyAi : MonoBehaviour
+public class DemoEnemyAi : MonoBehaviour
 {
     public static EnemyAi Instance { get; private set; }
     private bool shouldDoTask = false;
@@ -30,6 +30,7 @@ public class EnemyAi : MonoBehaviour
     protected int aiLevel;
     private GameManager gameManager;
     private UnityEvent aiUpdate;
+    private int taskChoice = -1;
 
     void Awake(){
         rayCastBlock = LayerMask.GetMask("Default", "whatIsGround", "Walls");
@@ -84,37 +85,11 @@ public class EnemyAi : MonoBehaviour
             taskEndAction();
         }
 
-        while (task == prevTask && tasks.Count > 1)
-        {
-            float totalWeight = 0f;
-
-            // Calculate total weight excluding the previous task
-            foreach (var t in tasks)
-            {
-                if (t.location.position != prevTask)
-                    totalWeight += t.weight;
-            }
-
-            float randomValue = Random.Range(0, totalWeight);
-            float currentSum = 0f;
-
-            for (int i = 0; i < tasks.Count; i++)
-            {
-                if (tasks[i].location.position == prevTask)
-                    continue;
-
-                currentSum += tasks[i].weight;
-                if (randomValue <= currentSum)
-                {
-                    _index = i;
-                    task = tasks[_index].location.position;
-                    break;
-                }
-            }
-        }
-        shouldDoTask = tasks[_index].endTask;
+        taskChoice++;
+        task = tasks[taskChoice].location.position;
+        shouldDoTask = tasks[taskChoice].endTask;
         agent.SetDestination(task);
-        return (task, tasks[_index].time );
+        return (task, tasks[taskChoice].time );
     }
 
     public void updateAi(){

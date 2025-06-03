@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class CatAI : EnemyAi
+public class DemoCat : DemoEnemyAi
 {
-    private int minTaskTime = 5;
+    private int minTaskTime = 10;
     private int maxTaskTime = 10;
 
     protected NavMeshAgent agent;
