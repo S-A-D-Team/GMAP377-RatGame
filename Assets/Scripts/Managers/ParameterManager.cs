@@ -145,13 +145,12 @@ public class ParameterManager : MonoBehaviour
                     case "Climb":
                         GameManager.Instance.onClimbToggle(isOn);
                         break;
-                    // Add more cases if you want to reflect other mutations
                     /*
                     case "Speed Boost":
-                        Add Speed Boost logic here (Just a way to apply a mutation)
+                        GameManager.Instance.onSpeedStackChange((int)val);
                         break;
                     case "Jump Boost":
-                        Add Jump Boost logic here (Just a way to apply a mutation)
+                        GameManager.Instance.onJumpStackChange((int)val);
                         break;
                     */ 
                 }
