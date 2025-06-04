@@ -13593,13 +13593,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
+      propertyPath: climbCooldown
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
+        type: 3}
       propertyPath: climbStamDrain
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
       propertyPath: jumpChargeRate
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1304832216517500403, guid: dffda832c25c2ae4dbeee30ae07658ef,
         type: 3}
@@ -18780,7 +18785,7 @@ MonoBehaviour:
   walkSpeed: 3.25
   climbSpeed: 2
   airSpeed: 6
-  jumpChargeRate: 10
+  jumpChargeRate: 30
   maxJumpForce: 6.5
   canBite: 1
   canClimb: 0
@@ -18807,6 +18812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpBuffer: 0.1
+  climbBuffer: 0.1
   jumpKey: 32
   runKey: 304
   refreshStatsKey: 114
@@ -22933,7 +22939,7 @@ PrefabInstance:
     - target: {fileID: 4277189983340825798, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 69.849045
+      value: 51.051228
       objectReference: {fileID: 0}
     - target: {fileID: 4302410347969582660, guid: e542447d9f8ed4c42812e281b794e334,
         type: 3}
