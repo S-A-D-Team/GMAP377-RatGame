@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour
                 break;  
             case 4: 
                 ratStats.currentHungerLevel = hungerLevel.Content;
-                ratStats.staminaCap = 0.9f;
+                ratStats.staminaCap = 1f;
 
                 break;
             case 5: 

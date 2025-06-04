@@ -120,7 +120,7 @@ public class FoodItem : Contaminable
     protected virtual void EatItem()
     {
         isEaten = true;
-        UIManager.Instance.changeHungerBar(0.1f * (int)potency);
+        GameManager.Instance.changeHunger(0.1f * (int)potency);
 
         //UI 
         UIManager.Instance.showInteractCue(false);
