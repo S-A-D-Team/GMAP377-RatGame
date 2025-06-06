@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,17 +15,23 @@ public class ParameterManager : MonoBehaviour
     public List<float> ratStatMaxValues = new List<float> { 20f, 20f, 10f, 4f, 4f };
 
     [Header("FoodStat Sliders")]
-    public List<string> foodStatNames = new List<string>
+    public List<string> contamStatNames = new List<string>
     {
         "LowContamPt",
         "MedContamPt",
-        "HighContamPt",
+        "HighContamPt"
+    };
+    public List<float> contamStatMinValues = new List<float> { 1f, 1f, 1f };
+    public List<float> contamStatMaxValues = new List<float> { 15f, 15f, 15f };
+
+    public List<string> hungerStatNames = new List<string>
+    {
         "LowHunger",
         "MedHunger",
         "HighHunger"
     };
-    public List<float> foodStatMinValues = new List<float> { 1f, 1f, 1f, 1f, 1f, 1f };
-    public List<float> foodStatMaxValues = new List<float> { 15f, 15f, 15f, 15f, 15f, 15f };
+    public List<float> hungerStatMinValues = new List<float> { 1f, 1f, 1f };
+    public List<float> hungerStatMaxValues = new List<float> { 15f, 15f, 15f };
 
     [Header("Prefabs")]
     public Toggle togglePrefab;
@@ -43,6 +50,9 @@ public class ParameterManager : MonoBehaviour
     public Button environmentButton;
 
     private RatStats ratStats;
+
+    // Store the current values for food stats (initialize with min values)
+    public List<float> foodStatCurrentValues = new List<float> { 1f, 1f, 1f, 1f, 1f, 1f };
 
     private void Start()
     {
@@ -64,7 +74,7 @@ public class ParameterManager : MonoBehaviour
         if (player != null)
             ratStats = player.GetComponent<RatStats>();
 
-        // Populate all UI panels
+        // Populate all UI panels directly
         PopulateMutationToggles();
         PopulateRatStatSliders();
         PopulateFoodStatSliders();
@@ -120,6 +130,18 @@ public class ParameterManager : MonoBehaviour
                     {
                         if (sliderTexts != null && sliderTexts.Length >= 2)
                             sliderTexts[1].text = ((int)val).ToString();
+
+                        // Call GameManager stack change
+                        switch (mutation)
+                        {
+                            case "Jump Boost":
+                                GameManager.Instance.onJumpStackChange((int)val);
+                                break;
+                            case "Speed Boost":
+                                GameManager.Instance.onSpeedStackChange((int)val);
+                                break;
+                        }
+
                         HandleMutationStacksSlider(mutation, (int)val);
                     });
                 }
@@ -143,7 +165,7 @@ public class ParameterManager : MonoBehaviour
                         isOn = ratStats.canBite;
                         break;
                     case "Climb":
-                        GameManager.Instance.onClimbToggle(isOn);
+                        // GameManager.Instance.onClimbToggle(isOn); // REMOVE THIS LINE
                         break;
                     /*
                     case "Speed Boost":
@@ -156,7 +178,6 @@ public class ParameterManager : MonoBehaviour
                 }
             }
             newToggle.isOn = isOn;
-            HandleMutationToggle(mutation, isOn);
 
             // Show/hide stack slider when toggled
             if (stacksSlider != null)
@@ -164,6 +185,7 @@ public class ParameterManager : MonoBehaviour
                 newToggle.onValueChanged.AddListener((toggleState) =>
                 {
                     stacksSlider.gameObject.SetActive(toggleState);
+                    // Only show/hide the slider, do NOT call GameManager here
                     HandleMutationToggle(mutation, toggleState);
                 });
             }
@@ -191,10 +213,10 @@ public class ParameterManager : MonoBehaviour
                 break;
             /*
             case "Jump Boost":
-                GameManager.Instance.onJumpBoostToggle(isOn);
+                GameManager.Instance.onJumpStackChange(isOn);
                 break;
             case "Speed Boost":
-                GameManager.Instance.onSpeedBoostToggle(isOn);
+                GameManager.Instance.onSpeedStackChange(isOn);
                 break;
             */
             default:
@@ -297,14 +319,12 @@ public class ParameterManager : MonoBehaviour
             case "AirSpeed":
                 ratStats.airSpeed = val;
                 break;
-            /*
-            case "Hunger":
-                // Add hunger logic here
+            case "Hunger Multiplier":
+                ratStats.hunger = ratStats.hunger + val;
                 break;
-            case "Stamina":
-                // Add stamina logic here
-                break; 
-            */
+            case "Stamina Multiplier":
+                ratStats.stamina = ratStats.stamina + val;
+                break;
             default:
                 Debug.LogWarning($"No handler for stat '{statName}'");
                 break;
@@ -313,89 +333,61 @@ public class ParameterManager : MonoBehaviour
 
     void PopulateFoodStatSliders()
     {
-        for (int i = 0; i < foodStatNames.Count; i++)
+        // Contamination sliders
+        for (int i = 0; i < contamStatNames.Count; i++)
         {
+            int idx = i; // capture for closure
             Slider newSlider = Instantiate(wholePrefab, environmentPanel.transform);
 
-            float minValue = foodStatMinValues.Count > i ? foodStatMinValues[i] : newSlider.minValue;
-            float maxValue = foodStatMaxValues.Count > i ? foodStatMaxValues[i] : newSlider.maxValue;
+            float minValue = contamStatMinValues.Count > i ? contamStatMinValues[i] : newSlider.minValue;
+            float maxValue = contamStatMaxValues.Count > i ? contamStatMaxValues[i] : newSlider.maxValue;
 
             newSlider.minValue = minValue;
             newSlider.maxValue = maxValue;
-
-            float statValue = minValue;
-            newSlider.value = statValue;
+            newSlider.value = minValue;
 
             var texts = newSlider.GetComponentsInChildren<TextMeshProUGUI>();
             if (texts.Length >= 2)
             {
-                texts[0].text = foodStatNames[i];
-                texts[1].text = statValue.ToString("0");
+                texts[0].text = contamStatNames[i];
+                texts[1].text = minValue.ToString("0");
             }
 
-            string foodName = foodStatNames[i];
+            newSlider.onValueChanged.AddListener((val) => {
+                if (texts.Length >= 2)
+                    texts[1].text = val.ToString("0");
+                foodStatCurrentValues[idx] = val; // <-- update the value
+            });
+        }
 
-            /*
-            switch (foodName)
+        // Hunger sliders
+        for (int i = 0; i < hungerStatNames.Count; i++)
+        {
+            int idx = i + 3; // hunger values are at indices 3, 4, 5
+            Slider newSlider = Instantiate(wholePrefab, environmentPanel.transform);
+
+            float minValue = hungerStatMinValues.Count > i ? hungerStatMinValues[i] : newSlider.minValue;
+            float maxValue = hungerStatMaxValues.Count > i ? hungerStatMaxValues[i] : newSlider.maxValue;
+
+            newSlider.minValue = minValue;
+            newSlider.maxValue = maxValue;
+            newSlider.value = minValue;
+
+            var texts = newSlider.GetComponentsInChildren<TextMeshProUGUI>();
+            if (texts.Length >= 2)
             {
-                case "LowContaminationPt":
-                    // Add "LowContaminationPt" setup logic here
-                    break;
-                case "MediumContaminationPt":
-                    // Add "MediumContaminationPt" setup logic here
-                    break;
-                case "HighContaminationPt":
-                    // Add "HighContaminationPt" setup logic here
-                    break;
-                case "LowHungerRefill":
-                    // Add "LowHungerRefill" setup logic here
-                    break;
-                case "MediumHungerRefill":
-                    // Add "MediumHungerRefill" setup logic here
-                    break;
-                case "HighHungerRefill":
-                    // Add "HighHungerRefill" setup logic here
-                    break;
-                default:
-                    // No handler for food stat setup
-                    break;
-            } */
+                texts[0].text = hungerStatNames[i];
+                texts[1].text = minValue.ToString("0");
+            }
 
-            newSlider.onValueChanged.AddListener((val) => HandleFoodStatSlider(foodName, val, texts));
+            newSlider.onValueChanged.AddListener((val) => {
+                if (texts.Length >= 2)
+                    texts[1].text = val.ToString("0");
+                foodStatCurrentValues[idx] = val; // <-- update the value
+            });
         }
 
         ForceLayoutRebuild(environmentPanel);
-    }
-
-    void HandleFoodStatSlider(string foodName, float val, TextMeshProUGUI[] texts)
-    {
-        if (texts.Length >= 2)
-            texts[1].text = val.ToString("0");
-
-        switch (foodName)
-        {
-            case "LowContaminationPt":
-                // Add "LowContaminationPt" logic here
-                break;
-            case "MediumContaminationPt":
-                // Add "MediumContaminationPt" logic here
-                break;
-            case "HighContaminationPt":
-                // Add "HighContaminationPt" logic here
-                break;
-            case "LowHungerRefill":
-                // Add "LowHungerRefill" logic here
-                break;
-            case "MediumHungerRefill":
-                // Add "MediumHungerRefill" logic here
-                break;
-            case "HighHungerRefill":
-                // Add "HighHungerRefill" logic here
-                break;
-            default:
-                Debug.LogWarning($"No handler for food stat '{foodName}'");
-                break;
-        }
     }
 
     // Forces a layout rebuild so UI updates immediately
@@ -416,6 +408,22 @@ public class ParameterManager : MonoBehaviour
 
         if (!wasActive) target.SetActive(false);
         if (parent != null && !parentWasActive) parent.SetActive(false);
+    }
+
+    // Add this accessor to get the hunger value for a given potency
+    public float GetHungerValue(Contaminable.potencyLevel potency)
+    {
+        // Hunger values are at indices 3, 4, 5 in your lists
+        /*
+        switch (potency)
+        {
+            case Contaminable.potencyLevel.LOW: return foodStatCurrentValues[3];
+            case Contaminable.potencyLevel.MEDIUM: return foodStatCurrentValues[4];
+            case Contaminable.potencyLevel.HIGH: return foodStatCurrentValues[5];
+            default: return 1f;
+        }
+        */
+        return 1f;
     }
 }
 
