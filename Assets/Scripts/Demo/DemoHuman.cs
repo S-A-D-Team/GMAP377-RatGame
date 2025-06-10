@@ -37,6 +37,7 @@ public class DemoHuman : DemoEnemyAi
 
     private Vector3 prevTask;
     private Vector3 trapPos;
+    private Vector3 secondaryTrapPos;
 
     private KeyCode killKey = KeyCode.Z;
 
@@ -79,12 +80,13 @@ public class DemoHuman : DemoEnemyAi
             playerFound = base.isPlayerSighted(player, eyes.transform);
             if (playerFound)
             {
-                checkMoving();
+                StartCoroutine(checkMoving());
                 if (!playerMoving && !placingTraps)
                 {
                     StartCoroutine(timeReaction());
                     Reaction();
                     isReacting = true;
+                    StartCoroutine(SecondaryTrapCheck());
 
                     //if the player has been spotted for the first time, 
                     if (!playerSpottedFirstTime)
@@ -120,6 +122,8 @@ public class DemoHuman : DemoEnemyAi
             {
                 isReacting = false;
                 taskTimer = 0;
+                StartCoroutine(placeTraps(trapsToPlace));
+                trapPos = secondaryTrapPos;
                 StartCoroutine(placeTraps(trapsToPlace));
             }
             else
@@ -176,6 +180,11 @@ public class DemoHuman : DemoEnemyAi
             playerMoving = true;
         }
         playerMoving = false;
+    }
+
+    IEnumerator SecondaryTrapCheck(){
+        yield return new WaitUntil(() => !(base.isPlayerSighted(player, eyes.transform)));
+        secondaryTrapPos = new Vector3 (player.transform.position.x, 0.05f, player.transform.position.z);
     }
 
     /*IEnumerator EatInfected()
