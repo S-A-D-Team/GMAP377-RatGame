@@ -8,6 +8,7 @@ using System.Linq;
 using Random = UnityEngine.Random;
 using static RatStats;
 using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
     public MutationLibrary mutationLibrary;
     public List<GameObject> mutationPool { get; private set; }
     public static GameManager Instance { get; private set; }
+    public UnityEvent aiUpdate;
 
     private void Awake()
     {
@@ -41,6 +43,7 @@ public class GameManager : MonoBehaviour
             mutationLibrary = Resources.Load<MutationLibrary>("MutationLibrary");
             mutationPool = mutationLibrary.mutationPrefabs;
         }
+
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
         //UIManager.Instance.updateParams += OnParamUIUpdate;
 
@@ -84,6 +87,9 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Threshold " + threshold + "% reached.");
         contaminationLevel++;
+
+        aiUpdate.Invoke();
+
         //Handle mutation and potential environment updates from here
         if (winCon && !winRunning)
         {
@@ -265,7 +271,9 @@ public class GameManager : MonoBehaviour
             Destroy(GameObject.FindWithTag("player").gameObject);
             onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
+
             UIManager.Instance.cueDeathUI(2);
+            //AudioManager.Instance.playDeath();
         }
 
     }

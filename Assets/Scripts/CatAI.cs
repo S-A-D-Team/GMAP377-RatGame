@@ -32,9 +32,13 @@ public class CatAI : EnemyAi
     private bool followingTrail = false, playerInZone = true;
     private int trailIndex = 0;
 
+    [SerializeField]
+    private GameObject eyes;
+
     [Space]
     public List<TaskInfo> CatTasks;
 
+    AudioSource audioData;
 
     // Start is called before the first frame update
     void Start()
@@ -44,12 +48,14 @@ public class CatAI : EnemyAi
         isInTask = false;
         isReacting = false;
         prevTask = new Vector3(0, 0, 0);
+        audioData = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(playerLockedOn)
+        playerFound = base.isPlayerSighted(player, eyes.transform);
+        /*if(playerLockedOn)
         {
             anim.SetFloat("WalkSpeed", 1.0f);
             Vector3 direction = (player.position - transform.position).normalized;
@@ -60,19 +66,15 @@ public class CatAI : EnemyAi
             if(player.gameObject.GetComponent<PlayerSafeZone>().isTouchingWallBack)
             {
                 playerLockedOn = false;
-                playerFound = false;
             }
-            return;
-        }
+        }*/
 
-        playerFound = base.isPlayerSighted(player) && base.isSightClear(player);
         if (!isReacting)
         {
             if (playerFound)
             {
+                audioData.Play(0);
                 Reaction();
-                isReacting = true;
-                playerLockedOn = true;
 
                 //if the player has been spotted for the first time, 
                 if(!playerSpottedFirstTime)
@@ -103,33 +105,60 @@ public class CatAI : EnemyAi
                     isInTask = false;
                 }
             }
-        }
+        } 
         else
         {
-            if (!playerFound)
+            if(!playerFound)
             {
-                agent.speed = 1;
-                agent.stoppingDistance = 2;
-                anim.SetFloat("WalkSpeed", 0f);
-                isReacting = false;
+                StartCoroutine(StopChase());
             }
             else
             {
-                agent.speed = 2.5f;
-                agent.stoppingDistance = 0;
-
-                anim.SetFloat("WalkSpeed", 1.0f);
-                Debug.Log("Chasing the player w NavMesh");
-
-                agent.SetDestination(player.position);
+                Chase();
             }
         }
     }
 
-    private void Reaction()
+    public void Reaction()
     {
         isInTask = false;
         taskTimer = 0;
+        isReacting = true;
+        playerLockedOn = true;
+    }
+
+    public void Chase(){
+        agent.speed = 3.5f;
+        agent.stoppingDistance = 0;
+
+        anim.SetFloat("WalkSpeed", 1.0f);
+        //Debug.Log("Chasing the player w NavMesh");
+                
+        agent.SetDestination(player.position);
+    }
+
+    IEnumerator StopChase(){
+        yield return new WaitUntil(ReachedDestination);
+        agent.speed = 1;
+        agent.stoppingDistance = 2;
+        anim.SetFloat("WalkSpeed", 0f);
+        isReacting = false;
+        playerLockedOn = false;
+    }
+
+    private bool ReachedDestination()
+    {
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                if(!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //depricated as Cat chase will use NavMesh
