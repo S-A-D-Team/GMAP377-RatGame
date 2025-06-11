@@ -26,7 +26,7 @@ public class FoodItem : Contaminable
         //if (poisoningEffect != null) { poisoningEffect.Stop(); }
 
 	}
-    private void Update()
+    protected void Update()
     {
         if (isColliding)
         {
@@ -124,10 +124,8 @@ public class FoodItem : Contaminable
     protected virtual void EatItem()
     {
         isEaten = true;
-
         audioData.Play(0);
-
-        UIManager.Instance.changeHungerBar(0.1f * (int)potency);
+        GameManager.Instance.changeHunger(0.1f * (int)potency);
 
         //UI 
         UIManager.Instance.showInteractCue(false);

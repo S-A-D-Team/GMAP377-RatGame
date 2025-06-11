@@ -58,12 +58,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private LayerMask whatIsGround;
     private bool grounded;
-    private bool wasGroundedLastFrame = false;
+    private bool wasGroundedLastFrame = true;
 
     [Header("Climb Check")]
     private bool climbing = false;
     [SerializeField]
-    private int climbCooldown = 8;
+    private int climbCooldown = 90;
+    private bool climbToggleQueued = false;
 
     [Header("Jumping")]
     [SerializeField]
@@ -232,6 +233,7 @@ public class PlayerMovement : MonoBehaviour
         }
         //Ascertain player intention based on input and position
         ActionStateUpdate();
+        HandleClimbToggle();
 
         //Ignore any stamina interactions if ravenous - it is essentially infinite in this state
         if (!tooHungryToCare)
@@ -255,37 +257,37 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.V))
         {
-            GameManager.Instance.winTheGame();
+            StartCoroutine(GameManager.Instance.winTheGame());
         }
     }
 
 
     private void FixedUpdate()
     {
-        wasGroundedLastFrame = grounded;
         //For movement along surfaces up to a certain steepness
         CheckGround();
-        //Ascertain player positioning relative to surfaces
-        PositionalStateUpdate();
         //Smoothen forces on the player in an air-to-ground transition, reduces slipperyness and bounciness
         bool isLanding = !wasGroundedLastFrame && grounded;
         if (isLanding)
         {
             OnLanding();
         }
-        
+        //Frame-sensitive state information
+        wasGroundedLastFrame = grounded;
+        if (climbToggleQueued)
+        {
+            climbToggleQueued = false;
+            TryClimbToggle();
+
+        }
+        //Ascertain player positioning relative to surfaces
+        PositionalStateUpdate();
         //Apply movement based on the above combination of surface checks, input, current positional state
         MovePlayer();
         //Adjust true movement to valid ranges
         SpeedControl();
         //Swap player material depending on physics needs
         MaterialUpdate();
-
-        /*if (grounded && playerInput.MoveInput == Vector2.zero)
-        {
-            Vector3 currentVelocity = rb.velocity;
-            rb.velocity -= Vector3.ProjectOnPlane(currentVelocity, groundNormal);
-        }*/
     }
 
     public void AdjustStatsToHunger()
@@ -386,7 +388,7 @@ public class PlayerMovement : MonoBehaviour
     {
         jumpStarted = false;
         canJump = true;
-        //currentVertical = verticalAction.Idle;
+        currentVertical = verticalAction.Idle;
 
         StopCoroutine(FullHop());
 
@@ -415,6 +417,14 @@ public class PlayerMovement : MonoBehaviour
         //Lightly anchor the rat to the surface to counteract other uneven forces
         rb.AddForce(-groundNormal * 100f, ForceMode.Acceleration);
 
+    }
+
+    private void HandleClimbToggle()
+    {
+        if (playerInput.ClimbPressed && canClimb)
+        {
+            climbToggleQueued = true;
+        }
     }
 
     IEnumerator HandleJump()
@@ -546,7 +556,8 @@ public class PlayerMovement : MonoBehaviour
         Vector3 climbOrigin = transform.TransformPoint(ratCollider.center);
         Vector3 direction = climbing ? attachDirection : orientation.forward;
         Vector3 climbEndpoint = climbOrigin + direction * (ratCollider.radius * 1.25f);
-        Gizmos.DrawLine(climbOrigin, climbEndpoint);
+        Vector3 climbEndpoint_ = climbOrigin + direction * (playerWidth * 0.5f + (ratCollider.radius * 1.25f));
+        Gizmos.DrawLine(climbOrigin, climbEndpoint_);
     }
 
     private bool NearClimbable()
@@ -565,7 +576,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsValidClimbable()
     {
-        float rayDistance = playerWidth * 0.5f + 0.01f;
+        float rayDistance = playerWidth * 0.5f + (ratCollider.radius * 1.25f);
         RaycastHit hit;
         Vector3 lookDirection = orientation.forward;
         //Checks in front of player orientation transform for climbables (orientation obj currently needed given that the rat doesn't rotate)
@@ -607,7 +618,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsDetached()
     {
-        float rayDistance = playerWidth * 0.5f + 0.01f;
+        float rayDistance = playerWidth * 0.5f + (ratCollider.radius * 1.25f);
         RaycastHit hit;
         if(!Physics.Raycast(transform.TransformPoint(ratCollider.center), attachDirection, out hit, rayDistance))
         {
@@ -645,8 +656,7 @@ public class PlayerMovement : MonoBehaviour
         {
             yield return null;
         }
-            canJump = true;
-        
+        canJump = true;
     }
 
     IEnumerator WaitForFrames(int frameWindow)
@@ -658,26 +668,29 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    //Toggles climbing behavior as necessary, checks ground vs. air otherwise
+    private void TryClimbToggle()
+    {
+        //Detach
+        if (currentPositional == positionalState.Climbing)
+        {
+            climbing = false;
+            StartCoroutine(ClimbCooldown());
+            currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
+
+        }
+        //Attach to climbable surfaces too steep to walk/run up, but no more than 90 degree, so long as climb is unlocked/off cooldown
+        else if (NearClimbable() && canClimb && hasStamina(climbStamDrain))
+        {
+            climbing = true;
+            currentPositional = positionalState.Climbing;
+        }
+        
+    }
+
     private void PositionalStateUpdate()
     {
-        //Toggles climbing behavior as necessary, checks ground vs. air otherwise
-        if (playerInput.ClimbPressed)
-        {
-            //Detach
-            if (currentPositional == positionalState.Climbing)
-            {
-                climbing = false;
-                StartCoroutine(ClimbCooldown());
-                currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
-
-            }
-            //Attach to climbable surfaces too steep to walk/run up, but no more than 90 degree, so long as climb is unlocked/off cooldown
-            else if (NearClimbable() && canClimb && hasStamina(climbStamDrain))
-            {
-                climbing = true;
-                currentPositional = positionalState.Climbing;
-            }
-        }
+        
         //Auto-update as a defensive measure
         if (currentPositional != positionalState.Climbing)
         {
@@ -731,7 +744,7 @@ public class PlayerMovement : MonoBehaviour
                 currentVertical = verticalAction.Idle;
                 currentLateral = lateralAction.Idle;
                 
-                if (playerInput.JumpPressed && canJump)
+                if (playerInput.BufferedJump() && canJump)
                 {
                     Debug.Log("Wall jump intended");
                     currentVertical = verticalAction.WallJumping;
