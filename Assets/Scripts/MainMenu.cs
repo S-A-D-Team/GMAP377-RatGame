@@ -8,6 +8,7 @@ public class MainMenu : MonoBehaviour
 {
     public GameObject controlsScreen;
     public GameObject loadingScreen;
+    public GameObject SettingObject;
     public Image loadingBarFill;
 
     void Start()
@@ -40,9 +41,14 @@ public class MainMenu : MonoBehaviour
         StartCoroutine(LoadSceneAsyncly("Demo"));
     }
 
-    public static void Settings()
+    //SettingsUI
+    public void SettingOpen()
     {
-        
+        SettingObject.SetActive(true);
+    }
+    public void SettingClose()
+    {
+        SettingObject.SetActive(false);
     }
 
     public void Controls()
@@ -53,6 +59,7 @@ public class MainMenu : MonoBehaviour
     {
         controlsScreen.SetActive(false);
     }
+    
 
     public static void QuitGame()
     {

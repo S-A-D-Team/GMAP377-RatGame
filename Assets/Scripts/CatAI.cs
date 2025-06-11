@@ -38,6 +38,7 @@ public class CatAI : EnemyAi
     [Space]
     public List<TaskInfo> CatTasks;
 
+    AudioSource audioData;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +48,7 @@ public class CatAI : EnemyAi
         isInTask = false;
         isReacting = false;
         prevTask = new Vector3(0, 0, 0);
+        audioData = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -71,6 +73,7 @@ public class CatAI : EnemyAi
         {
             if (playerFound)
             {
+                audioData.Play(0);
                 Reaction();
 
                 //if the player has been spotted for the first time, 
