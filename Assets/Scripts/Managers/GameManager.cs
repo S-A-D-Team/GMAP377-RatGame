@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     private int contaminationLevel = 0;
 
+    private bool winRunning = false;
+
     public RatStats ratStats;
     [Tooltip("Drag the generated library asset here, attempts to load from runtime resources otherwise")]
     public MutationLibrary mutationLibrary;
@@ -83,17 +85,19 @@ public class GameManager : MonoBehaviour
         Debug.Log("Threshold " + threshold + "% reached.");
         contaminationLevel++;
         //Handle mutation and potential environment updates from here
-        if (winCon)
+        if (winCon && !winRunning)
         {
-            winTheGame();
+            StartCoroutine(winTheGame());
         }
     }
 
-    public void winTheGame()
+    IEnumerator winTheGame()
     {
+        winRunning = true;
         //Time.timeScale = 0.0f;
         //Cursor.lockState = CursorLockMode.Confined;
         //Cursor.visible = true;
+        yield return new WaitForSeconds(5f);
         UIManager.Instance.cueWinUI();
         StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().winCaseQuitToMenu(4f));
     }
