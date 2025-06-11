@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Base Movement")]
     [SerializeField]
     [Tooltip("The base walking speed of the player")]
-    public float speed;
+    private float speed;
     [SerializeField]
     private Transform orientation;
     [SerializeField]
@@ -51,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Running")]
     [SerializeField]
-    public float runSpeed;
+    private float runSpeed;
     private bool running;
 
     [Header("Ground Check")]
@@ -69,9 +69,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float jumpChargeRate;
     [SerializeField]
-    public float minJumpForce;
+    private float minJumpForce;
     [SerializeField]
-    public float maxJumpForce;
+    private float maxJumpForce;
     [SerializeField]
     private int jumpCooldown = 10;
     [SerializeField]

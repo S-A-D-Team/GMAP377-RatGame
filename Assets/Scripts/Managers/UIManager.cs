@@ -325,7 +325,7 @@ public class UIManager : MonoBehaviour
         {
             _uis.SetActive(true);
         }
-        
+        //SetupParamUIListeners();
     }
 
     public void showInteractCue(bool _state)
@@ -616,5 +616,7 @@ public class UIManager : MonoBehaviour
         }
 
     }
-}
 
+
+
+}

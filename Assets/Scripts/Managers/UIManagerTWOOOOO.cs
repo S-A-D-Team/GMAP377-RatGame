@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class UIManagerTWOOOOO : MonoBehaviour
 {
     public GameObject controlsScreen;
-    public GameObject SettingObject;
     public IEnumerator startReload(float time)
     {
         yield return new WaitForSeconds(time);
@@ -46,7 +45,6 @@ public class UIManagerTWOOOOO : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
-    //Controls UI
     public void Controls()
     {
         controlsScreen.SetActive(true);
@@ -54,15 +52,5 @@ public class UIManagerTWOOOOO : MonoBehaviour
     public void ControlsBack()
     {
         controlsScreen.SetActive(false);
-    }
-    
-    //SettingsUI
-    public void SettingOpen()
-    {
-        SettingObject.SetActive(true);
-    }
-    public void SettingClose()
-    {
-        SettingObject.SetActive(false);
     }
 }

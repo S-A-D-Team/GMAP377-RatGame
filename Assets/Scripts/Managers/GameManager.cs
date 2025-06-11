@@ -267,9 +267,7 @@ public class GameManager : MonoBehaviour
             Destroy(GameObject.FindWithTag("player").gameObject);
             onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
-
             UIManager.Instance.cueDeathUI(2);
-            //AudioManager.Instance.playDeath();
         }
 
     }
