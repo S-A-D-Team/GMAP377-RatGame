@@ -257,7 +257,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.V))
         {
-            GameManager.Instance.winTheGame();
+            StartCoroutine(GameManager.Instance.winTheGame());
         }
     }
 

@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator winTheGame()
+    public IEnumerator winTheGame()
     {
         winRunning = true;
         //Time.timeScale = 0.0f;

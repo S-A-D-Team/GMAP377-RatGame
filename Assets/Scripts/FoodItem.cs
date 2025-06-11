@@ -22,7 +22,7 @@ public class FoodItem : Contaminable
 		poisonedEffect.Stop();
         //if (poisoningEffect != null) { poisoningEffect.Stop(); }
 	}
-    private void Update()
+    protected void Update()
     {
         if (isColliding)
         {
