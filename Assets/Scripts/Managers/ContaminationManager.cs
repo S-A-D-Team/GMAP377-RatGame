@@ -193,4 +193,19 @@ public class ContaminationManager : MonoBehaviour
         }
 
     }
+
+    public void SetPotencyForLevel(Contaminable.potencyLevel level, float newValue)
+    {
+        foreach (var contaminable in contaminables.Keys)
+        {
+            if (contaminable.potency == level)
+            {
+                contaminable.potencyValue = newValue;
+            }
+        }
+
+        Debug.Log($"[ContaminationManager] Set potency value of {level} to {newValue} for all matching contaminables.");
+    }
+
+
 }

@@ -15,23 +15,14 @@ public class ParameterManager : MonoBehaviour
     public List<float> ratStatMaxValues = new List<float> { 20f, 20f, 10f, 4f, 4f };
 
     [Header("FoodStat Sliders")]
-    public List<string> contamStatNames = new List<string>
+    public List<string> potencyStatNames = new List<string>
     {
-        "LowContamPt",
-        "MedContamPt",
-        "HighContamPt"
+        "LowPotency",
+        "MedPotency",
+        "HighPotency"
     };
-    public List<float> contamStatMinValues = new List<float> { 1f, 1f, 1f };
-    public List<float> contamStatMaxValues = new List<float> { 15f, 15f, 15f };
-
-    public List<string> hungerStatNames = new List<string>
-    {
-        "LowHunger",
-        "MedHunger",
-        "HighHunger"
-    };
-    public List<float> hungerStatMinValues = new List<float> { 1f, 1f, 1f };
-    public List<float> hungerStatMaxValues = new List<float> { 15f, 15f, 15f };
+    public List<float> potencyStatMinValues = new List<float> { 1f, 1f, 1f };
+    public List<float> potencyStatMaxValues = new List<float> { 15f, 15f, 15f };
 
     [Header("Prefabs")]
     public Toggle togglePrefab;
@@ -50,9 +41,10 @@ public class ParameterManager : MonoBehaviour
     public Button environmentButton;
 
     private RatStats ratStats;
+    private ContaminationManager contaminationManager;
 
-    // Store the current values for food stats (initialize with min values)
-    public List<float> foodStatCurrentValues = new List<float> { 1f, 1f, 1f, 1f, 1f, 1f };
+    // Store the current values for potency stats (initialize with min values)
+    public List<float> potencyStatCurrentValues = new List<float> { 1f, 1f, 1f };
 
     private void Start()
     {
@@ -73,6 +65,11 @@ public class ParameterManager : MonoBehaviour
         var player = GameObject.FindWithTag("player");
         if (player != null)
             ratStats = player.GetComponent<RatStats>();
+
+        contaminationManager = FindObjectOfType<ContaminationManager>();
+        if (contaminationManager == null)
+        Debug.LogWarning("ContaminationManager not found in scene.");
+
 
         // Populate all UI panels directly
         PopulateMutationToggles();
@@ -333,14 +330,13 @@ public class ParameterManager : MonoBehaviour
 
     void PopulateFoodStatSliders()
     {
-        // Contamination sliders
-        for (int i = 0; i < contamStatNames.Count; i++)
+        for (int i = 0; i < potencyStatNames.Count; i++)
         {
-            int idx = i; // capture for closure
+            int idx = i;
             Slider newSlider = Instantiate(wholePrefab, environmentPanel.transform);
 
-            float minValue = contamStatMinValues.Count > i ? contamStatMinValues[i] : newSlider.minValue;
-            float maxValue = contamStatMaxValues.Count > i ? contamStatMaxValues[i] : newSlider.maxValue;
+            float minValue = potencyStatMinValues.Count > i ? potencyStatMinValues[i] : newSlider.minValue;
+            float maxValue = potencyStatMaxValues.Count > i ? potencyStatMaxValues[i] : newSlider.maxValue;
 
             newSlider.minValue = minValue;
             newSlider.maxValue = maxValue;
@@ -349,46 +345,32 @@ public class ParameterManager : MonoBehaviour
             var texts = newSlider.GetComponentsInChildren<TextMeshProUGUI>();
             if (texts.Length >= 2)
             {
-                texts[0].text = contamStatNames[i];
+                texts[0].text = potencyStatNames[i];
                 texts[1].text = minValue.ToString("0");
             }
 
             newSlider.onValueChanged.AddListener((val) => {
                 if (texts.Length >= 2)
                     texts[1].text = val.ToString("0");
-                foodStatCurrentValues[idx] = val; // <-- update the value
-            });
-        }
 
-        // Hunger sliders
-        for (int i = 0; i < hungerStatNames.Count; i++)
-        {
-            int idx = i + 3; // hunger values are at indices 3, 4, 5
-            Slider newSlider = Instantiate(wholePrefab, environmentPanel.transform);
+                potencyStatCurrentValues[idx] = val;
 
-            float minValue = hungerStatMinValues.Count > i ? hungerStatMinValues[i] : newSlider.minValue;
-            float maxValue = hungerStatMaxValues.Count > i ? hungerStatMaxValues[i] : newSlider.maxValue;
-
-            newSlider.minValue = minValue;
-            newSlider.maxValue = maxValue;
-            newSlider.value = minValue;
-
-            var texts = newSlider.GetComponentsInChildren<TextMeshProUGUI>();
-            if (texts.Length >= 2)
-            {
-                texts[0].text = hungerStatNames[i];
-                texts[1].text = minValue.ToString("0");
-            }
-
-            newSlider.onValueChanged.AddListener((val) => {
-                if (texts.Length >= 2)
-                    texts[1].text = val.ToString("0");
-                foodStatCurrentValues[idx] = val; // <-- update the value
+                // Apply to Contaminable instances through ContaminationManager
+                if (contaminationManager != null)
+                {
+                    Contaminable.potencyLevel potencyLevel = (Contaminable.potencyLevel)(idx + 1); // LOW = 1, MEDIUM = 2, HIGH = 3
+                    contaminationManager.SetPotencyForLevel(potencyLevel, val);
+                }
+                else
+                {
+                    Debug.LogWarning("ContaminationManager is missing. Cannot apply potency changes.");
+                }
             });
         }
 
         ForceLayoutRebuild(environmentPanel);
     }
+
 
     // Forces a layout rebuild so UI updates immediately
     private void ForceLayoutRebuild(GameObject target)
@@ -410,20 +392,17 @@ public class ParameterManager : MonoBehaviour
         if (parent != null && !parentWasActive) parent.SetActive(false);
     }
 
-    // Add this accessor to get the hunger value for a given potency
-    public float GetHungerValue(Contaminable.potencyLevel potency)
+    // Update this accessor to use the new potency list
+    public float GetPotencyValue(Contaminable.potencyLevel potency)
     {
-        // Hunger values are at indices 3, 4, 5 in your lists
-        /*
+        // 0: LOW, 1: MEDIUM, 2: HIGH
         switch (potency)
         {
-            case Contaminable.potencyLevel.LOW: return foodStatCurrentValues[3];
-            case Contaminable.potencyLevel.MEDIUM: return foodStatCurrentValues[4];
-            case Contaminable.potencyLevel.HIGH: return foodStatCurrentValues[5];
+            case Contaminable.potencyLevel.LOW: return potencyStatCurrentValues[0];
+            case Contaminable.potencyLevel.MEDIUM: return potencyStatCurrentValues[1];
+            case Contaminable.potencyLevel.HIGH: return potencyStatCurrentValues[2];
             default: return 1f;
         }
-        */
-        return 1f;
     }
 }
 
