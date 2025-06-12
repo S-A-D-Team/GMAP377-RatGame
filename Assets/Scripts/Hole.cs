@@ -12,6 +12,14 @@ public class Hole : MonoBehaviour
 
     public List<GameObject> wallsInContact = new List<GameObject>();
 
+    AudioSource audioData;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        audioData = GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         if (!isEnabled) return;
@@ -43,6 +51,8 @@ public class Hole : MonoBehaviour
             return;
 
         Transform wall = wallsInContact[0].transform;
+
+        audioData.Play(0);
 
         //find the matching orientation reference based on name
         string _refName = wall.name.Replace("Wall", "HoleRef"); // "Wall (1)" becomes "HoleRef (1)"

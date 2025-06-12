@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 //Singleton for evaluating contamination levels within game environment
 public class ContaminationManager : MonoBehaviour
@@ -98,6 +99,12 @@ public class ContaminationManager : MonoBehaviour
                 c.potency = (Contaminable.potencyLevel)rn;
             }
         }
+    }
+
+    public List<Contaminable> GetContaminables(string name)
+    {
+        List<Contaminable> contamsOfType = contaminables.Keys.Where(item => item.itemName == name).ToList();
+        return contamsOfType;
     }
 
     public void CalculateContaminationLevel(Contaminable c, float v)

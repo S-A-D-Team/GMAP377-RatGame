@@ -15,14 +15,18 @@ public class FoodItem : Contaminable
     private bool isEaten = false;
     [SerializeField] private bool isColliding = false;
 
+    AudioSource audioData;
+
     protected override void Start()
 	{
 		base.Start();
 		//make sure the fx is not playing 
 		poisonedEffect.Stop();
+        audioData = GetComponent<AudioSource>();
         //if (poisoningEffect != null) { poisoningEffect.Stop(); }
+
 	}
-    private void Update()
+    protected void Update()
     {
         if (isColliding)
         {
@@ -120,7 +124,8 @@ public class FoodItem : Contaminable
     protected virtual void EatItem()
     {
         isEaten = true;
-        UIManager.Instance.changeHungerBar(0.1f * (int)potency);
+        audioData.Play(0);
+        GameManager.Instance.changeHunger(0.1f * (int)potency);
 
         //UI 
         UIManager.Instance.showInteractCue(false);
