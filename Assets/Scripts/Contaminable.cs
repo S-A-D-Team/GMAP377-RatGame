@@ -25,6 +25,8 @@ public class Contaminable : MonoBehaviour
         HIGH = 3
     }
 
+    public float potencyValue = 1f;
+
     public string itemName;
 
     public potencyLevel potency;
