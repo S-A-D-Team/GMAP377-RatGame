@@ -152,10 +152,14 @@ public class DemoHuman : DemoEnemyAi
 
     private void Runaway()
     {
-        Vector3 playerDirection = player.position - transform.position;
-        Vector3 oppositeDirection = transform.position - playerDirection;
+        if(aiLevel == 0){
+            Vector3 playerDirection = player.position - transform.position;
+            Vector3 oppositeDirection = transform.position - playerDirection;
 
-        agent.SetDestination(oppositeDirection);
+            agent.SetDestination(oppositeDirection);
+        } else{
+            agent.SetDestination(player.position);
+        }
     }
 
     IEnumerator placeTraps(int numToPlace){
