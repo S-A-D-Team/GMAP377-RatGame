@@ -38,7 +38,7 @@ public class MainMenu : MonoBehaviour
 
     public void PlayDemo()
     {
-        StartCoroutine(LoadSceneAsyncly("Demo"));
+        StartCoroutine(LoadSceneAsyncly("SpringFinal_Demo"));
     }
 
     //SettingsUI
