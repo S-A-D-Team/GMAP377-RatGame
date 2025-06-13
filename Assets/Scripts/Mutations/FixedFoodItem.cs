@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Food item that automatically grants a specific mutation
+//Food item that automatically grants a specific mutation (or nothing)
 //DEMONSTRATION/TESTING PURPOSES ONLY
 public class FixedFoodItem : FoodItem
 {
@@ -11,7 +11,8 @@ public class FixedFoodItem : FoodItem
         SPEED,
         JUMP,
         BITE,
-        CLIMB
+        CLIMB,
+        NONE
     };
 
     //MUST BE SET IN INSPECTOR
@@ -52,6 +53,8 @@ public class FixedFoodItem : FoodItem
                 break;
             case fixedMutations.CLIMB:
                 GameManager.Instance.AddMutation<ClimbMutation>();
+                break;
+            case fixedMutations.NONE:
                 break;
         }
     }

@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &687930315948406757
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 40194118417656445, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_Name
+      value: FixedCheese
+      objectReference: {fileID: 0}
+    - target: {fileID: 40194118417656445, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 563050692718660104, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1397490897564482858, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1905982775168741892, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2129845861263449445, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4017935613948558550, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4103111502470954747, guid: ff27143f697666a45b109f18060a1355, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 40194118417656445, guid: ff27143f697666a45b109f18060a1355,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5319075805953769876}
+  m_SourcePrefab: {fileID: 100100000, guid: ff27143f697666a45b109f18060a1355, type: 3}
+--- !u!1 &649301938261433752 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 40194118417656445, guid: ff27143f697666a45b109f18060a1355,
+    type: 3}
+  m_PrefabInstance: {fileID: 687930315948406757}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-5319075805953769876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649301938261433752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f36435231a43fef4b93eaadc5922c0fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contaminationValue: 0
+  contaminationBuildup: 0
+  mutationYield: 1
+  canGrantPoints: 1
+  itemName: Cheese
+  potency: 2
+  lerpProperty: _Contamination_Lerp
+  isWinCondition: 0
+  poisoned: 0
+  poisonedEffect: {fileID: 0}
+  chompEffect: {fileID: 0}
+  chompAnimLength: 0
+  isColliding: 0
+  mutationGranted: 0
