@@ -22,8 +22,6 @@ public class HumanAI : EnemyAi
     [SerializeField]
     private GameObject reactionCanvas;
 
-    protected NavMeshAgent agent;
-
     private Transform player;
 
     private bool playerFound;
@@ -34,6 +32,11 @@ public class HumanAI : EnemyAi
 
     private float taskTimer;
     private float locationTime;
+    private float baseSpeed;
+    private float startTurnAngle;
+    public float rotationSpeed = 1f;
+    public float minAngle = -45f;
+    public float maxAngle = 45f;
 
     private Vector3 prevTask;
     private Vector3 trapPos;
@@ -58,7 +61,6 @@ public class HumanAI : EnemyAi
     void Start()
     { 
         player = base.findPlayer();
-        agent = GetComponent<NavMeshAgent>();
         isInTask = false;
         isReacting = false;
         prevTask = new Vector3(0,0,0);
@@ -66,11 +68,13 @@ public class HumanAI : EnemyAi
         playerMoving = false;
         humanDeath = new UnityEvent();
         placingTraps = false;
+        baseSpeed = agent.speed;
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(agent.speed);
         if (Input.GetKey(killKey))
         {
             //StartCoroutine(EatInfected());
@@ -86,6 +90,7 @@ public class HumanAI : EnemyAi
                     StartCoroutine(timeReaction());
                     Reaction();
                     isReacting = true;
+                    agent.speed /= 2;
                     StartCoroutine(SecondaryTrapCheck());
 
                     //if the player has been spotted for the first time, 
@@ -99,13 +104,14 @@ public class HumanAI : EnemyAi
             }
             else if (!isInTask)
             {
-                (Vector3, float) _holderVar = base.changeLocation(HumanTasks, agent, prevTask);
+                (Vector3, float) _holderVar = base.changeLocation(HumanTasks, prevTask);
                 prevTask = _holderVar.Item1;
                 minTaskTime = (int)_holderVar.Item2 - 1;
                 maxTaskTime = (int)_holderVar.Item2 + 1;
                 locationTime = Random.Range(minTaskTime, maxTaskTime);
                 taskTimer = 0;
                 isInTask = true;
+                startTurnAngle = transform.eulerAngles.y;
             }
             else
             {
@@ -113,6 +119,12 @@ public class HumanAI : EnemyAi
                 if (taskTimer >= locationTime)
                 {
                     isInTask = false;
+                }
+                if(ReachedDestination() && isDesperate){
+                    float pingPongValue = Mathf.PingPong(Time.time * rotationSpeed, 0.5f);
+                    float targetYRotation = Mathf.Lerp(startTurnAngle + minAngle, startTurnAngle + maxAngle, pingPongValue);
+
+                    transform.rotation = Quaternion.Euler(0, targetYRotation, 0);
                 }
             }
         }
@@ -128,7 +140,7 @@ public class HumanAI : EnemyAi
             }
             else
             {
-                Runaway();
+                Stalk();
                 taskTimer += Time.deltaTime;
             }
         }
@@ -150,12 +162,10 @@ public class HumanAI : EnemyAi
         reactionCanvas.SetActive(false);
     }
 
-    private void Runaway()
+    private void Stalk()
     {
         Vector3 playerDirection = player.position - transform.position;
-        Vector3 oppositeDirection = transform.position - playerDirection;
-
-        agent.SetDestination(oppositeDirection);
+        agent.SetDestination(playerDirection);
     }
 
     IEnumerator placeTraps(int numToPlace){
@@ -185,6 +195,7 @@ public class HumanAI : EnemyAi
     IEnumerator SecondaryTrapCheck(){
         yield return new WaitUntil(() => !(base.isPlayerSighted(player, eyes.transform)));
         secondaryTrapPos = new Vector3 (player.transform.position.x, 0.05f, player.transform.position.z);
+        agent.speed = (float)(baseSpeed + (0.5 * (aiLevel - 1)));
     }
 
     /*IEnumerator EatInfected()

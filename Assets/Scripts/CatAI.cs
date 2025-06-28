@@ -8,7 +8,6 @@ public class CatAI : EnemyAi
     private int minTaskTime = 5;
     private int maxTaskTime = 10;
 
-    protected NavMeshAgent agent;
 
     private Transform player;
 
@@ -44,7 +43,6 @@ public class CatAI : EnemyAi
     void Start()
     {
         player = base.findPlayer();
-        agent = GetComponent<NavMeshAgent>();
         isInTask = false;
         isReacting = false;
         prevTask = new Vector3(0, 0, 0);
@@ -73,7 +71,7 @@ public class CatAI : EnemyAi
         {
             if (playerFound)
             {
-                audioData.Play(0);
+                audioData.Play();
                 Reaction();
 
                 //if the player has been spotted for the first time, 
@@ -88,7 +86,7 @@ public class CatAI : EnemyAi
                 
                 if (!playerLockedOn)
                 {
-                    (Vector3, float) _holderVar = base.changeLocation(CatTasks, agent, prevTask);
+                    (Vector3, float) _holderVar = base.changeLocation(CatTasks, prevTask);
                     prevTask = _holderVar.Item1;
                     minTaskTime = (int)_holderVar.Item2 - 1;
                     maxTaskTime = (int)_holderVar.Item2 + 1;

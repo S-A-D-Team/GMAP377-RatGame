@@ -26,10 +26,12 @@ public class EnemyAi : MonoBehaviour
 {
     public static EnemyAi Instance { get; private set; }
     private bool shouldDoTask = false;
+    protected bool isDesperate = false;
     private LayerMask rayCastBlock;
     protected int aiLevel;
     private GameManager gameManager;
     private UnityEvent aiUpdate;
+    protected NavMeshAgent agent;
 
     void Awake(){
         rayCastBlock = LayerMask.GetMask("Default", "whatIsGround", "Walls");
@@ -38,6 +40,8 @@ public class EnemyAi : MonoBehaviour
         gameManager = GameObject.Find("Managers").GetComponent<GameManager>();
         aiUpdate = gameManager.aiUpdate;
         aiUpdate.AddListener(updateAi);
+
+        agent = GetComponent<NavMeshAgent>();
     }
     
     // Start is called before the first frame update
@@ -72,7 +76,7 @@ public class EnemyAi : MonoBehaviour
         return false;
     }
 
-    protected (Vector3, float) changeLocation(List<TaskInfo> tasks, NavMeshAgent agent, Vector3 prevTask)
+    protected (Vector3, float) changeLocation(List<TaskInfo> tasks, Vector3 prevTask)
     {
         int _index = 0;
         Vector3 task = prevTask;
@@ -118,7 +122,9 @@ public class EnemyAi : MonoBehaviour
     }
 
     public void updateAi(){
+        isDesperate = true;
         aiLevel++;
+        agent.speed += (1f * (aiLevel - 1));
     }
 
     //will get overridden by child classes
