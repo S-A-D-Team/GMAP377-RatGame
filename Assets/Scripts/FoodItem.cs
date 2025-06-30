@@ -16,11 +16,13 @@ public class FoodItem : Contaminable
     [SerializeField] private bool isColliding = false;
 
     private AudioSource audioData;
+    private MeshRenderer mesh;
 
     protected override void Awake()
     {
         base.Awake();
         audioData = GetComponent<AudioSource>();
+        mesh = GetComponent<MeshRenderer>();
     }
     protected override void Start()
 	{
@@ -28,7 +30,7 @@ public class FoodItem : Contaminable
 		//make sure the fx is not playing and the mesh is active
 		poisonedEffect.Stop();
         audioData.Stop();
-        gameObject.GetComponent<MeshRenderer>().enabled = true;
+        if (mesh != null) { mesh.enabled = true; }
         //if (poisoningEffect != null) { poisoningEffect.Stop(); }
 
 	}
@@ -131,7 +133,7 @@ public class FoodItem : Contaminable
     {
         isEaten = true;
         audioData.Play();
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        if (mesh != null) { mesh.enabled = false; }
         GameManager.Instance.changeHunger(0.1f * (int)potency);
 
         //UI 
