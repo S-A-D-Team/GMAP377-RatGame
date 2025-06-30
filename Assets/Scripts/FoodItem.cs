@@ -45,7 +45,7 @@ public class FoodItem : Contaminable
                     EatItem();
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.F) && !poisoned)
+            else if (Input.GetKeyDown(KeyCode.F) && !poisoned && !isPoisoning)
             {
                 /*
                 if (poisoningEffect == null)
