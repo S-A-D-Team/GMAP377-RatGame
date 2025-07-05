@@ -25,52 +25,41 @@ public struct TaskInfo
 public class EnemyAi : MonoBehaviour
 {
     public static EnemyAi Instance { get; private set; }
-    private bool shouldDoTask = false;
+
+    protected Transform player;
+    protected NavMeshAgent agent;
+    protected bool shouldDoTask = false;
     protected bool isDesperate = false;
-    private LayerMask rayCastBlock;
-    protected int aiLevel;
+    protected LayerMask rayCastBlock;
+    protected int aiLevel = 1;
+
     private GameManager gameManager;
     private UnityEvent aiUpdate;
-    protected NavMeshAgent agent;
 
     void Awake(){
         rayCastBlock = LayerMask.GetMask("Default", "whatIsGround", "Walls");
-        aiLevel = 1;
-
         gameManager = GameObject.Find("Managers").GetComponent<GameManager>();
         aiUpdate = gameManager.aiUpdate;
         aiUpdate.AddListener(updateAi);
-
         agent = GetComponent<NavMeshAgent>();
-    }
-    
-    // Start is called before the first frame update
-    protected Transform findPlayer()
-    {
-        return GameObject.FindWithTag("player").transform;
+        player = GameObject.FindWithTag("player").transform;
     }
 
-    protected bool isPlayerSighted(Transform player, Transform enemyHeight)
-    {
-        Vector3 playerDirection = transform.position - player.position;
-        float playerAngle = Vector3.Angle(transform.forward, playerDirection);
+    protected virtual void updateAi(){
+        isDesperate = true;
+        aiLevel++;
+        agent.speed += (1f * (aiLevel - 1));
+    }
 
-        if(Mathf.Abs(playerAngle) > 135 && Mathf.Abs(playerAngle) < 225)
+    protected bool isPlayerSighted(Transform enemyEyes, float fieldOfView = 90f, float viewDistance = 10f)
+    {
+        Vector3 playerDirection = player.position - enemyEyes.position;
+        float playerAngle = Vector3.Angle(enemyEyes.forward, playerDirection);
+
+        if(playerAngle < fieldOfView / 2f)
         {
-            return isSightClear(player, enemyHeight.position);
-        }
-        return false;
-    }
-
-    protected bool isSightClear(Transform player, Vector3 enemyHeight)
-    {
-        RaycastHit _hit;
-        Vector3 playerDirection = player.position - enemyHeight;
-        if(Physics.Raycast(enemyHeight, playerDirection, out _hit, 10f, rayCastBlock))
-        {
-            if (_hit.transform.CompareTag("player"))
-            {
-                return true;
+            if(Physics.Raycast(enemyEyes.position, playerDirection, out RaycastHit hit, viewDistance, rayCastBlock)){
+                return hit.transform.CompareTag("player");
             }
         }
         return false;
@@ -78,53 +67,46 @@ public class EnemyAi : MonoBehaviour
 
     protected (Vector3, float) changeLocation(List<TaskInfo> tasks, Vector3 prevTask)
     {
-        int _index = 0;
         Vector3 task = prevTask;
+        int index = 0;
 
-        //at the end of previous task, do the task action if we need
-        if(shouldDoTask)
-        {
+        if(shouldDoTask){
             shouldDoTask = false;
             taskEndAction();
         }
 
-        while (task == prevTask && tasks.Count > 1)
-        {
+        while(task == prevTask && tasks.Count > 1){
             float totalWeight = 0f;
-
-            // Calculate total weight excluding the previous task
             foreach (var t in tasks)
-            {
                 if (t.location.position != prevTask)
                     totalWeight += t.weight;
-            }
+            
+            float rand = Random.Range(0, totalWeight);
+            float current = 0f;
 
-            float randomValue = Random.Range(0, totalWeight);
-            float currentSum = 0f;
+            for(int i = 0; i < tasks.Count; i++){
+                if(tasks[i].location.position == prevTask) continue;
+                current += tasks[i].weight;
 
-            for (int i = 0; i < tasks.Count; i++)
-            {
-                if (tasks[i].location.position == prevTask)
-                    continue;
-
-                currentSum += tasks[i].weight;
-                if (randomValue <= currentSum)
-                {
-                    _index = i;
-                    task = tasks[_index].location.position;
+                if(rand <= current){
+                    index = i;
+                    task = tasks[i].location.position;
                     break;
                 }
             }
         }
-        shouldDoTask = tasks[_index].endTask;
+
+        shouldDoTask = tasks[index].endTask;
         agent.SetDestination(task);
-        return (task, tasks[_index].time );
+        return (task, tasks[index].time);
     }
 
-    public void updateAi(){
-        isDesperate = true;
-        aiLevel++;
-        agent.speed += (1f * (aiLevel - 1));
+    protected bool ReachedDestination(){
+        return !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance && (!agent.hasPath || agent.velocity.sqrMagnitude < 0.01f);
+    }
+
+    protected bool TryGetValidNavMeshPosition(Vector3 position){
+        return NavMesh.SamplePosition(position, out _, 0.1f, NavMesh.AllAreas);
     }
 
     //will get overridden by child classes
