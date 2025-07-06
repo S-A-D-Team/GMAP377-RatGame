@@ -104,10 +104,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 moveDirection;
     private Rigidbody rb;
-    private CapsuleCollider ratCollider;
     private BoxCollider ratBox;
-    private float playerWidth;
-    private float playerHeight;
     private Vector3 groundNormal = Vector3.up;
     private Vector3 climbDirection;
     private Vector3 wallJumpDirection;
