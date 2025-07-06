@@ -127,8 +127,8 @@ GameObject:
   - component: {fileID: 1304832216517500403}
   - component: {fileID: 7607355011323265677}
   - component: {fileID: 3377198739701718355}
-  - component: {fileID: 7701203519220823874}
   - component: {fileID: 946212899350555962}
+  - component: {fileID: 5342907393453799599}
   m_Layer: 0
   m_Name: Player
   m_TagString: player
@@ -256,8 +256,21 @@ MonoBehaviour:
     type: 3}
   timeToBite: 1
   wallsInContact: []
---- !u!136 &7701203519220823874
-CapsuleCollider:
+--- !u!114 &946212899350555962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5058273188919755049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043eab7b2589818439467954d027055c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isTouchingWallBack: 0
+--- !u!65 &5342907393453799599
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -274,24 +287,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.0925874
-  m_Height: 0.20447579
-  m_Direction: 2
-  m_Center: {x: 0.0003886968, y: -0.034202978, z: 0.0027785748}
---- !u!114 &946212899350555962
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5058273188919755049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 043eab7b2589818439467954d027055c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isTouchingWallBack: 0
+  serializedVersion: 3
+  m_Size: {x: 0.125, y: 0.125, z: 0.1875}
+  m_Center: {x: 0, y: -0.03, z: 0}
 --- !u!1 &5416546354237750039
 GameObject:
   m_ObjectHideFlags: 0
