@@ -105,6 +105,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection;
     private Rigidbody rb;
     private CapsuleCollider ratCollider;
+    private BoxCollider ratBox;
     private float playerWidth;
     private float playerHeight;
     private Vector3 groundNormal = Vector3.up;
@@ -163,11 +164,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         playerInput = GetComponent<PlayerInputCollection>();
-        //Make sure to grab the collider relevant to physics
-        ratCollider = GetComponents<CapsuleCollider>().FirstOrDefault(col => !col.isTrigger);
-        //These values have swapped x,y because the rat's current object is rotated 90 degrees
-        playerHeight = ratCollider.radius * 2;
-        playerWidth = ratCollider.height;
+        ratBox = GetComponent<BoxCollider>();
     }
     // Start is called before the first frame update
     void Start()
@@ -360,24 +357,24 @@ public class PlayerMovement : MonoBehaviour
         {
             if (playerInput.MoveInput != Vector2.zero)
             {
-                if (ratCollider.sharedMaterial != noFriction)
+                if (ratBox.sharedMaterial != noFriction)
                 {
-                    ratCollider.sharedMaterial = noFriction;
+                    ratBox.sharedMaterial = noFriction;
                 }
             }
             else
             {
-                if (ratCollider.sharedMaterial != idleFriction)
+                if (ratBox.sharedMaterial != idleFriction)
                 {
-                    ratCollider.sharedMaterial = idleFriction;
+                    ratBox.sharedMaterial = idleFriction;
                 }
             }
         }
         else
         {
-            if (ratCollider.sharedMaterial != noFriction)
+            if (ratBox.sharedMaterial != noFriction)
             {
-                ratCollider.sharedMaterial = noFriction;
+                ratBox.sharedMaterial = noFriction;
             }
         }
     }
@@ -507,10 +504,7 @@ public class PlayerMovement : MonoBehaviour
         climbing = false;
         rb.velocity = Vector3.zero;
         Vector3 wallJumpForce = wallJumpDirection * horizontalBounce + Vector3.up * ((minJumpForce + maxJumpForce) / 2f);
-        Debug.Log(wallJumpForce);
-        Debug.Log(Physics.gravity.y > wallJumpForce.y);
         rb.AddForce(wallJumpForce, ForceMode.Impulse);
-        Debug.DrawRay(orientation.position, wallJumpForce, Color.magenta, 2f);
         StartCoroutine(ClimbCooldown());
         StartCoroutine(JumpCooldown());
     }
@@ -518,14 +512,20 @@ public class PlayerMovement : MonoBehaviour
     //Update grounded state and direction of grounded movement for sloped movement
     private void CheckGround() 
     {
-        float castRadius = ratCollider.radius * 0.9f;
-        float castDistance = playerHeight * 0.6f;
-        Vector3 offsetOrigin = transform.TransformPoint(ratCollider.center) + Vector3.up * (castRadius + 0.01f);
+        Vector3 ratCenter = transform.TransformPoint(ratBox.center);
+        Vector3 halfBounds = Vector3.Scale(ratBox.size * 0.5f, transform.lossyScale) * 0.95f;
+        Vector3 castDirection = transform.TransformDirection(Vector3.down);
+        Vector3 normalizedCastDir = castDirection.normalized;
+        Vector3 absNormCastDir = new Vector3(Mathf.Abs(normalizedCastDir.x), Mathf.Abs(normalizedCastDir.y), Mathf.Abs(normalizedCastDir.z));
+        float extentDown = Vector3.Dot(halfBounds, absNormCastDir);
+        float castDistance = extentDown + 0.05f;
+        Vector3 castOrigin = ratCenter - normalizedCastDir * 0.01f;
+        
         //Checks for both even and uneven ground based off the current player collider's geometry
-        if (Physics.SphereCast(offsetOrigin, castRadius, Vector3.down, out RaycastHit hit, castDistance, whatIsGround))
+        if (Physics.BoxCast(castOrigin, halfBounds, Vector3.down, out RaycastHit hit, transform.rotation, castDistance, whatIsGround))
         {
             //Check to see if the hit surface is too steep to traverse by ground movement
-            grounded = Vector3.Angle(hit.normal, Vector3.up) <= maxInclination;
+            grounded = Vector3.Angle(hit.normal, transform.up) <= maxInclination;
             groundNormal = hit.normal;
             lastGrounded = Time.time;
         }
@@ -541,23 +541,52 @@ public class PlayerMovement : MonoBehaviour
         {
             return;
         }
-        //For ground spherecasting
-        float gizmoRadius = ratCollider.radius * 0.9f;
-        float castDistance = playerHeight * 0.6f;
-        Vector3 origin = transform.TransformPoint(ratCollider.center) + Vector3.up * (gizmoRadius + 0.01f);
-        Vector3 endpoint = origin + Vector3.down * castDistance;
-
+        //For ground boxcasting
+        Vector3 ratCenter = transform.TransformPoint(ratBox.center);
+        Vector3 halfBounds = Vector3.Scale(ratBox.size * 0.5f, transform.lossyScale) * 0.95f;
+        Vector3 castDirection = transform.TransformDirection(Vector3.down);
+        Vector3 normalizedCastDir = castDirection.normalized;
+        Vector3 absNormCastDir = new Vector3(Mathf.Abs(normalizedCastDir.x), Mathf.Abs(normalizedCastDir.y), Mathf.Abs(normalizedCastDir.z));
+        float extentDown = Vector3.Dot(halfBounds, absNormCastDir);
+        float castDistance = extentDown + 0.05f;
+        Vector3 castOrigin = ratCenter - normalizedCastDir * 0.01f;
+        
+        //Starting point, matrices used to allign casts with rat rotation
         Gizmos.color = grounded ? Color.green : Color.red;
-        Gizmos.DrawLine(origin, endpoint);
-        Gizmos.DrawWireSphere(endpoint, gizmoRadius);
+        Gizmos.matrix = Matrix4x4.TRS(castOrigin, transform.rotation, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, halfBounds * 2);
+
+        //Ending point
+        Gizmos.color = grounded ? Color.blue : Color.yellow;
+        Gizmos.matrix = Matrix4x4.TRS(castOrigin + castDirection * castDistance, transform.rotation, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, halfBounds * 2);
+
+        //Raycast path
+        Gizmos.color = grounded ? Color.white : Color.black;
+        Gizmos.matrix = Matrix4x4.identity;
+        Gizmos.DrawLine(castOrigin, castOrigin + castDirection * castDistance);
+
+        if (Physics.BoxCast(castOrigin, halfBounds, Vector3.down, out RaycastHit hit, transform.rotation, castDistance, whatIsGround))
+        {
+            //Point of contact
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawSphere(hit.point, 0.02f);
+
+            //Direction of normal between rat and contact surface
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(hit.point, hit.point + hit.normal * 0.2f);
+        }
 
         //For climb raycasting
         Gizmos.color = climbing ? Color.blue : Color.red;
-        Vector3 climbOrigin = transform.TransformPoint(ratCollider.center);
-        Vector3 direction = climbing ? attachDirection : orientation.forward;
-        Vector3 climbEndpoint = climbOrigin + direction * (ratCollider.radius * 1.25f);
-        Vector3 climbEndpoint_ = climbOrigin + direction * (playerWidth * 0.5f + (ratCollider.radius * 1.25f));
-        Gizmos.DrawLine(climbOrigin, climbEndpoint_);
+        Vector3 climbOrigin = transform.TransformPoint(ratBox.center);
+        Vector3 direction = climbing ? attachDirection : orientation.TransformDirection(Vector3.forward);
+        Vector3 normalizedDir = direction.normalized;
+        Vector3 absNormDir = new Vector3(Mathf.Abs(normalizedDir.x), Mathf.Abs(normalizedDir.y), Mathf.Abs(normalizedDir.z));
+        float extentForward = Vector3.Dot(halfBounds, absNormDir);
+        float distance = extentForward + 0.05f;
+        Vector3 climbEndpoint = climbOrigin + direction * distance;
+        Gizmos.DrawLine(climbOrigin, climbEndpoint);
     }
 
     private bool NearClimbable()
@@ -576,24 +605,32 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsValidClimbable()
     {
-        float rayDistance = playerWidth * 0.5f + (ratCollider.radius * 1.25f);
-        RaycastHit hit;
-        Vector3 lookDirection = orientation.forward;
+        Vector3 ratCenter = transform.TransformPoint(ratBox.center);
+        Vector3 halfBounds = Vector3.Scale(ratBox.size * 0.5f, transform.lossyScale) * 0.95f;
+        Vector3 castDirection = orientation.TransformDirection(Vector3.forward);
+        Vector3 normalizedCastDir = castDirection.normalized;
+        Vector3 absNormCastDir = new Vector3(Mathf.Abs(normalizedCastDir.x), Mathf.Abs(normalizedCastDir.y), Mathf.Abs(normalizedCastDir.z));
+        float extentDown = Vector3.Dot(halfBounds, absNormCastDir);
+        float rayDistance = extentDown + 0.05f;
+        Vector3 castOrigin = ratCenter - normalizedCastDir * 0.01f;
+        
         //Checks in front of player orientation transform for climbables (orientation obj currently needed given that the rat doesn't rotate)
-        if (Physics.Raycast(transform.TransformPoint(ratCollider.center), lookDirection, out hit, rayDistance))
+        if (Physics.Raycast(castOrigin, castDirection, out RaycastHit hit, rayDistance))
         {
             //Secondary check to make sure the object is even marked as climbable instead of using a Layer Mask
             if (hit.collider.TryGetComponent<ClimbableSurface>(out var _))
             {
                 Debug.Log("Yep near climbable");
-                float contactAngle = Vector3.Angle(hit.normal, Vector3.up);
+                float contactAngle = Mathf.Floor(Vector3.Angle(hit.normal, Vector3.up));
+                
+                Debug.Log(contactAngle);
                 //Surface must be sufficiently steep, climb must be unlocked (mutation) and not on cooldown
                 bool validAngle = (contactAngle > maxInclination && contactAngle <= 90f) && canClimb;
                 if (validAngle)
                 {
                     Debug.Log("Yep valid angle");
                     wallJumpDirection = (hit.normal + Vector3.up * verticalBounce).normalized;
-                    attachDirection = lookDirection.normalized;
+                    attachDirection = normalizedCastDir;
                     //Inner cross product is a vector perpendicular to both Vector3.up and the surface normal
                     //This causes the outer cross product to produce a vector as far aligned upward along the way as possible
                     climbDirection = Vector3.Cross(hit.normal, Vector3.Cross(Vector3.up, hit.normal)).normalized;
@@ -618,9 +655,16 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsDetached()
     {
-        float rayDistance = playerWidth * 0.5f + (ratCollider.radius * 1.25f);
-        RaycastHit hit;
-        if(!Physics.Raycast(transform.TransformPoint(ratCollider.center), attachDirection, out hit, rayDistance))
+        Vector3 ratCenter = transform.TransformPoint(ratBox.center);
+        Vector3 halfBounds = Vector3.Scale(ratBox.size * 0.5f, transform.lossyScale) * 0.95f;
+        Vector3 castDirection = orientation.TransformDirection(Vector3.forward);
+        Vector3 normalizedCastDir = castDirection.normalized;
+        Vector3 absNormCastDir = new Vector3(Mathf.Abs(normalizedCastDir.x), Mathf.Abs(normalizedCastDir.y), Mathf.Abs(normalizedCastDir.z));
+        float extentDown = Vector3.Dot(halfBounds, absNormCastDir);
+        float rayDistance = extentDown + 0.05f;
+        Vector3 castOrigin = ratCenter - normalizedCastDir * 0.01f;
+        
+        if(!Physics.Raycast(castOrigin, attachDirection, out RaycastHit hit, rayDistance))
         {
                 return true;
         }
@@ -787,7 +831,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    //Later considerations: Also do stamina checking here before each intended action is taken
     //Act on player input intent based on position (Not all actions are available in all positions)
     private void MovePlayer()
     {
