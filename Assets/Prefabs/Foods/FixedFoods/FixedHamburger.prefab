@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4091215678630914190
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 40194118417656445, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_Name
+      value: FixedHamburger
+      objectReference: {fileID: 0}
+    - target: {fileID: 40194118417656445, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 563050692718660104, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1945928624238110370, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2129845861263449445, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4017935613948558550, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6190396798288619524, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6474409837949766067, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4103111502470954747, guid: 236a0af4b0e7e094282dbba2bc85e43c, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 40194118417656445, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3453878499673934505}
+  m_SourcePrefab: {fileID: 100100000, guid: 236a0af4b0e7e094282dbba2bc85e43c, type: 3}
+--- !u!1 &4055533992107426547 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 40194118417656445, guid: 236a0af4b0e7e094282dbba2bc85e43c,
+    type: 3}
+  m_PrefabInstance: {fileID: 4091215678630914190}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3453878499673934505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4055533992107426547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f36435231a43fef4b93eaadc5922c0fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contaminationValue: 0
+  contaminationBuildup: 0
+  mutationYield: 1
+  canGrantPoints: 1
+  itemName: Hamburger
+  potency: 3
+  lerpProperty: _Contamination_Lerp
+  isWinCondition: 0
+  poisoned: 0
+  poisonedEffect: {fileID: 0}
+  chompEffect: {fileID: 0}
+  chompAnimLength: 0
+  isColliding: 0
+  mutationGranted: 0

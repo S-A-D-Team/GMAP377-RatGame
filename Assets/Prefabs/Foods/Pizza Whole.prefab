@@ -17,7 +17,8 @@ GameObject:
   - component: {fileID: 8109826236316869053}
   - component: {fileID: 7007334145751280693}
   - component: {fileID: 1085703267765005647}
-  m_Layer: 0
+  - component: {fileID: -6904234969876551782}
+  m_Layer: 6
   m_Name: Pizza Whole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,6 +153,8 @@ MonoBehaviour:
   contaminationBuildup: 0
   mutationYield: 10
   canGrantPoints: 1
+  potencyValue: 1
+  itemName: PizzaWhole
   potency: 3
   lerpProperty: _Contamination_Lerp
   isWinCondition: 0
@@ -217,6 +220,102 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.6665556, y: 1.02, z: 2.4112046}
   m_Center: {x: -3.0921543, y: 0, z: -0.61060286}
+--- !u!82 &-6904234969876551782
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40194118417656445}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: df82dc2e8e789f241b339aaf378efb25, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &563050692718660104
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,7 +327,7 @@ GameObject:
   - component: {fileID: 8562667649707371020}
   - component: {fileID: 983664488189564898}
   - component: {fileID: 8157088470470998185}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -303,7 +402,7 @@ GameObject:
   - component: {fileID: 7200851163535299816}
   - component: {fileID: 7234581968267935635}
   - component: {fileID: 7254981087948681730}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -440,7 +539,7 @@ GameObject:
   - component: {fileID: 8430146780677873252}
   - component: {fileID: 3816749006390738706}
   - component: {fileID: 3246321188833533654}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -562,7 +661,7 @@ GameObject:
   - component: {fileID: 3207408864985484423}
   - component: {fileID: 3890442065471521314}
   - component: {fileID: 1771372717883814575}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pizza1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -645,7 +744,7 @@ GameObject:
   - component: {fileID: 8034271335004956083}
   - component: {fileID: 6154974840672099606}
   - component: {fileID: 5181398590735010979}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Poisoned
   m_TagString: Untagged
   m_Icon: {fileID: 0}

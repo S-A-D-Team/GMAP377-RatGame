@@ -20,10 +20,13 @@ public class PlayerInputCollection : MonoBehaviour
     private float horInput;
     private float vertInput;
 
-    [Header("Jump Input Buffering")]
+    [Header("Input Buffering")]
     [SerializeField]
     private float jumpBuffer = 0.1f;
+    [SerializeField]
+    private float climbBuffer = 0.1f;
     private float lastJumpPress = -100f;
+    private float lastClimbPress = -100f;
 
     [Header("Key Bindings")]
     [SerializeField]
@@ -44,7 +47,6 @@ public class PlayerInputCollection : MonoBehaviour
         horInput = Input.GetAxisRaw("Horizontal");
         vertInput = Input.GetAxisRaw("Vertical");
         MoveInput = new Vector2(horInput, vertInput);
-
         ClimbPressed = Input.GetKeyDown(climbKey);
         RefreshPressed = Input.GetKeyDown(refreshStatsKey);
         RunHeld = Input.GetKey(runKey);
@@ -56,6 +58,10 @@ public class PlayerInputCollection : MonoBehaviour
         if (JumpPressed)
         {
             lastJumpPress = Time.time;
+        }
+        if (ClimbPressed)
+        {
+            lastClimbPress = Time.time;
         }
         //if (Input.GetKeyDown(KeyCode.Escape) && !UIManager.Instance.isTutorialActive)
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -70,6 +76,11 @@ public class PlayerInputCollection : MonoBehaviour
     public bool BufferedJump()
     {
         return Time.time < lastJumpPress + jumpBuffer;
+    }
+
+    public bool BufferedClimb()
+    {
+        return Time.time < lastClimbPress + climbBuffer;
     }
 
 }

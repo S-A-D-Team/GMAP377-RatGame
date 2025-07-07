@@ -15,18 +15,26 @@ public class FoodItem : Contaminable
     private bool isEaten = false;
     [SerializeField] private bool isColliding = false;
 
-    AudioSource audioData;
+    private AudioSource audioData;
+    private MeshRenderer mesh;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        audioData = GetComponent<AudioSource>();
+        mesh = GetComponent<MeshRenderer>();
+    }
     protected override void Start()
 	{
 		base.Start();
-		//make sure the fx is not playing 
+		//make sure the fx is not playing and the mesh is active
 		poisonedEffect.Stop();
-        audioData = GetComponent<AudioSource>();
+        audioData.Stop();
+        if (mesh != null) { mesh.enabled = true; }
         //if (poisoningEffect != null) { poisoningEffect.Stop(); }
 
 	}
-    private void Update()
+    protected void Update()
     {
         if (isColliding)
         {
@@ -37,7 +45,7 @@ public class FoodItem : Contaminable
                     EatItem();
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.F) && !poisoned)
+            else if (Input.GetKeyDown(KeyCode.F) && !poisoned && !isPoisoning)
             {
                 /*
                 if (poisoningEffect == null)
@@ -124,10 +132,9 @@ public class FoodItem : Contaminable
     protected virtual void EatItem()
     {
         isEaten = true;
-
-        audioData.Play(0);
-
-        UIManager.Instance.changeHungerBar(0.1f * (int)potency);
+        audioData.Play();
+        if (mesh != null) { mesh.enabled = false; }
+        GameManager.Instance.changeHunger(0.1f * (int)potency);
 
         //UI 
         UIManager.Instance.showInteractCue(false);
@@ -142,7 +149,7 @@ public class FoodItem : Contaminable
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(gameObject, audioData.clip.length);
         }
         
     }

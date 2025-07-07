@@ -25,6 +25,10 @@ public class Contaminable : MonoBehaviour
         HIGH = 3
     }
 
+    public float potencyValue = 1f;
+
+    public string itemName;
+
     public potencyLevel potency;
 
     [Space]
@@ -84,7 +88,7 @@ public class Contaminable : MonoBehaviour
         }
         //Update its entry in the manager
         ContaminationManager.Instance.CalculateContaminationLevel(this, contaminationValue);
-        if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;
+        //if (canSpread) GetComponent<ContaminationSpread>().contaminationRate = contaminationValue / 100;
     }
 
     public void AddBuildUp(float _buildUpValue)

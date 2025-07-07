@@ -54,7 +54,7 @@ public class LoadSceneAdditive : MonoBehaviour
     void Start()
     {
         loadingScreen.SetActive(true);
-        string[] scenesToLoad = { "Pre-Alpha_LivingRoom", "Pre-Alpha_Kitchen", "Foods" };
+        string[] scenesToLoad = { "SpringFinal_LivingRoom", "SpringFinal_Kitchen", "Foods" };
         StartCoroutine(LoadAdditiveScenesAsync(scenesToLoad));
     }
 

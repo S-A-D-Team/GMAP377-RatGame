@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4103111502470954747}
   - component: {fileID: 8109826236316869053}
   - component: {fileID: 1983981422387194597}
-  m_Layer: 0
+  - component: {fileID: -2002261935502480676}
+  m_Layer: 6
   m_Name: Cheese
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,6 +76,8 @@ MonoBehaviour:
   contaminationBuildup: 0
   mutationYield: 2
   canGrantPoints: 1
+  potencyValue: 1
+  itemName: Cheese
   potency: 2
   lerpProperty: _Contamination_Lerp
   isWinCondition: 0
@@ -119,6 +122,102 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.0928266, y: 1.2467667, z: 1.6486466}
   m_Center: {x: -0.08108023, y: -0.37720174, z: 0.32432342}
+--- !u!82 &-2002261935502480676
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40194118417656445}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: df82dc2e8e789f241b339aaf378efb25, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &563050692718660104
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +229,7 @@ GameObject:
   - component: {fileID: 8562667649707371020}
   - component: {fileID: 983664488189564898}
   - component: {fileID: 8157088470470998185}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -205,7 +304,7 @@ GameObject:
   - component: {fileID: 2301079559463908150}
   - component: {fileID: 6450901195888035586}
   - component: {fileID: 8185754300387848876}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Poisoned
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5035,7 +5134,7 @@ GameObject:
   - component: {fileID: 48341092875065479}
   - component: {fileID: 847402321055341490}
   - component: {fileID: 5469446967555701413}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cheese - Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5120,7 +5219,7 @@ GameObject:
   - component: {fileID: 7200851163535299816}
   - component: {fileID: 7234581968267935635}
   - component: {fileID: 7254981087948681730}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5257,7 +5356,7 @@ GameObject:
   - component: {fileID: 8430146780677873252}
   - component: {fileID: 3816749006390738706}
   - component: {fileID: 3163079733439683496}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
