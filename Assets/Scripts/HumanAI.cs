@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using TMPro;
 
 public class HumanAI : EnemyAi
 {
@@ -14,6 +15,7 @@ public class HumanAI : EnemyAi
     [SerializeField] private CatAI cat;
     [SerializeField] private GameObject ratTrap;
     [SerializeField] private GameObject reactionCanvas;
+    [SerializeField] TextMeshProUGUI lineText;
     [SerializeField] private GameObject eyes;
 
     private float taskTimer;
@@ -22,6 +24,7 @@ public class HumanAI : EnemyAi
     private Vector3 prevTask;
     private Vector3 trapPos, secondaryTrapPos;
     private float startTurnAngle;
+    private int displaySaying;
 
     [SerializeField] private float rotationSpeed = 1f;
     [SerializeField] private float minAngle = -45f, maxAngle = 45f;
@@ -30,14 +33,23 @@ public class HumanAI : EnemyAi
     private bool playerMoving;
     private bool coroutineRunning;
 
-   public UnityEvent humanDeath = new UnityEvent();
-   public List<TaskInfo> HumanTasks;
+    public UnityEvent humanDeath = new UnityEvent();
+    public List<TaskInfo> HumanTasks;
+
+    private string sightReaction = "Ah, a rat!";
+    [SerializeField] private List<string> relaxedLines;
+    [SerializeField] private List<string> nervousLines;
+    [SerializeField] private List<string> concernedLines;
+    [SerializeField] private List<string> desperateLines;
+    private List<string> currentLines;
+
 
     void Start()
     { 
         prevTask = transform.position;
         reactionCanvas.SetActive(false);
         baseSpeed = agent.speed;
+        currentLines = relaxedLines;
     }
 
     void Update()
@@ -70,10 +82,19 @@ public class HumanAI : EnemyAi
             taskTimer += Time.deltaTime;
             if(taskTimer >= locationTime) shouldDoTask = true;
 
-            if(ReachedDestination() && isDesperate){
-                float pingPong = Mathf.PingPong(Time.time * rotationSpeed, 0.5f);
-                float angle = Mathf.Lerp(startTurnAngle + minAngle, startTurnAngle + maxAngle, pingPong);
-                transform.rotation = Quaternion.Euler(0, angle, 0);
+            if(ReachedDestination()){
+                if(!coroutineRunning){
+                    displaySaying = Random.Range(0, (currentLines.Count * 2));
+                    if(displaySaying < currentLines.Count){
+                        StartCoroutine(displayLine(currentLines[displaySaying]));
+                    }
+                }
+
+                if( isDesperate){
+                    float pingPong = Mathf.PingPong(Time.time * rotationSpeed, 0.5f);
+                    float angle = Mathf.Lerp(startTurnAngle + minAngle, startTurnAngle + maxAngle, pingPong);
+                    transform.rotation = Quaternion.Euler(0, angle, 0);
+                }
             }
         }
     }
@@ -93,7 +114,7 @@ public class HumanAI : EnemyAi
     private IEnumerator reactToPlayer(){
         currentState = HumanState.Reacting;
         trapPos = new Vector3(player.position.x, 0.05f, player.position.z);
-        reactionCanvas.SetActive(true);
+        StartCoroutine(displayLine(sightReaction));
         cat.Reaction();
         cat.Chase();
         agent.speed /= 2;
@@ -104,7 +125,15 @@ public class HumanAI : EnemyAi
         }
 
         yield return new WaitForSeconds(3);
+    }
+
+    private IEnumerator displayLine(string line){
+        coroutineRunning = true;
+        lineText.text = line;
+        reactionCanvas.SetActive(true);
+        yield return new WaitForSeconds(3);
         reactionCanvas.SetActive(false);
+        coroutineRunning = false;
     }
 
     private void HandleReacting(){
@@ -143,5 +172,22 @@ public class HumanAI : EnemyAi
 
     protected override void taskEndAction(){
         StartCoroutine(placeTraps(transform.position + Vector3.up));
+    }
+
+    protected override void updateAi(){
+        aiLevel++;
+        agent.speed += (1f * (aiLevel - 1));
+        isDesperate = true;
+        switch(aiLevel){
+            case 2:
+                currentLines = nervousLines;
+                break;
+            case 3:
+                currentLines = nervousLines;
+                break;
+            default:
+                currentLines = desperateLines;
+                break;
+        }
     }
 }
