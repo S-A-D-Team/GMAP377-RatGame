@@ -9,6 +9,7 @@ public class MainMenu : MonoBehaviour
     public GameObject controlsScreen;
     public GameObject loadingScreen;
     public GameObject SettingObject;
+    public GameObject LevelSelectScreen;
     public Image loadingBarFill;
 
     void Start()
@@ -33,7 +34,13 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
-        StartCoroutine(LoadSceneAsyncly("Main"));
+        //StartCoroutine(LoadSceneAsyncly("Main"));
+        LevelSelectScreen.SetActive(true);
+    }
+
+    public void LoadLevel(string sceneName)
+    {
+        StartCoroutine(LoadSceneAsyncly(sceneName));
     }
 
     public void PlayDemo()
