@@ -10,14 +10,18 @@ public class CatAI : EnemyAi
 
     [SerializeField] public List<TaskInfo> CatTasks;
     [SerializeField] private GameObject eyes;
+    [SerializeField] private GameObject crouchedEyes;
     [SerializeField] private Animator anim;
     [SerializeField] private AudioSource audioData;
     [SerializeField] private float chaseSpeedMultiplier;
-    //[SerializeField] private float crouchSpeedMultiplier;
+    [SerializeField] private float crouchSpeedMultiplier;
+    [SerializeField] private float jumpSpeed;
+    [SerializeField] private float jumpHeight;
 
 
     [SerializeField] private bool playerSpottedFirstTime = false;
 
+    private Transform eyeLocation;
     private Vector3 prevTask;
     private float taskTimer;
     private float locationTime;
@@ -27,6 +31,8 @@ public class CatAI : EnemyAi
     {
         prevTask = transform.position;
         baseSpeed = agent.speed;
+        eyeLocation = eyes.transform;
+        StartCoroutine(HandleOffMeshLink());
     }
 
     void Update()
@@ -39,14 +45,14 @@ public class CatAI : EnemyAi
                 Reaction();
                 break;
             case CatState.Chasing:
-                if(isPlayerSighted(eyes.transform)) Chase();
+                if(isPlayerSighted(eyeLocation)) Chase();
                 else StartCoroutine(StopChase());
                 break;
         }
     }
 
     private void HandlePatrolling(){
-        if(isPlayerSighted(eyes.transform)){
+        if(isPlayerSighted(eyeLocation)){
             currentState = CatState.Reacting;
         } else{
             if(ReachedDestination()){
@@ -61,6 +67,83 @@ public class CatAI : EnemyAi
                 taskTimer = 0;
             }
         }
+    }
+
+    private IEnumerator HandleOffMeshLink(){
+        while(true){
+            if(agent.isOnOffMeshLink){
+                OffMeshLinkData linkData = agent.currentOffMeshLinkData;
+                Vector3 start = agent.transform.position;
+                Vector3 end = linkData.endPos + Vector3.up * agent.baseOffset;
+
+                float verticalDifference = end.y - start.y;
+                float peakHeight = Mathf.Abs(verticalDifference) * jumpHeight;
+
+                float arcLength = EstimateArcLength(start, end, peakHeight);
+                float jumpDuration = arcLength / jumpSpeed;
+
+                if(anim != null){
+                    anim.SetBool("isJumping", true);
+                }
+
+                yield return new WaitForSeconds(0.2f);
+
+                yield return StartCoroutine(ParabolicJump(start, end, peakHeight, jumpDuration));
+
+                if(anim != null){
+                    anim.SetBool("isJumping", false);
+                }
+
+                agent.CompleteOffMeshLink();
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator ParabolicJump(Vector3 start, Vector3 end, float peakHeight, float duration){
+        float elapsed = 0f;
+
+        agent.updatePosition = false;
+        agent.updateRotation = false;
+
+        while (elapsed < duration){
+            float t = elapsed/duration;
+
+            Vector3 horizontal = Vector3.Lerp(start, end, t);
+
+            float heightOffset = 4 * peakHeight * t * (1-t);
+            horizontal.y += heightOffset;
+
+            agent.transform.position = horizontal;
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        agent.transform.position = end;
+
+        agent.updatePosition = true;
+        agent.updateRotation = true;
+    }
+
+    private float EstimateArcLength(Vector3 start, Vector3 end, float peakHeight, int resolution = 10)
+    {
+        float totalLength = 0f;
+        Vector3 previous = start;
+
+        for (int i = 1; i <= resolution; i++)
+        {
+            float t = i / (float)resolution;
+            Vector3 current = Vector3.Lerp(start, end, t);
+            float height = 4 * peakHeight * t * (1 - t);
+            current.y += height;
+
+            totalLength += Vector3.Distance(previous, current);
+            previous = current;
+        }
+
+        return totalLength;
     }
 
     public void Reaction()
@@ -99,23 +182,22 @@ public class CatAI : EnemyAi
             GameManager.Instance.onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
             UIManager.Instance.cueDeathUI(1);
-        } /*else{
-            Debug.Log("Crouching");
+        } else if(other.gameObject.layer == LayerMask.NameToLayer("whatIsGround")){
             Crouch();
-        }*/
+        }
     }
 
-    //The Commented code is for crouching, this will be implemented when a crouching animation is given
-
-    /*private void OnTriggerExit(Collider other){
+    private void OnTriggerExit(Collider other){
         StandUp();
     }
 
     private void Crouch(){
+        eyeLocation = crouchedEyes.transform;
         anim.SetBool("isCrouching", true);
     }
 
     private void StandUp(){
+        eyeLocation = eyes.transform;
         anim.SetBool("isCrouching", false);
-    }*/
+    }
 }
