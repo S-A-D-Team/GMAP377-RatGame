@@ -89,6 +89,9 @@ public class GameManager : MonoBehaviour
         contaminationLevel++;
 
         aiUpdate.Invoke();
+        //Subject to change, might want to trigger these only at certain thresholds
+        //Potentially requires extra data added to ContaminationSettings to specify this
+        SetpieceManager.Instance.TriggerSetpiece();
 
         //Handle mutation and potential environment updates from here
         if (winCon && !winRunning)
