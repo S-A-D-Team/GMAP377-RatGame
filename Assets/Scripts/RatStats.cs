@@ -25,6 +25,7 @@ public class RatStats : MonoBehaviour
     public float stamRegenDelay;
     public int mutationLevel;
     public hungerLevel currentHungerLevel;
+    public float scentRange;
     public enum hungerLevel
     {
         Full = 110,

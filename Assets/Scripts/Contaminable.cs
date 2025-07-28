@@ -16,6 +16,8 @@ public class Contaminable : MonoBehaviour
     protected int mutationYield = 1;
     [SerializeField]
     protected bool canGrantPoints = true;
+    [SerializeField]
+    protected bool smelled = false;
 
     //Determine mutation yield/hunger modifier
     public enum potencyLevel
