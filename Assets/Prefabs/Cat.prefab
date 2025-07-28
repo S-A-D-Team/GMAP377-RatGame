@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4408933157101015138
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8549022874971756372}
+  m_Layer: 0
+  m_Name: CrouchingEyes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8549022874971756372
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4408933157101015138}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.153, z: 0.483}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 828151557437959591}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6609223878201811832
 GameObject:
   m_ObjectHideFlags: 0
@@ -15,7 +46,7 @@ GameObject:
   - component: {fileID: 7108192133677860809}
   m_Layer: 0
   m_Name: Cat
-  m_TagString: Untagged
+  m_TagString: Cat
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,11 +61,12 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0.02, y: 0.73, z: -3.3949995}
-  m_LocalScale: {x: 0.56866, y: 0.56866, z: 0.56866}
+  m_LocalScale: {x: 1.4181243, y: 1.4181243, z: 1.4181243}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4638816605367160766}
   - {fileID: 1019029275074751439}
+  - {fileID: 8549022874971756372}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!136 &471993792247179293
@@ -94,14 +126,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6288ceedad540474098fe6d86c0f6a06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerFound: 0
-  isInTask: 0
-  isReacting: 0
+  CatTasks:
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  - location: {fileID: 0}
+    time: 15
+    weight: 1
+    endTask: 0
+  eyes: {fileID: 8695794918854729498}
+  crouchedEyes: {fileID: 0}
   anim: {fileID: 8595894632377030733}
-  playerLockedOn: 0
+  audioData: {fileID: 0}
+  chaseSpeedMultiplier: 5
+  crouchSpeedMultiplier: 0
   playerSpottedFirstTime: 0
-  offNavMeshTrail: []
-  CatTasks: []
 --- !u!65 &7108192133677860809
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -180,7 +256,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d7843eb1601b4ab46b4e978e6f8a44c5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.607
+      value: 0.086
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d7843eb1601b4ab46b4e978e6f8a44c5,
         type: 3}
@@ -190,7 +266,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d7843eb1601b4ab46b4e978e6f8a44c5,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.422
+      value: -0.115
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d7843eb1601b4ab46b4e978e6f8a44c5,
         type: 3}
@@ -227,6 +303,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 690173974204175592, guid: d7843eb1601b4ab46b4e978e6f8a44c5,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ed1593838ade348aa480232343083f, type: 2}
     - target: {fileID: 919132149155446097, guid: d7843eb1601b4ab46b4e978e6f8a44c5,
         type: 3}
       propertyPath: m_Name
@@ -283,7 +364,7 @@ Animator:
   m_GameObject: {fileID: 5416620393398506756}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 22dad621769fcdf4ca87677656ef8cf7, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7226cf5460d47804883b18cc207bd91d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
