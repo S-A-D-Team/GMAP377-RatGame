@@ -16,6 +16,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     private float initialWalkSpeed;
     private float initialRunSpeed;
     private float initialDrag;
+    private AudioSource audioData;
 
     [Header("Messages for first and subsequent gains of this mutation")]
     [SerializeField]
@@ -102,6 +103,9 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
     {
         UIManager.Instance.cueMutation(obtainedStr);
         stackMutation();
+        if (audioData != null){
+            audioData.Play();
+        }
     }
 
     public override void stackMutation()

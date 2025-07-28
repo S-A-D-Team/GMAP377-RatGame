@@ -11,6 +11,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
     private float maxJumpMultiplier = -100f;
 
     private float initialJumpForce;
+    private AudioSource audioData;
 
     [Header("Messages for first and subsequent gains of this mutation")]
     [SerializeField]
@@ -90,6 +91,9 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
     {
         UIManager.Instance.cueMutation(obtainedStr);
         stackMutation();
+        if (audioData != null){
+            audioData.Play();
+        }
     }
 
     //Flat minimum multiplier at 1 with subsequent stacks providing smooth, diminishing returns up to a hard capped maximum multiplier (resulting in a soft cap of stacks)

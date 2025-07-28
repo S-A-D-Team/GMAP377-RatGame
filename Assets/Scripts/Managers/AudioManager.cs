@@ -18,7 +18,7 @@ public class AudioManager : MonoBehaviour
 
         Instance = this;
     }
-    //kills the Inatance
+    //kills the Instance
     public void SelfDestroy()
     {
         Instance = null;

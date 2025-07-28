@@ -5,6 +5,7 @@ using UnityEngine;
 public class BiteMutation : PhysicalMutation, IMutation, IToggleable
 {
     private Hole biteLogic;
+    private AudioSource audioData;
     [SerializeField]
     private string obtainedStr = "You feel like walls may only be a suggestion (Bite Unlocked!)";
     public void Initialize()
@@ -21,6 +22,9 @@ public class BiteMutation : PhysicalMutation, IMutation, IToggleable
         if (toRemove != null)
         {
             GameManager.Instance.mutationPool.Remove(toRemove);
+        }
+        if (audioData != null){
+            audioData.Play();
         }
         rat.canBite = true;
         notifyFlag();

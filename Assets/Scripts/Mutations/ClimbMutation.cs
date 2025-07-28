@@ -5,6 +5,7 @@ using UnityEngine;
 public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
 {
     private PlayerMovement climbLogic;
+    private AudioSource audioData;
     [SerializeField]
     private string obtainedStr = "You feel like inclines can no longer decline you (Climb Unlocked!)";
     public void Initialize()
@@ -22,6 +23,9 @@ public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
         if (toRemove != null)
         {
             GameManager.Instance.mutationPool.Remove(toRemove);
+        }
+        if (audioData != null){
+            audioData.Play();
         }
         rat.canClimb = true;
         notifyFlag();

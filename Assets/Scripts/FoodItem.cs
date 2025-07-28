@@ -86,6 +86,9 @@ public class FoodItem : Contaminable
             {
                 break;
             }
+            if(audioData != null){
+            audioData.Play();
+            }
             chargeWindow -= Time.deltaTime;
             //update UI
             UIManager.Instance.showContainationBuildUp(true, ((_completeChargeTime - chargeWindow)/_completeChargeTime));
