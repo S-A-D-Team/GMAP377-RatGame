@@ -112,7 +112,7 @@ public class CatAI : EnemyAi
 
             Vector3 horizontal = Vector3.Lerp(start, end, t);
 
-            float heightOffset = 4 * peakHeight * t * (1-t);
+            float heightOffset = peakHeight * t * (1-t);
             horizontal.y += heightOffset;
 
             agent.transform.position = horizontal;

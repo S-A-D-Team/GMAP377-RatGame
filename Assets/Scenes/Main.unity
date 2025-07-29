@@ -3795,7 +3795,17 @@ PrefabInstance:
         type: 3}
       propertyPath: catModel
       value: 
-      objectReference: {fileID: 482125382}
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: jumpHeight
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
       propertyPath: crouchSpeed
@@ -3806,6 +3816,11 @@ PrefabInstance:
       propertyPath: crouchScaleY
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: crouchedEyes
+      value: 
+      objectReference: {fileID: 607224566}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
       propertyPath: tasks.Array.size
@@ -3875,6 +3890,11 @@ PrefabInstance:
         type: 3}
       propertyPath: tasks.Array.data[10]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: crouchSpeedMultiplier
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
@@ -5316,12 +5336,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 469814250}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &482125382 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2842704076883066127, guid: 01832c9110ba56e44885512f6813cb0b,
-    type: 3}
-  m_PrefabInstance: {fileID: 317614487}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &492249598
 GameObject:
   m_ObjectHideFlags: 0
@@ -6393,6 +6407,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 604555383}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &607224566 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4408933157101015138, guid: 01832c9110ba56e44885512f6813cb0b,
+    type: 3}
+  m_PrefabInstance: {fileID: 317614487}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &609029033
 GameObject:
   m_ObjectHideFlags: 0
