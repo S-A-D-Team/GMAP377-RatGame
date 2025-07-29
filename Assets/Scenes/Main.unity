@@ -3795,7 +3795,7 @@ PrefabInstance:
         type: 3}
       propertyPath: catModel
       value: 
-      objectReference: {fileID: 482125382}
+      objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
       propertyPath: crouchSpeed
@@ -5316,12 +5316,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 469814250}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &482125382 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2842704076883066127, guid: 01832c9110ba56e44885512f6813cb0b,
-    type: 3}
-  m_PrefabInstance: {fileID: 317614487}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &492249598
 GameObject:
   m_ObjectHideFlags: 0
@@ -18702,6 +18696,7 @@ MonoBehaviour:
   stamRegenDelay: 1
   mutationLevel: 0
   currentHungerLevel: 100
+  scentRange: 0
   hungerPenalty: 100
   hungerTolerance: 0
 --- !u!114 &2014804301
