@@ -18,6 +18,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
     [SerializeField]
     private string stackStr = "You feel EVEN lighter (Jump Up!)";
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -89,6 +90,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
     public override void onMutate()
     {
         UIManager.Instance.cueMutation(obtainedStr);
+        //AudioManager.Instance.cueMutationSound(obtainSound);
         stackMutation();
     }
 
