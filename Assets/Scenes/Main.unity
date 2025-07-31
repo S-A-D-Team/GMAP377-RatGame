@@ -3799,7 +3799,12 @@ PrefabInstance:
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
       propertyPath: jumpSpeed
-      value: 2
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: jumpHeight
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
@@ -3809,6 +3814,21 @@ PrefabInstance:
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
       propertyPath: crouchScaleY
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: minJumpHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: maxDropArcHeight
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: minDropArcHeight
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
