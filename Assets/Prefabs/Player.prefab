@@ -79,7 +79,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2996159687012565720}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -114,6 +114,83 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &4634102600770875261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9100600177927852084}
+  - component: {fileID: 3266227156543449115}
+  m_Layer: 0
+  m_Name: Smell
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9100600177927852084
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4634102600770875261}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 604104785542074620}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3266227156543449115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4634102600770875261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3093aa0f64cc17247aa0d7fe784dbd4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1839045690083948062}
+        m_TargetAssemblyTypeName: SensoryManager, Assembly-CSharp
+        m_MethodName: AddToContaminablesSensed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTriggerStay:
+    m_PersistentCalls:
+      m_Calls: []
+  onTriggerExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1839045690083948062}
+        m_TargetAssemblyTypeName: SensoryManager, Assembly-CSharp
+        m_MethodName: RemoveFromContaminablesSensed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5058273188919755049
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,6 +206,9 @@ GameObject:
   - component: {fileID: 3377198739701718355}
   - component: {fileID: 946212899350555962}
   - component: {fileID: 5342907393453799599}
+  - component: {fileID: 2044646389809097427}
+  - component: {fileID: 468299749160769950}
+  - component: {fileID: 1839045690083948062}
   m_Layer: 0
   m_Name: Player
   m_TagString: player
@@ -152,6 +232,7 @@ Transform:
   - {fileID: 2240846081640140446}
   - {fileID: 1371570497433604825}
   - {fileID: 6699762171020344878}
+  - {fileID: 9100600177927852084}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &6916524303983875178
@@ -196,26 +277,31 @@ MonoBehaviour:
   runStamDrain: 0.1
   climbStamDrain: 0.1
   biteStamDrain: 0.25
-  speed: 6
+  speed: 3.25
   orientation: {fileID: 6699762171020344878}
-  groundDrag: 4
+  groundDrag: 3
   maxInclination: 45
-  runSpeed: 8
+  runSpeed: 4.675
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  climbCooldown: 10
-  jumpChargeRate: 0
-  minJumpForce: 0
-  maxJumpForce: 0
-  jumpCooldown: 0
+  climbCooldown: 90
+  jumpChargeRate: 30
+  minJumpForce: 2.5
+  maxJumpForce: 6.5
+  jumpCooldown: 8
   verticalBounce: 0.75
   horizontalBounce: 6
-  airMovement: 0.2
+  airMovement: 6
   coyoteInterval: 0.15
   noFriction: {fileID: 13400000, guid: 1239d38f3156d4641bd5d386613a99a5, type: 2}
   idleFriction: {fileID: 13400000, guid: c61d75a288172da4ea008632e7c8259c, type: 2}
-  spawnAreas: []
+  spawnAreas:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!136 &7607355011323265677
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -290,6 +376,70 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.125, y: 0.125, z: 0.1875}
   m_Center: {x: 0, y: -0.03, z: 0}
+--- !u!114 &2044646389809097427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5058273188919755049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7786677d14f037549a6f8967f49ba1c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  runSpeed: 4.675
+  walkSpeed: 3.25
+  climbSpeed: 2
+  airSpeed: 6
+  jumpChargeRate: 30
+  maxJumpForce: 6.5
+  canBite: 1
+  canClimb: 0
+  groundDrag: 3
+  hunger: 1
+  stamina: 1
+  staminaCap: 1
+  stamRegen: 0.1
+  stamRegenDelay: 1
+  mutationLevel: 0
+  currentHungerLevel: 100
+  scentRange: 1
+  hungerPenalty: 100
+  hungerTolerance: 0
+--- !u!114 &468299749160769950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5058273188919755049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0ac436687b383842a1467a591a03a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpBuffer: 0.1
+  climbBuffer: 0.1
+  jumpKey: 32
+  runKey: 304
+  refreshStatsKey: 114
+  climbKey: 102
+  debugMoveUpKey: 108
+  biteKey: 101
+--- !u!114 &1839045690083948062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5058273188919755049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44e954cffbb45974e82c377a1fbe26fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sos: {fileID: 3266227156543449115}
 --- !u!1 &5416546354237750039
 GameObject:
   m_ObjectHideFlags: 0
