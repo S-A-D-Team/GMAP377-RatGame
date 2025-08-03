@@ -177,9 +177,11 @@ MonoBehaviour:
   anim: {fileID: 8595894632377030733}
   audioData: {fileID: 1341505651439123524}
   chaseSpeedMultiplier: 5
-  crouchSpeedMultiplier: 0
-  jumpSpeed: 0.1
+  crouchSpeedMultiplier: 0.5
+  jumpSpeed: 2
   jumpHeight: 0.1
+  minDropArcHeight: 0.5
+  maxDropArcHeight: 1.2
   playerSpottedFirstTime: 0
 --- !u!65 &7108192133677860809
 BoxCollider:
