@@ -12,6 +12,9 @@ public class CatAI : EnemyAi
     [SerializeField] private GameObject eyes;
     [SerializeField] private Animator anim;
     [SerializeField] private AudioSource audioData;
+    [SerializeField] private float chaseSpeedMultiplier;
+    //[SerializeField] private float crouchSpeedMultiplier;
+
 
     [SerializeField] private bool playerSpottedFirstTime = false;
 
@@ -62,9 +65,12 @@ public class CatAI : EnemyAi
 
     public void Reaction()
     {
+        agent.speed *= chaseSpeedMultiplier;
         currentState = CatState.Chasing;
-        anim.SetFloat("WalkSpeed", 1f);
-        audioData.Play();
+        anim.SetFloat("WalkSpeed", 3f);
+        if(audioData != null){
+            audioData.Play();
+        }
 
         if(!playerSpottedFirstTime){
             playerSpottedFirstTime = true;
@@ -73,16 +79,15 @@ public class CatAI : EnemyAi
     }
 
     public void Chase(){
-        agent.speed *= 3;
         agent.stoppingDistance = 0;
         agent.SetDestination(player.position);
     }
 
     private IEnumerator StopChase(){
         currentState = CatState.Patrolling;
+        agent.speed = baseSpeed + (0.5f * (aiLevel - 1));
         yield return new WaitUntil(ReachedDestination);
         anim.SetFloat("WalkSpeed", 0f);
-        agent.speed = baseSpeed + (0.5f * (aiLevel - 1));
         agent.stoppingDistance = 2f;
     }
 
@@ -94,6 +99,23 @@ public class CatAI : EnemyAi
             GameManager.Instance.onPlayerDead();
             StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
             UIManager.Instance.cueDeathUI(1);
-        }
+        } /*else{
+            Debug.Log("Crouching");
+            Crouch();
+        }*/
     }
+
+    //The Commented code is for crouching, this will be implemented when a crouching animation is given
+
+    /*private void OnTriggerExit(Collider other){
+        StandUp();
+    }
+
+    private void Crouch(){
+        anim.SetBool("isCrouching", true);
+    }
+
+    private void StandUp(){
+        anim.SetBool("isCrouching", false);
+    }*/
 }
