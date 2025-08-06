@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     private PlayerMovement ratMov;
 
+    private SensoryManager ratSens;
+
     private int contaminationLevel = 0;
 
     private bool winRunning = false;
@@ -67,6 +69,7 @@ public class GameManager : MonoBehaviour
         theRat = rat;
         ratStats = rat.GetComponent<RatStats>();
         ratMov = rat.GetComponent<PlayerMovement>();
+        ratSens = rat.GetComponent<SensoryManager>();
         if (ratStats == null)
         {
             Debug.Log("RatStats not added to Player prefab!");
@@ -75,12 +78,18 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("PlayerMovement not added to Player prefab!");
         }
+        if (ratSens == null)
+        {
+            Debug.Log("SensoryManager not added to Player prefab!");
+        }
 
         ratStats.hunger = 1;
         ratStats.stamina = 1;
         ratStats.currentHungerLevel = hungerLevel.Full;
         ratStats.staminaCap = 1f;
         ratStats.mutationLevel = 0;
+
+        ratSens.changeSmellRadius(ratStats.scentRange);
     }
 
     public void OnThresholdTrigger(float threshold, bool winCon)
@@ -89,6 +98,9 @@ public class GameManager : MonoBehaviour
         contaminationLevel++;
 
         aiUpdate.Invoke();
+        //Subject to change, might want to trigger these only at certain thresholds
+        //Potentially requires extra data added to ContaminationSettings to specify this
+        SetpieceManager.Instance.TriggerSetpiece();
 
         //Handle mutation and potential environment updates from here
         if (winCon && !winRunning)
@@ -283,6 +295,15 @@ public class GameManager : MonoBehaviour
         ratStats.stamina += _change;
         ratStats.stamina = Mathf.Clamp(ratStats.stamina, 0f, ratStats.staminaCap);
         UIManager.Instance.changeStaminaBar(ratStats.stamina);
+    }
+
+    public void changeScentRange(float _change)
+    {
+        ratStats.scentRange += _change;
+        if (ratStats.scentRange < 0f)
+        {
+            ratStats.scentRange = 0f;
+        }
     }
 
 }

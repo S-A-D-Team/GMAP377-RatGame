@@ -16,6 +16,9 @@ public class FoodItem : Contaminable
     [SerializeField] private bool isColliding = false;
 
     private AudioSource audioData;
+
+    public static AudioSource infectingSound;
+
     private MeshRenderer mesh;
 
     protected override void Awake()
@@ -89,12 +92,15 @@ public class FoodItem : Contaminable
             chargeWindow -= Time.deltaTime;
             //update UI
             UIManager.Instance.showContainationBuildUp(true, ((_completeChargeTime - chargeWindow)/_completeChargeTime));
+            //if sound is not playing
+            //play the sound
             yield return null;
         }
         //close UI
         UIManager.Instance.showContainationBuildUp(false, 0f);
         //If action fully charged, apply contamination
         //poisoningEffect.Stop();
+        //don't play the sound anymore
         if (chargeWindow <= 0f)
         {
             ContaminateItem();
