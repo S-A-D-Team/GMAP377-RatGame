@@ -6,10 +6,9 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject controlsScreen;
+
     public GameObject loadingScreen;
-    public GameObject SettingObject;
-    public GameObject LevelSelectScreen;
+
     public Image loadingBarFill;
 
     void Start()
@@ -32,41 +31,20 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    public void PlayGame()
-    {
-        //StartCoroutine(LoadSceneAsyncly("Main"));
-        LevelSelectScreen.SetActive(true);
-    }
-
     public void LoadLevel(string sceneName)
     {
         StartCoroutine(LoadSceneAsyncly(sceneName));
     }
-
-    public void PlayDemo()
-    {
-        StartCoroutine(LoadSceneAsyncly("SpringFinal_Demo"));
-    }
-
-    //SettingsUI
-    public void SettingOpen()
-    {
-        SettingObject.SetActive(true);
-    }
-    public void SettingClose()
-    {
-        SettingObject.SetActive(false);
-    }
-
-    public void Controls()
-    {
-        controlsScreen.SetActive(true);
-    }
-    public void ControlsBack()
-    {
-        controlsScreen.SetActive(false);
-    }
     
+    public void ShowUI(GameObject uiObject)
+    {
+        uiObject.SetActive(true);
+    }
+
+    public void HideUI(GameObject uiObject)
+    {
+        uiObject.SetActive(false);
+    }
 
     public static void QuitGame()
     {
