@@ -1531,24 +1531,15 @@ MonoBehaviour:
   - 10
   - 4
   - 4
-  foodStatNames:
-  - LowContamPt
-  - MedContamPt
-  - HighContamPt
-  - LowHunger
-  - MedHunger
-  - HighHunger
-  foodStatMinValues:
+  potencyStatNames:
+  - LowPotency
+  - MedPotency
+  - HighPotency
+  potencyStatMinValues:
   - 1
   - 1
   - 1
-  - 1
-  - 1
-  - 1
-  foodStatMaxValues:
-  - 15
-  - 15
-  - 15
+  potencyStatMaxValues:
   - 15
   - 15
   - 15
@@ -1566,6 +1557,10 @@ MonoBehaviour:
   mutationButton: {fileID: 2431388784692749109}
   statsButton: {fileID: 5906673191668586557}
   environmentButton: {fileID: 1636182951466384381}
+  potencyStatCurrentValues:
+  - 1
+  - 1
+  - 1
 --- !u!114 &981413809528081298
 MonoBehaviour:
   m_ObjectHideFlags: 0
