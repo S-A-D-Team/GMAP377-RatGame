@@ -53,8 +53,10 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
+    /*
     [SerializeField] private TextMeshProUGUI gameTime;
     [SerializeField] private TextMeshProUGUI gameDay;
+    */
 
     [Space]
     [Header("Tutorial")]
@@ -293,14 +295,18 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    
     public void UpdateTimeUI(int _gameDay, int _gameHour, int _gameMinute, bool _isPM)
     {
+        /*
         string _formattedTime = $"{_gameHour}:{_gameMinute:D2}";
         _formattedTime += _isPM ? " PM" : " AM";
 
         gameDay.text = "Day: " + _gameDay.ToString();
         gameTime.text = _formattedTime;
+        */
     }
+    
 
     public void onResume()
     {
@@ -501,6 +507,7 @@ public class UIManager : MonoBehaviour
         return newParam.getID();
     }*/
 
+    /*
     public string getParamName(int id)
     {
         foreach (Parameter param in parameters)
@@ -616,5 +623,6 @@ public class UIManager : MonoBehaviour
         }
 
     }
+    */
 }
 
