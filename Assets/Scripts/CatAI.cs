@@ -28,8 +28,11 @@ public class CatAI : EnemyAi
     private float taskTimer;
     private float locationTime;
     private float baseSpeed;
+    private float jumpCooldownTime = 10.0f;
+    private float lastJumpTime = -10f;
     private bool isJumping = false;
     private bool midJump = false;
+    private Vector3? lastLinkEndPos = null;
 
     void Start()
     {
@@ -81,40 +84,40 @@ public class CatAI : EnemyAi
             {
                 OffMeshLinkData linkData = agent.currentOffMeshLinkData;
 
-                if (!IsLinkOnPath(linkData.endPos))
+                if (lastLinkEndPos.HasValue && Vector3.Distance(linkData.endPos, lastLinkEndPos.Value) < 0.1f)
                 {
-                    agent.CompleteOffMeshLink();
                     yield return null;
                     continue;
                 }
 
                 isJumping = true;
 
-                Vector3 start = agent.transform.position;
-                Vector3 end = linkData.endPos + Vector3.up * agent.baseOffset;
+                Vector3 startPos = transform.position;
+                Vector3 endPos = linkData.endPos + Vector3.up * agent.baseOffset;
 
-                float verticalDifference = end.y - start.y;
+                agent.enabled = false;
+
+                if (anim != null) anim.SetBool("isJumping", true);
+
+                yield return new WaitForSeconds(0.5f);
+
+                float verticalDifference = endPos.y - startPos.y;
                 float peakHeight = verticalDifference < 0
                     ? Mathf.Clamp(-verticalDifference * 0.2f, minDropArcHeight, maxDropArcHeight)
-                    : Mathf.Clamp(Mathf.Abs(verticalDifference) * jumpHeight, 0.2f, 1f);
+                    : Mathf.Clamp(Mathf.Abs(verticalDifference) * jumpHeight, 0.05f, 0.3f);   
 
-                float arcLength = EstimateArcLength(start, end, peakHeight);
-                float jumpDuration = Mathf.Clamp(arcLength / jumpSpeed, 0.1f, 0.35f);
+                float arcLength = EstimateArcLength(startPos, endPos, peakHeight);
+                float jumpDuration = Mathf.Clamp(arcLength / jumpSpeed, 0.08f, 1.8f);
 
-                if (anim != null)
-                    anim.SetBool("isJumping", true);
+                yield return StartCoroutine(ParabolicJump(startPos, endPos, peakHeight, jumpDuration));
 
-                yield return new WaitForSeconds(0.2f);
+                lastJumpTime = Time.time;
 
-                yield return StartCoroutine(ParabolicJump(start, end, peakHeight, jumpDuration));
+                if (anim != null) anim.SetBool("isJumping", false);
 
-                if (anim != null)
-                    anim.SetBool("isJumping", false);
-
+                agent.enabled = true;
+                lastLinkEndPos = linkData.startPos; 
                 agent.CompleteOffMeshLink();
-                yield return new WaitUntil(() => !midJump);
-                yield return new WaitForSeconds(3f);
-
                 isJumping = false;
             }
 
@@ -122,49 +125,42 @@ public class CatAI : EnemyAi
         }
     }
 
-    
-    private bool IsLinkOnPath(Vector3 linkEnd)
+    private bool IsLinkInPath(OffMeshLinkData linkData)
     {
-        NavMeshPath path = new NavMeshPath();
-        agent.CalculatePath(agent.destination, path);
+        if (!agent.hasPath) return false;
 
-        foreach (Vector3 corner in path.corners)
+        Vector3 endPosFlat = new Vector3(linkData.endPos.x, 0, linkData.endPos.z);
+
+        foreach (Vector3 corner in agent.path.corners)
         {
-            if (Vector3.Distance(corner, linkEnd) < 1.5f)
+            Vector3 cornerFlat = new Vector3(corner.x, 0, corner.z);
+            if (Vector3.Distance(cornerFlat, endPosFlat) < 0.5f)
+            {
                 return true;
+            }
         }
 
         return false;
     }
-
 
     private IEnumerator ParabolicJump(Vector3 start, Vector3 end, float peakHeight, float duration)
     {
         midJump = true;
         float elapsed = 0f;
 
-        agent.updatePosition = false;
-        agent.updateRotation = false;
-
-        while (elapsed <= duration)
+        while (elapsed < duration)
         {
             float t = elapsed / duration;
-
-            Vector3 horizontal = Vector3.Lerp(start, end, t);
-
-            float heightOffset = peakHeight * t * (1 - t);
-            horizontal.y += heightOffset;
-
-            agent.transform.position = horizontal;
+            Vector3 pos = Vector3.Lerp(start, end, t);
+            pos.y +=  4 * peakHeight * Mathf.Sin(Mathf.PI * t);
+            transform.position = pos;
 
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        agent.transform.position = end;
-
-        agent.updatePosition = true;
-        agent.updateRotation = true;
+        /*Vector3 endPos = new Vector3(end.x, end.y - 2, end.z);*/
+        transform.position = end;
         midJump = false;
     }
 
@@ -177,7 +173,7 @@ public class CatAI : EnemyAi
         {
             float t = i / (float)resolution;
             Vector3 current = Vector3.Lerp(start, end, t);
-            float height = 4 * peakHeight * t * (1 - t);
+            float height = peakHeight * t * (1 - t);
             current.y += height;
 
             totalLength += Vector3.Distance(previous, current);

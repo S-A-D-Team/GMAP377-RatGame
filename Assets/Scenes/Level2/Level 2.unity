@@ -6755,14 +6755,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_StartPoint: {x: -8.940046, y: 2.066318, z: 0.79198474}
   m_EndPoint: {x: -4.6849103, y: 0.3039894, z: 0.65898204}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
-  m_Area: 0
+  m_Area: 2
 --- !u!1001 &170151909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14162,9 +14162,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AgentTypeID: -1372625422
-  m_StartPoint: {x: -4.411911, y: 1.186103, z: 1.981945}
-  m_EndPoint: {x: -6.709507, y: 1.0565693, z: 3.9823036}
-  m_Width: 0.07660534
+  m_StartPoint: {x: -6.7457237, y: 1.2547433, z: 3.7758598}
+  m_EndPoint: {x: -4.1892624, y: 1.1301502, z: 2.0054264}
+  m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
@@ -14181,14 +14181,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_StartPoint: {x: -6.5740623, y: 0, z: -1.0676765}
   m_EndPoint: {x: -4.1418304, y: 1.2375398, z: 0.51039886}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
-  m_Area: 0
+  m_Area: 2
 --- !u!114 &332823303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14203,12 +14203,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AgentTypeID: -1372625422
   m_StartPoint: {x: 1.029068, y: 0, z: -1.2563305}
-  m_EndPoint: {x: -0.5485573, y: 1.2964405, z: 0.6591854}
+  m_EndPoint: {x: -0.5485573, y: 1.1069486, z: 0.6591854}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
-  m_Area: 0
+  m_Area: 2
 --- !u!1 &336305045
 GameObject:
   m_ObjectHideFlags: 0
@@ -26508,14 +26508,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_StartPoint: {x: -7.291733, y: -0.3570528, z: 5.662567}
   m_EndPoint: {x: -4.384018, y: 0.28498888, z: 0.6956229}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
-  m_Area: 0
+  m_Area: 2
 --- !u!1 &677370567
 GameObject:
   m_ObjectHideFlags: 0
@@ -38736,6 +38736,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
+      propertyPath: jumpSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
       propertyPath: CatTasks.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -48747,8 +48752,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AgentTypeID: -1372625422
-  m_StartPoint: {x: 1.9964885, y: 0.09317958, z: 0.5472276}
-  m_EndPoint: {x: 2.9996438, y: -1.9068013, z: 2.5962884}
+  m_StartPoint: {x: 2.9996438, y: -1.9068013, z: 2.5962884}
+  m_EndPoint: {x: 1.9964885, y: 0.09317958, z: 0.5472276}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
@@ -54600,6 +54605,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
+      propertyPath: jumpSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
       propertyPath: CatTasks.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -59079,8 +59089,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AgentTypeID: -1372625422
-  m_StartPoint: {x: 0.0000005764856, y: 1.6228, z: 0.43182337}
-  m_EndPoint: {x: 0.0000000968943, y: -3.5621978e-10, z: 1.4614304}
+  m_StartPoint: {x: 0.0000000968943, y: -3.5621978e-10, z: 1.4614304}
+  m_EndPoint: {x: 0.0000005764856, y: 1.6228, z: 0.43182337}
   m_Width: 6.3450623
   m_CostModifier: -1
   m_Bidirectional: 1
@@ -65217,6 +65227,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
@@ -85488,14 +85503,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_StartPoint: {x: -8.40168, y: 0.18325806, z: 0.54229975}
   m_EndPoint: {x: -4.6989822, y: -0.7240677, z: 0.5561166}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
-  m_Area: 0
+  m_Area: 2
 --- !u!1 &2112937984
 GameObject:
   m_ObjectHideFlags: 0
