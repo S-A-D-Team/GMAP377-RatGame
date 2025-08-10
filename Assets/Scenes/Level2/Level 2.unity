@@ -14164,7 +14164,7 @@ MonoBehaviour:
   m_AgentTypeID: -1372625422
   m_StartPoint: {x: -4.411911, y: 1.186103, z: 1.981945}
   m_EndPoint: {x: -6.709507, y: 1.0565693, z: 3.9823036}
-  m_Width: 0
+  m_Width: 0.07660534
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
@@ -14181,14 +14181,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AgentTypeID: -1372625422
-  m_StartPoint: {x: 1.7364998, y: 1.6248987, z: -4.052286}
-  m_EndPoint: {x: -0.47593307, y: 1.1364925, z: 0.41853523}
+  m_AgentTypeID: 0
+  m_StartPoint: {x: -6.5740623, y: 0, z: -1.0676765}
+  m_EndPoint: {x: -4.1418304, y: 1.2375398, z: 0.51039886}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
-  m_Area: 2
+  m_Area: 0
 --- !u!114 &332823303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14202,13 +14202,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AgentTypeID: -1372625422
-  m_StartPoint: {x: -2.743454, y: 1.6768451, z: -3.8107414}
-  m_EndPoint: {x: -4.083233, y: 1.3906395, z: 0.09536362}
+  m_StartPoint: {x: 1.029068, y: 0, z: -1.2563305}
+  m_EndPoint: {x: -0.5485573, y: 1.2964405, z: 0.6591854}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
-  m_Area: 2
+  m_Area: 0
 --- !u!1 &336305045
 GameObject:
   m_ObjectHideFlags: 0
@@ -28205,8 +28205,6 @@ GameObject:
   - component: {fileID: 713597099}
   - component: {fileID: 713597098}
   - component: {fileID: 713597097}
-  - component: {fileID: 713597102}
-  - component: {fileID: 713597101}
   m_Layer: 6
   m_Name: SM_TVRack (1)
   m_TagString: Untagged
@@ -28324,46 +28322,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713597095}
   m_Mesh: {fileID: -8760054720611764740, guid: 125363afd0137d441befe4a97048f497, type: 3}
---- !u!114 &713597101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 713597095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AgentTypeID: -1372625422
-  m_StartPoint: {x: -4.1852503, y: -0.00000005053203, z: -0.01261562}
-  m_EndPoint: {x: -3.2375762, y: 1.7244501, z: 0.037996415}
-  m_Width: 1.1500351
-  m_CostModifier: -1
-  m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
-  m_Area: 2
---- !u!114 &713597102
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 713597095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AgentTypeID: -1372625422
-  m_StartPoint: {x: 4.054336, y: 0.042937234, z: -0.0093666}
-  m_EndPoint: {x: 3.197752, y: 1.7454518, z: 0.011981394}
-  m_Width: 1.014862
-  m_CostModifier: -1
-  m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
-  m_Area: 2
 --- !u!1001 &715133975
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -48651,6 +48609,7 @@ GameObject:
   - component: {fileID: 1241464265}
   - component: {fileID: 1241464264}
   - component: {fileID: 1241464268}
+  - component: {fileID: 1241464269}
   m_Layer: 6
   m_Name: Table
   m_TagString: Untagged
@@ -48769,12 +48728,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AgentTypeID: -1372625422
   m_StartPoint: {x: -2.8669245, y: -1.7841489, z: -2.4359803}
-  m_EndPoint: {x: -1.9625968, y: -0.037250586, z: -1.1872807}
+  m_EndPoint: {x: -1.8818792, y: -0.03725067, z: -0.49863455}
   m_Width: 0
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
   m_Area: 2
+--- !u!114 &1241464269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1241464263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: -1372625422
+  m_StartPoint: {x: 1.9964885, y: 0.09317958, z: 0.5472276}
+  m_EndPoint: {x: 2.9996438, y: -1.9068013, z: 2.5962884}
+  m_Width: 0
+  m_CostModifier: -1
+  m_Bidirectional: 1
+  m_AutoUpdatePosition: 0
+  m_Area: 0
 --- !u!1001 &1243759921
 PrefabInstance:
   m_ObjectHideFlags: 0
