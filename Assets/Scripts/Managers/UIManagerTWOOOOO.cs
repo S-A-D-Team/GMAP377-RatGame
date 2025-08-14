@@ -38,11 +38,12 @@ public class UIManagerTWOOOOO : MonoBehaviour
 
     public void quitGame()
     {
-        // Destroy singletons if needed
         GameManager.Instance?.SelfDestroy();
         UIManager.Instance?.SelfDestroy();
         GameTimer.Instance?.SelfDestroy();
         ContaminationManager.Instance?.SelfDestroy();
+
+        Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }
 
