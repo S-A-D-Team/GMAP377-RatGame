@@ -1,4 +1,3 @@
-
 // Controls the menu scene, including rat and cat movement and avoidance logic
 using System.Collections;
 using System.Collections.Generic;
@@ -33,6 +32,23 @@ public class MenuScene : MonoBehaviour
     // How close to the edge before rats turn back
     public float edgeBuffer = 0.5f;
 
+    private enum RatMoveType { Normal, Sniffer, Scurrier }
+    private class RatBehavior
+    {
+        public RatMoveType moveType;
+        public float moveTimer = 0f;
+        public float pauseTimer = 0f;
+        public bool isPaused = false;
+        public float currentSpeed = 0f;
+        public float targetSpeed = 0f;
+        public float moveDuration = 0f;
+        public float pauseDuration = 0f;
+        // Add these for mouse reaction
+        public float mouseFreezeTimer = 0f;
+        public bool isGlancing = false;
+    }
+    private List<RatBehavior> ratBehaviors = new List<RatBehavior>();
+
     // Initialize plane bounds and rat directions
     void Start()
     {
@@ -52,10 +68,23 @@ public class MenuScene : MonoBehaviour
         // Initialize each rat's direction and timer
         ratTargetDirections.Clear();
         ratDirectionChangeTimers.Clear();
+        ratBehaviors.Clear();
         foreach (var rat in rats)
         {
             ratTargetDirections.Add(RandomDirection()); // Start with a random direction
             ratDirectionChangeTimers.Add(0f);
+
+            // Randomly assign a behavior
+            RatBehavior behavior = new RatBehavior();
+            float r = Random.value;
+            if (r < 0.33f) behavior.moveType = RatMoveType.Sniffer;
+            else if (r < 0.66f) behavior.moveType = RatMoveType.Scurrier;
+            else behavior.moveType = RatMoveType.Normal;
+            behavior.currentSpeed = 0f;
+            behavior.targetSpeed = ratSpeed;
+            behavior.moveDuration = GetMoveDuration(behavior.moveType);
+            behavior.pauseDuration = GetPauseDuration(behavior.moveType);
+            ratBehaviors.Add(behavior);
         }
     }
 
@@ -99,73 +128,131 @@ public class MenuScene : MonoBehaviour
                     ratDirectionChangeTimers[i] = 0f;
                 }
 
-                // Turn smoothly toward the target direction
-                Quaternion ratTargetRotation = Quaternion.LookRotation(ratTargetDirections[i]);
-                rat.transform.rotation = Quaternion.Slerp(
-                    rat.transform.rotation,
-                    ratTargetRotation,
-                    turnSpeed * Time.deltaTime
-                );
-                rat.transform.position += rat.transform.forward * ratSpeed * Time.deltaTime;
+                var behavior = ratBehaviors[i];
 
-                // Clamp rat to the ground plane and set y to fixed value
-                Vector3 clampedPos = ClampToPlane(rat.transform.position);
-                clampedPos.y = -2.0685f;
-                rat.transform.position = clampedPos;
-
-                // Fix rat's rotation so it stays upright
-                Vector3 euler = rat.transform.eulerAngles;
-                rat.transform.rotation = Quaternion.Euler(0, euler.y, -90);
-
-                // Find the closest rat for the cat to chase
-                float dist = Vector3.Distance(cat.transform.position, rat.transform.position);
-                if (dist < closestDist)
+                // Handle unique movement patterns
+                switch (behavior.moveType)
                 {
-                    closestDist = dist;
-                    catTarget = rat.transform.position;
+                    case RatMoveType.Sniffer:
+                    case RatMoveType.Scurrier:
+                        if (!behavior.isPaused)
+                        {
+                            behavior.moveTimer += Time.deltaTime;
+                            if (behavior.moveTimer > behavior.moveDuration)
+                            {
+                                behavior.isPaused = true;
+                                behavior.pauseTimer = 0f;
+                                behavior.moveTimer = 0f;
+                                behavior.targetSpeed = 0f; // Smoothly slow to stop
+                                behavior.pauseDuration = GetPauseDuration(behavior.moveType);
+                            }
+                            else
+                            {
+                                behavior.targetSpeed = ratSpeed * (behavior.moveType == RatMoveType.Scurrier ? 1.7f : 1f);
+                            }
+                        }
+                        else
+                        {
+                            behavior.pauseTimer += Time.deltaTime;
+                            if (behavior.pauseTimer > behavior.pauseDuration)
+                            {
+                                behavior.isPaused = false;
+                                behavior.moveTimer = 0f;
+                                behavior.targetSpeed = ratSpeed * (behavior.moveType == RatMoveType.Scurrier ? 1.7f : 1f); // Accelerate out of pause
+                                behavior.moveDuration = GetMoveDuration(behavior.moveType);
+                            }
+                            else
+                            {
+                                behavior.targetSpeed = 0f;
+                            }
+                        }
+                        break;
+                    default:
+                        behavior.isPaused = false;
+                        behavior.targetSpeed = ratSpeed;
+                        break;
                 }
 
-                // Smoother avoidance: steer away from nearby rats with stronger influence
-                Vector3 avoidance = Vector3.zero;
-                int neighbors = 0;
-                float smoothAvoidanceRadius = avoidanceRadius * 1.5f; // look further ahead
-                float smoothAvoidanceStrength = avoidanceStrength * 1.5f;
-                for (int j = 0; j < rats.Count; j++)
+                // Use acceleration for smoother speed transitions
+                float accel = 3.5f; // units per second^2
+                if (behavior.currentSpeed < behavior.targetSpeed)
                 {
-                    if (i == j || rats[j] == null) continue;
-                    Vector3 toOther = ratPos - rats[j].transform.position;
-                    float otherDist = toOther.magnitude;
-                    if (otherDist < smoothAvoidanceRadius && otherDist > 0.01f)
+                    behavior.currentSpeed = Mathf.Min(behavior.currentSpeed + accel * Time.deltaTime, behavior.targetSpeed);
+                }
+                else
+                {
+                    behavior.currentSpeed = Mathf.Max(behavior.currentSpeed - accel * Time.deltaTime, behavior.targetSpeed);
+                }
+
+                // Only move if currentSpeed is significant
+                if (behavior.currentSpeed > 0.01f)
+                {
+                    // Turn smoothly toward the target direction
+                    Quaternion ratTargetRotation = Quaternion.LookRotation(ratTargetDirections[i]);
+                    rat.transform.rotation = Quaternion.Slerp(
+                        rat.transform.rotation,
+                        ratTargetRotation,
+                        turnSpeed * Time.deltaTime
+                    );
+                    rat.transform.position += rat.transform.forward * behavior.currentSpeed * Time.deltaTime;
+
+                    // Clamp rat to the ground plane and set y to fixed value
+                    Vector3 clampedPos = ClampToPlane(rat.transform.position);
+                    clampedPos.y = -2.0685f;
+                    rat.transform.position = clampedPos;
+
+                    // Fix rat's rotation so it stays upright
+                    Vector3 euler = rat.transform.eulerAngles;
+                    rat.transform.rotation = Quaternion.Euler(0, euler.y, -90);
+
+                    // Find the closest rat for the cat to chase
+                    float dist = Vector3.Distance(cat.transform.position, rat.transform.position);
+                    if (dist < closestDist)
                     {
-                        // Stronger repulsion the closer the rats are
-                        float strength = Mathf.Lerp(smoothAvoidanceStrength, smoothAvoidanceStrength * 2.5f, 1f - (otherDist / smoothAvoidanceRadius));
-                        avoidance += toOther.normalized * strength / (otherDist + 0.01f);
-                        neighbors++;
+                        closestDist = dist;
+                        catTarget = rat.transform.position;
+                    }
+
+                    // Smoother avoidance: steer away from nearby rats with stronger influence
+                    Vector3 avoidance = Vector3.zero;
+                    int neighbors = 0;
+                    float smoothAvoidanceRadius = avoidanceRadius * 1.5f; // look further ahead
+                    float smoothAvoidanceStrength = avoidanceStrength * 1.5f;
+                    for (int j = 0; j < rats.Count; j++)
+                    {
+                        if (i == j || rats[j] == null) continue;
+                        Vector3 toOther = ratPos - rats[j].transform.position;
+                        float otherDist = toOther.magnitude;
+                        if (otherDist < smoothAvoidanceRadius && otherDist > 0.01f)
+                        {
+                            // Stronger repulsion the closer the rats are
+                            float strength = Mathf.Lerp(smoothAvoidanceStrength, smoothAvoidanceStrength * 2.5f, 1f - (otherDist / smoothAvoidanceRadius));
+                            avoidance += toOther.normalized * strength / (otherDist + 0.01f);
+                            neighbors++;
+                        }
+                    }
+                    if (neighbors > 0)
+                    {
+                        avoidance /= neighbors;
+                        // Blend avoidance more strongly for smoother steering
+                        ratTargetDirections[i] = Vector3.Slerp(ratTargetDirections[i], (ratTargetDirections[i] + avoidance).normalized, 0.85f).normalized;
                     }
                 }
-                if (neighbors > 0)
+
+                // CAT: Chase the closest rat
+                Vector3 direction = (catTarget - cat.transform.position);
+                direction.y = 0;
+                if (direction.magnitude > 0.1f)
                 {
-                    avoidance /= neighbors;
-                    // Blend avoidance more strongly for smoother steering
-                    ratTargetDirections[i] = Vector3.Slerp(ratTargetDirections[i], (ratTargetDirections[i] + avoidance).normalized, 0.85f).normalized;
+                    // Turn smoothly toward the closest rat
+                    Quaternion lookRot = Quaternion.LookRotation(direction);
+                    cat.transform.rotation = Quaternion.Slerp(cat.transform.rotation, lookRot, turnSpeed * Time.deltaTime);
+                    cat.transform.position += cat.transform.forward * catSpeed * Time.deltaTime;
                 }
+
+                // Clamp cat to the ground plane
+                cat.transform.position = ClampToPlane(cat.transform.position);
             }
-
-            // (No post-move overlap push; avoidance is handled in steering above)
-
-            // CAT: Chase the closest rat
-            Vector3 direction = (catTarget - cat.transform.position);
-            direction.y = 0;
-            if (direction.magnitude > 0.1f)
-            {
-                // Turn smoothly toward the closest rat
-                Quaternion lookRot = Quaternion.LookRotation(direction);
-                cat.transform.rotation = Quaternion.Slerp(cat.transform.rotation, lookRot, turnSpeed * Time.deltaTime);
-                cat.transform.position += cat.transform.forward * catSpeed * Time.deltaTime;
-            }
-
-            // Clamp cat to the ground plane
-            cat.transform.position = ClampToPlane(cat.transform.position);
         }
     }
 
@@ -185,5 +272,25 @@ public class MenuScene : MonoBehaviour
     {
         float angle = Random.Range(0f, 360f);
         return new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0, Mathf.Cos(angle * Mathf.Deg2Rad)).normalized;
+    }
+
+    // Helper methods for durations:
+    float GetMoveDuration(RatMoveType type)
+    {
+        switch (type)
+        {
+            case RatMoveType.Sniffer: return 10f + Random.value * 6f; 
+            case RatMoveType.Scurrier: return 7f + Random.value * 4f;
+            default: return 12f + Random.value * 6f;  
+        }
+    }
+    float GetPauseDuration(RatMoveType type)
+    {
+        switch (type)
+        {
+            case RatMoveType.Sniffer: return 1f + Random.value * 0.5f;     
+            case RatMoveType.Scurrier: return 0.7f + Random.value * 0.5f; 
+            default: return 0.8f + Random.value * 0.5f;                    
+        }
     }
 }
