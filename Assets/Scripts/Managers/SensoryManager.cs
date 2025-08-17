@@ -9,12 +9,14 @@ public class SensoryManager : MonoBehaviour
     protected Dictionary<Contaminable, Color> originalColors;
     [SerializeField]
     protected SenseOfSmell sos;
+    protected List<SenseOfHearing> listeners;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         contaminables = new List<Contaminable>();
         originalColors = new Dictionary<Contaminable, Color>();
+        listeners = new List<SenseOfHearing>();
     }
 
     // Update is called once per frame
@@ -78,6 +80,28 @@ public class SensoryManager : MonoBehaviour
             {
                 contaminables.Remove(collider.GetComponent<Contaminable>());
             }
+        }
+    }
+
+    public void addToListeners(SenseOfHearing listener)
+    {
+        listeners.Add(listener);
+    }
+
+    public void removeFromListeners(SenseOfHearing listener)
+    {
+        if (listeners.Contains(listener))
+        {
+           listeners.Remove(listener);
+        }
+    }
+
+    public void emitSound(GameObject source, Vector3 location, float intensity)
+    {
+        //Debug.Log("Sensory Manager emit sound");
+        foreach (var listener in listeners)
+        {
+            listener.hear(source, location, intensity);
         }
     }
 
