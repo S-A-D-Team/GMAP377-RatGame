@@ -51,7 +51,7 @@ public class EnemyAi : MonoBehaviour
         agent.speed += (1f * (aiLevel - 1));
     }
 
-    protected bool isPlayerSighted(Transform enemyEyes, float fieldOfView = 90f, float viewDistance = 10f)
+    protected bool isPlayerSighted(Transform enemyEyes, float fieldOfView = 120f, float viewDistance = 20f)
     {
         Vector3 playerDirection = player.position - enemyEyes.position;
         float playerAngle = Vector3.Angle(enemyEyes.forward, playerDirection);
