@@ -43,13 +43,24 @@ public class GrandmaAI : EnemyAi
     [SerializeField] private List<string> desperateLines;
     private List<string> currentLines;
 
+    [SerializeField] private Sprite defaultSprite;
+    [SerializeField] private Sprite vacuumSprite;
+    private SpriteRenderer spriteRenderer;
+
+
 
     void Start()
-    { 
+    {
         prevTask = transform.position;
         reactionCanvas.SetActive(false);
         baseSpeed = agent.speed;
         currentLines = relaxedLines;
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        spriteRenderer.sprite = defaultSprite;
+        
+        foreach (TaskInfo taskinfo in HumanTasks) {
+            Debug.Log(taskinfo.location);
+        }
     }
 
     void Update()
@@ -67,33 +78,43 @@ public class GrandmaAI : EnemyAi
     private void HandlePatrolling(){
         bool playerSeen = isPlayerSighted(eyes.transform);
 
-        if(playerSeen && !coroutineRunning){
+        if (playerSeen && !coroutineRunning)
+        {
             StartCoroutine(checkIfPlayerIsMoving());
         }
-        else if (!playerSeen && shouldDoTask){
+        else if (!playerSeen && shouldDoTask)
+        {
             (Vector3, float) task = changeLocation(HumanTasks, prevTask);
             prevTask = task.Item1;
             locationTime = Random.Range(task.Item2 - 1, task.Item2 + 1);
             taskTimer = 0;
             startTurnAngle = transform.eulerAngles.y;
-        } else{
+        }
+        else
+        {
             taskTimer += Time.deltaTime;
-            if(taskTimer >= locationTime) shouldDoTask = true;
+            if (taskTimer >= locationTime) shouldDoTask = true;
 
-            if(ReachedDestination()){
-                if(!coroutineRunning){
+            if (ReachedDestination())
+            {
+                if (!coroutineRunning)
+                {
                     displaySaying = Random.Range(0, (currentLines.Count * 2));
-                    if(displaySaying < currentLines.Count){
+                    if (displaySaying < currentLines.Count)
+                    {
                         StartCoroutine(displayLine(currentLines[displaySaying]));
                     }
                 }
 
-                if( isDesperate){
+                if (isDesperate)
+                {
                     float pingPong = Mathf.PingPong(Time.time * rotationSpeed, 0.5f);
                     float angle = Mathf.Lerp(startTurnAngle + minAngle, startTurnAngle + maxAngle, pingPong);
                     transform.rotation = Quaternion.Euler(0, angle, 0);
-                } else{
-                    if (hasVacuum && Random.value < 0.4f)
+                }
+                else
+                {
+                    if (hasVacuum && Random.Range(0f, 100f) < 0.05f)
                     {
                         hasVacuum = false;
 
@@ -102,6 +123,11 @@ public class GrandmaAI : EnemyAi
                         vacuum.transform.rotation = Quaternion.identity;
 
                         vacuum.SetActive(true);
+
+                        if (spriteRenderer != null && defaultSprite != null)
+                        {
+                            spriteRenderer.sprite = defaultSprite;
+                        }
                     }
                 }
             }
@@ -122,6 +148,8 @@ public class GrandmaAI : EnemyAi
 
     private IEnumerator reactToPlayer(){
         currentState = HumanState.Reacting;
+        shouldDoTask = false;
+        taskTimer = 0f;
         StartCoroutine(displayLine(sightReaction));
         cat.Reaction();
         cat.Chase();
@@ -146,7 +174,7 @@ public class GrandmaAI : EnemyAi
         } else{
             if(!hasVacuum){
                 Vector3 directionToPlayer = transform.position - player.position;
-                Vector3 fleeTarget = transform.position + directionToPlayer.normalized * 10f;
+                Vector3 fleeTarget = transform.position + directionToPlayer.normalized * 5f;
 
                 NavMeshHit hit;
                 if (NavMesh.SamplePosition(fleeTarget, out hit, 5f, NavMesh.AllAreas))
@@ -182,8 +210,13 @@ public class GrandmaAI : EnemyAi
         {
             hasVacuum = true;
             vacuum.transform.SetParent(vacuumHolder);
-            vacuum.transform.localPosition = Vector3.zero;
+            vacuum.transform.localPosition = new Vector3(0f, -1f, 0.7f);
             vacuum.transform.localRotation = Quaternion.identity;
+
+            if (spriteRenderer != null && vacuumSprite != null)
+            {
+                spriteRenderer.sprite = vacuumSprite;
+            }
         }
     }
 }
