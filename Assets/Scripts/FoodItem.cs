@@ -7,6 +7,7 @@ public class FoodItem : Contaminable
     [Space]
     [Header("Food Details")]
     public bool poisoned;
+    public AudioSource uiSoundSource;
 	public ParticleSystem poisonedEffect;
     //public ParticleSystem poisoningEffect;
     public GameObject chompEffect;
@@ -15,13 +16,13 @@ public class FoodItem : Contaminable
     private bool isEaten = false;
     [SerializeField] private bool isColliding = false;
 
-    private AudioSource audioData;
+    //private AudioSource audioData;
     private MeshRenderer mesh;
 
     protected override void Awake()
     {
         base.Awake();
-        audioData = GetComponent<AudioSource>();
+        //audioData = GetComponent<AudioSource>();
         mesh = GetComponent<MeshRenderer>();
     }
     protected override void Start()
@@ -29,7 +30,7 @@ public class FoodItem : Contaminable
 		base.Start();
 		//make sure the fx is not playing and the mesh is active
 		poisonedEffect.Stop();
-        audioData.Stop();
+        //audioData.Stop();
         if (mesh != null) { mesh.enabled = true; }
         //if (poisoningEffect != null) { poisoningEffect.Stop(); }
 
@@ -86,9 +87,11 @@ public class FoodItem : Contaminable
             {
                 break;
             }
-            if(audioData != null){
-            audioData.Play();
-            }
+            //if(audioData != null)
+            //{
+            //audioData.Play();
+            //}
+            uiSoundSource.Play();
             chargeWindow -= Time.deltaTime;
             //update UI
             UIManager.Instance.showContainationBuildUp(true, ((_completeChargeTime - chargeWindow)/_completeChargeTime));
@@ -135,7 +138,7 @@ public class FoodItem : Contaminable
     protected virtual void EatItem()
     {
         isEaten = true;
-        audioData.Play();
+        //audioData.Play();
         if (mesh != null) { mesh.enabled = false; }
         GameManager.Instance.changeHunger(0.1f * (int)potency);
 
@@ -150,10 +153,10 @@ public class FoodItem : Contaminable
             Destroy(gameObject, chompAnimLength);
 
         }
-        else
-        {
-            Destroy(gameObject, audioData.clip.length);
-        }
+        //else
+        //{
+            //Destroy(gameObject, audioData.clip.length);
+        //}
         
     }
 
