@@ -2,160 +2,135 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; 
+using TMPro;
 
 public class SettingsManager : MonoBehaviour
 {
-    public Slider masterslider; 
-    public TMP_Text masterValueText; 
+    [Header("Audio Settings")]
+    [Tooltip("Master volume slider")]
+    public Slider masterslider;
+    [Tooltip("Master volume display text")]
+    public TMP_Text masterValueText;
 
+    [Tooltip("Music volume slider")]
     public Slider musicslider;
-    public TMP_Text musicValueText; 
+    [Tooltip("Music volume display text")]
+    public TMP_Text musicValueText;
 
+    [Tooltip("SFX volume slider")]
     public Slider sfxslider;
+    [Tooltip("SFX volume display text")]
     public TMP_Text sfxValueText;
 
-    public GameObject BGM;   
-    private AudioSource bgmAudioSource;
-    private AudioSource sfxAudioSource; 
-
-    [Header("Screen Resolution Dropdown")]
-    public TMP_Dropdown resolutionDropdown;
-
-    private readonly List<Vector2Int> supportedResolutions = new List<Vector2Int>
-    {
-        new Vector2Int(1920, 1080),
-        new Vector2Int(1280, 720),
-        new Vector2Int(800, 600)
-    };
-
-    private float masterVolume = 1f;
-
+    // Initialize settings on game start
     void Start()
     {
-        // Get AudioSource from BGM
-        if (BGM != null)
-        {
-            bgmAudioSource = BGM.GetComponent<AudioSource>();
-        }
-
-        // Load saved volumes
-        masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
-
+        // Initialize UI listeners
         masterslider.onValueChanged.AddListener(UpdateMasterValueText);
         musicslider.onValueChanged.AddListener(UpdateMusicValueText);
         sfxslider.onValueChanged.AddListener(UpdateSFXValueText);
 
-        masterslider.value = masterVolume * masterslider.maxValue;
-        
-        if (bgmAudioSource != null)
-        {
-            musicslider.value = PlayerPrefs.GetFloat("MusicVolume", 0.5f) * musicslider.maxValue;
-        }
-        else
-        {
-            musicslider.value = PlayerPrefs.GetFloat("MusicVolume", 0.5f) * musicslider.maxValue;
-        }
-        
-        sfxslider.value = PlayerPrefs.GetFloat("SFXVolume", 0.5f) * sfxslider.maxValue;
+        // Load and apply saved settings
+        LoadSettings();
+    }
 
+
+
+    // Load saved settings from PlayerPrefs
+    private void LoadSettings()
+    {
+        // Load volume settings
+        float masterVol = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        float musicVol = PlayerPrefs.GetFloat("MusicVolume", 0.5f);
+        float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
+
+        // Update sliders
+        masterslider.value = masterVol * masterslider.maxValue;
+        musicslider.value = musicVol * musicslider.maxValue;
+        sfxslider.value = sfxVol * sfxslider.maxValue;
+
+        // Update display texts
         UpdateMasterValueText(masterslider.value);
         UpdateMusicValueText(musicslider.value);
         UpdateSFXValueText(sfxslider.value);
 
-        // Apply all volumes on start
-        ApplyAllVolumes();
-
-        PopulateResolutionDropdown();
+        // Apply settings to MainAudioManager
+        ApplyVolumeSettings();
     }
 
-    private void PopulateResolutionDropdown()
-    {
-        if (resolutionDropdown == null) return;
-
-        resolutionDropdown.ClearOptions();
-        List<string> options = new List<string>();
-        foreach (var res in supportedResolutions)
-        {
-            options.Add($"{res.x} x {res.y}");
-        }
-        resolutionDropdown.AddOptions(options);
-        resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownChanged);
-        resolutionDropdown.value = 0;
-        resolutionDropdown.RefreshShownValue();
-    }
-
-    private void OnResolutionDropdownChanged(int index)
-    {
-        if (index < 0 || index >= supportedResolutions.Count) return;
-        var res = supportedResolutions[index];
-        Screen.SetResolution(res.x, res.y, Screen.fullScreen);
-    }
-
+    // Update master volume display and save setting
     private void UpdateMasterValueText(float value)
     {
         masterValueText.text = value.ToString("0");
-        masterVolume = value / masterslider.maxValue;
+        float normalizedValue = value / masterslider.maxValue;
         
-        // Save master volume to PlayerPrefs
-        PlayerPrefs.SetFloat("MasterVolume", masterVolume);
+        // Save to PlayerPrefs
+        PlayerPrefs.SetFloat("MasterVolume", normalizedValue);
         PlayerPrefs.Save();
         
-        // Apply master volume to all audio sources
-        ApplyAllVolumes();
+        // Apply to MainAudioManager
+        if (MainAudioManager.Instance != null)
+        {
+            MainAudioManager.Instance.SetMasterVolume(normalizedValue);
+        }
     }
 
-    void UpdateMusicValueText(float value)
+
+    // Update music volume display and save setting
+    private void UpdateMusicValueText(float value)
     {
         musicValueText.text = value.ToString("0");
-        
-        // Save music volume to PlayerPrefs
         float normalizedValue = value / musicslider.maxValue;
+        
+        // Save to PlayerPrefs
         PlayerPrefs.SetFloat("MusicVolume", normalizedValue);
         PlayerPrefs.Save();
         
-        // Apply music volume with master volume
-        if (bgmAudioSource != null)
+        // Apply to MainAudioManager
+        if (MainAudioManager.Instance != null)
         {
-            bgmAudioSource.volume = normalizedValue * masterVolume;
+            MainAudioManager.Instance.SetMusicVolume(normalizedValue);
         }
     }
 
-    void UpdateSFXValueText(float value)
+    // Update SFX volume display and save setting
+    private void UpdateSFXValueText(float value)
     {
         sfxValueText.text = value.ToString("0");
-        
-        // Save SFX volume to PlayerPrefs
         float normalizedValue = value / sfxslider.maxValue;
+        
+        // Save to PlayerPrefs
         PlayerPrefs.SetFloat("SFXVolume", normalizedValue);
         PlayerPrefs.Save();
         
-        // Apply SFX volume with master volume
-        ApplyAllVolumes();
-    }
-
-    private void ApplyAllVolumes()
-    {
-        if (bgmAudioSource != null)
+        // Apply to MainAudioManager
+        if (MainAudioManager.Instance != null)
         {
-            float musicVolume = PlayerPrefs.GetFloat("MusicVolume", 0.5f);
-            bgmAudioSource.volume = musicVolume * masterVolume;
-        }
-        
-        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
-        foreach (AudioSource audioSource in allAudioSources)
-        {
-            if (audioSource != bgmAudioSource)
-            {
-                float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
-                audioSource.volume = sfxVolume * masterVolume;
-            }
+            MainAudioManager.Instance.SetSFXVolume(normalizedValue);
         }
     }
 
-    public void SetFullScreen(bool isFullScreen)
+    // Apply all volume settings to MainAudioManager
+    private void ApplyVolumeSettings()
     {
-        Screen.fullScreen = isFullScreen;
+        if (MainAudioManager.Instance == null)
+        {
+            Debug.LogWarning("MainAudioManager not found!");
+            return;
+        }
+
+        // Apply all volume settings
+        MainAudioManager.Instance.SetMasterVolume(PlayerPrefs.GetFloat("MasterVolume", 1f));
+        MainAudioManager.Instance.SetMusicVolume(PlayerPrefs.GetFloat("MusicVolume", 0.5f));
+        MainAudioManager.Instance.SetSFXVolume(PlayerPrefs.GetFloat("SFXVolume", 0.5f));
     }
 
+    // Reset all settings to default values
+    public void ResetToDefaults()
+    {
+        // Reset volumes
+        masterslider.value = masterslider.maxValue; // 100%
+        musicslider.value = masterslider.maxValue * 0.5f; // 50%
+        sfxslider.value = masterslider.maxValue * 0.5f; // 50%
+    }
 }
