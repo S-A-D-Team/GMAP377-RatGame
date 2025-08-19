@@ -6,15 +6,19 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-
     public GameObject loadingScreen;
-
     public Image loadingBarFill;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+
+        // Play background music using MainAudioManager
+        if (MainAudioManager.Instance != null)
+        {
+            MainAudioManager.Instance.PlayMusic("Main");
+        }
     }
 
     IEnumerator LoadSceneAsyncly(string _scenename)
@@ -33,8 +37,15 @@ public class MainMenu : MonoBehaviour
 
     public void LoadLevel(string sceneName)
     {
+        // Stop background music before loading next scene
+        if (MainAudioManager.Instance != null)
+        {
+            MainAudioManager.Instance.StopMusic();
+        }
+
         StartCoroutine(LoadSceneAsyncly(sceneName));
     }
+
     
     public void ShowUI(GameObject uiObject)
     {
