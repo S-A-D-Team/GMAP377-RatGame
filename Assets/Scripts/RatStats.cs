@@ -26,6 +26,7 @@ public class RatStats : MonoBehaviour
     public int mutationLevel;
     public hungerLevel currentHungerLevel;
     public float scentRange;
+    public bool hasStinky;
     public enum hungerLevel
     {
         Full = 110,

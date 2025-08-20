@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 
     private PlayerMovement ratMov;
 
-    private SensoryManager ratSens;
+    private SensoryManager sens;
 
     private int contaminationLevel = 0;
 
@@ -49,7 +49,13 @@ public class GameManager : MonoBehaviour
         ContaminationManager.Instance.thresholdPassed += OnThresholdTrigger;
         //UIManager.Instance.updateParams += OnParamUIUpdate;
 
-        
+        sens = gameObject.GetComponent<SensoryManager>();
+        if (sens == null)
+        {
+            Debug.Log("SensoryManager not added to Managers List prefab!");
+        }
+
+
     }
     public void SelfDestroy()
     {
@@ -69,7 +75,7 @@ public class GameManager : MonoBehaviour
         theRat = rat;
         ratStats = rat.GetComponent<RatStats>();
         ratMov = rat.GetComponent<PlayerMovement>();
-        ratSens = rat.GetComponent<SensoryManager>();
+        
         if (ratStats == null)
         {
             Debug.Log("RatStats not added to Player prefab!");
@@ -78,10 +84,6 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("PlayerMovement not added to Player prefab!");
         }
-        if (ratSens == null)
-        {
-            Debug.Log("SensoryManager not added to Player prefab!");
-        }
 
         ratStats.hunger = 1;
         ratStats.stamina = 1;
@@ -89,7 +91,7 @@ public class GameManager : MonoBehaviour
         ratStats.staminaCap = 1f;
         ratStats.mutationLevel = 0;
 
-        ratSens.changeSmellRadius(ratStats.scentRange);
+        sens.changeSmellRadius(ratStats.scentRange);
     }
 
     public void OnThresholdTrigger(float threshold, bool winCon)
@@ -303,6 +305,31 @@ public class GameManager : MonoBehaviour
         if (ratStats.scentRange < 0f)
         {
             ratStats.scentRange = 0f;
+        }
+    }
+
+    public void addListener(SenseOfHearing listener)
+    {
+        if (sens != null)
+        {
+            sens.addToListeners(listener);
+        }
+    }
+
+    public void removeListener(SenseOfHearing listener)
+    {
+        if (sens != null)
+        {
+            sens.removeFromListeners(listener);
+        }
+    }
+
+    public void emitSound(GameObject source, Vector3 location, float intensity)
+    {
+        if (sens != null)
+        {
+            //Debug.Log("Game Manager emit sound");
+            sens.emitSound(source, location, intensity);
         }
     }
 
