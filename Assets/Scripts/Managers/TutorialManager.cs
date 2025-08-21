@@ -17,11 +17,34 @@ public class TutorialManager : MonoBehaviour
 
     private void Start()
     {
-        if(tutorialStage == 0){
+        bool tutorialEnabled = PlayerPrefs.GetInt("TutorialEnabled", 1) == 1;
+
+        if (tutorialEnabled && tutorialStage == 0)
+        {
             UIManager.Instance.beginTutorial(0);
+        }
+        else
+        {
+            UIManager.Instance.endTutorial();
+            StartCoroutine(SpawnPlayerNextFrame());
         }
     }
 
+    private IEnumerator SpawnPlayerNextFrame()
+    {
+        // Wait until end of frame to ensure player exists
+        yield return new WaitForEndOfFrame();
+
+        PlayerMovement player = GameObject.FindGameObjectWithTag("player")?.GetComponent<PlayerMovement>();
+        if (player != null)
+        {
+            player.spawnRandom();
+        }
+        else
+        {
+            Debug.LogWarning("Player not found when trying to spawn!");
+        }
+    }
 
     public void PlayIntroNarration()
     {
