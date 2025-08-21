@@ -1713,7 +1713,7 @@ PrefabInstance:
     - target: {fileID: 896229595392792019, guid: f8e99b934a2fdd44f944a92c0a335637,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 896229595392792019, guid: f8e99b934a2fdd44f944a92c0a335637,
         type: 3}
@@ -1723,7 +1723,7 @@ PrefabInstance:
     - target: {fileID: 896229595392792019, guid: f8e99b934a2fdd44f944a92c0a335637,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: LoadLevel
       objectReference: {fileID: 0}
     - target: {fileID: 896229595392792019, guid: f8e99b934a2fdd44f944a92c0a335637,
         type: 3}
@@ -1815,6 +1815,11 @@ PrefabInstance:
       propertyPath: masterslider
       value: 
       objectReference: {fileID: 414280488}
+    - target: {fileID: 2783315454630737473, guid: f8e99b934a2fdd44f944a92c0a335637,
+        type: 3}
+      propertyPath: tutorialToggle
+      value: 
+      objectReference: {fileID: 608910529007318741}
     - target: {fileID: 2783315454630737473, guid: f8e99b934a2fdd44f944a92c0a335637,
         type: 3}
       propertyPath: masterValueText
@@ -2365,6 +2370,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8e99b934a2fdd44f944a92c0a335637, type: 3}
+--- !u!114 &608910529007318741 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6729269587297240554, guid: f8e99b934a2fdd44f944a92c0a335637,
+    type: 3}
+  m_PrefabInstance: {fileID: 608910529007318740}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3554407467427589967
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -12222,6 +12222,21 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0.01
       objectReference: {fileID: 0}
+    - target: {fileID: 4351592684015809603, guid: a106b117a8426c94c9cdd82ceb0725bc,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4351592684015809603, guid: a106b117a8426c94c9cdd82ceb0725bc,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4351592684015809603, guid: a106b117a8426c94c9cdd82ceb0725bc,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4787711349080769446, guid: a106b117a8426c94c9cdd82ceb0725bc,
         type: 3}
       propertyPath: m_Size
@@ -12237,6 +12252,11 @@ PrefabInstance:
       propertyPath: masterslider
       value: 
       objectReference: {fileID: 1221649666}
+    - target: {fileID: 5161283348397344744, guid: a106b117a8426c94c9cdd82ceb0725bc,
+        type: 3}
+      propertyPath: tutorialToggle
+      value: 
+      objectReference: {fileID: 1916795851}
     - target: {fileID: 5161283348397344744, guid: a106b117a8426c94c9cdd82ceb0725bc,
         type: 3}
       propertyPath: masterValueText
@@ -17738,6 +17758,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0000001, y: 1, z: 0.99999994}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1916795851 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4351592684015809603, guid: a106b117a8426c94c9cdd82ceb0725bc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1221649663}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1918808881
 GameObject:
   m_ObjectHideFlags: 0
@@ -18882,6 +18914,7 @@ MonoBehaviour:
   mutationLevel: 0
   currentHungerLevel: 100
   scentRange: 0
+  hasStinky: 0
   hungerPenalty: 100
   hungerTolerance: 0
 --- !u!114 &2014804301

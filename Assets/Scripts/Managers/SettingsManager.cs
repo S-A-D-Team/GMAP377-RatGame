@@ -22,6 +22,10 @@ public class SettingsManager : MonoBehaviour
     [Tooltip("SFX volume display text")]
     public TMP_Text sfxValueText;
 
+    [Header("Gameplay Settings")]
+    [Tooltip("Toggle for enabling/disabling tutorial")]
+    public Toggle tutorialToggle;
+
     // Initialize settings on game start
     void Start()
     {
@@ -30,11 +34,28 @@ public class SettingsManager : MonoBehaviour
         musicslider.onValueChanged.AddListener(UpdateMusicValueText);
         sfxslider.onValueChanged.AddListener(UpdateSFXValueText);
 
+        if (tutorialToggle != null)
+        {
+            tutorialToggle.onValueChanged.AddListener(SetTutorialEnabled);
+        }
+
         // Load and apply saved settings
         LoadSettings();
+
+        // Auto-apply tutorial state on startup
+        bool tutorialEnabled = PlayerPrefs.GetInt("TutorialEnabled", 1) == 1;
+        if (UIManager.Instance != null)
+        {
+            if (tutorialEnabled)
+            {
+                UIManager.Instance.beginTutorial(0); // Start tutorial at stage 0
+            }
+            else
+            {
+                UIManager.Instance.endTutorial();
+            }
+        }
     }
-
-
 
     // Load saved settings from PlayerPrefs
     private void LoadSettings()
@@ -56,6 +77,13 @@ public class SettingsManager : MonoBehaviour
 
         // Apply settings to MainAudioManager
         ApplyVolumeSettings();
+
+        // Load tutorial toggle state
+        bool tutorialEnabled = PlayerPrefs.GetInt("TutorialEnabled", 1) == 1;
+        if (tutorialToggle != null)
+        {
+            tutorialToggle.isOn = tutorialEnabled;
+        }
     }
 
     // Update master volume display and save setting
@@ -74,7 +102,6 @@ public class SettingsManager : MonoBehaviour
             MainAudioManager.Instance.SetMasterVolume(normalizedValue);
         }
     }
-
 
     // Update music volume display and save setting
     private void UpdateMusicValueText(float value)
@@ -132,5 +159,32 @@ public class SettingsManager : MonoBehaviour
         masterslider.value = masterslider.maxValue; // 100%
         musicslider.value = masterslider.maxValue * 0.5f; // 50%
         sfxslider.value = masterslider.maxValue * 0.5f; // 50%
+
+        // Reset tutorial to enabled by default
+        if (tutorialToggle != null)
+        {
+            tutorialToggle.isOn = true;
+        }
+    }
+
+    // Called when tutorial toggle is changed
+    public void SetTutorialEnabled(bool isEnabled)
+    {
+        // Save setting
+        PlayerPrefs.SetInt("TutorialEnabled", isEnabled ? 1 : 0);
+        PlayerPrefs.Save();
+
+        // Apply immediately if UIManager exists
+        if (UIManager.Instance != null)
+        {
+            if (isEnabled)
+            {
+                UIManager.Instance.beginTutorial(0);
+            }
+            else
+            {
+                UIManager.Instance.endTutorial();
+            }
+        }
     }
 }

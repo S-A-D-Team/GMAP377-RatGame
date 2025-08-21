@@ -51490,6 +51490,11 @@ PrefabInstance:
       objectReference: {fileID: 1900262416}
     - target: {fileID: 5161283348397344744, guid: a106b117a8426c94c9cdd82ceb0725bc,
         type: 3}
+      propertyPath: tutorialToggle
+      value: 
+      objectReference: {fileID: 1675488664}
+    - target: {fileID: 5161283348397344744, guid: a106b117a8426c94c9cdd82ceb0725bc,
+        type: 3}
       propertyPath: masterValueText
       value: 
       objectReference: {fileID: 2003933365}
@@ -51713,6 +51718,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a106b117a8426c94c9cdd82ceb0725bc, type: 3}
+--- !u!114 &1675488664 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4351592684015809603, guid: a106b117a8426c94c9cdd82ceb0725bc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1675488663}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1686636032
 GameObject:
   m_ObjectHideFlags: 0
