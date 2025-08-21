@@ -249,9 +249,14 @@ public class CatAI : EnemyAi
         if (!playerSpottedFirstTime)
         {
             playerSpottedFirstTime = true;
-            UIManager.Instance.beginTutorial(6);
+
+            if (PopupManager.Instance != null)
+            {
+                PopupManager.Instance.ShowCatPopup();
+            }
         }
     }
+
 
     public void Chase()
     {
