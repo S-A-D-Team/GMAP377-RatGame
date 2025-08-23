@@ -724,13 +724,19 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator JumpCooldown()
     {
+        float airTime = 0f;
+
         yield return WaitForFrames(jumpCooldown);
         
         while (!grounded && playerInput.JumpPressed)
         {
+            airTime += Time.deltaTime;
+
             yield return null;
         }
         canJump = true;
+
+        GameManager.Instance.emitSound(gameObject, gameObject.transform.position, airTime);
     }
 
     IEnumerator WaitForFrames(int frameWindow)
@@ -935,6 +941,8 @@ public class PlayerMovement : MonoBehaviour
                     moveDirection = climbDirection * playerInput.MoveInput.y;
                     UIManager.Instance.playClimb();
                     rb.AddForce(3f * climbSpeed * moveDirection.normalized, ForceMode.Force);
+
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 3f * climbSpeed);
                 }
                 else if (currentLateral == lateralAction.Idle)
                 {
@@ -953,12 +961,16 @@ public class PlayerMovement : MonoBehaviour
                     running = false;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(2.5f * speed * moveDirection, ForceMode.Force);
+
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * speed);
                 }
                 else if (currentLateral == lateralAction.Running)
                 {
                     running = true;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(moveDirection * runSpeed * 2.5f, ForceMode.Force);
+
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * runSpeed);
                 }
                 else
                 {

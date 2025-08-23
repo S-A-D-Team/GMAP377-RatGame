@@ -10,18 +10,39 @@ public class TutorialManager : MonoBehaviour
     [TextArea] public string staminaNarration;
     [TextArea] public string mutationNarration;
     [TextArea] public string endTutorialNarration;
-    [TextArea] public string humanNarration;
-    [TextArea] public string catNarration;
 
     public int tutorialStage = 0;
 
     private void Start()
     {
-        if(tutorialStage == 0){
+        bool tutorialEnabled = PlayerPrefs.GetInt("TutorialEnabled", 1) == 1;
+
+        if (tutorialEnabled && tutorialStage == 0)
+        {
             UIManager.Instance.beginTutorial(0);
+        }
+        else
+        {
+            UIManager.Instance.endTutorial();
+            StartCoroutine(SpawnPlayerNextFrame());
         }
     }
 
+    private IEnumerator SpawnPlayerNextFrame()
+    {
+        // Wait until end of frame to ensure player exists
+        yield return new WaitForEndOfFrame();
+
+        PlayerMovement player = GameObject.FindGameObjectWithTag("player")?.GetComponent<PlayerMovement>();
+        if (player != null)
+        {
+            player.spawnRandom();
+        }
+        else
+        {
+            Debug.LogWarning("Player not found when trying to spawn!");
+        }
+    }
 
     public void PlayIntroNarration()
     {
@@ -63,22 +84,6 @@ public class TutorialManager : MonoBehaviour
         UIManager.Instance.mutationHighlight.gameObject.SetActive(false);
     }
 
-    public void PlayHumanNarration()
-    {
-        UIManager.Instance.SetTutorialCaption(humanNarration);
-        UIManager.Instance.hungerHighlight.gameObject.SetActive(false);
-        UIManager.Instance.staminaHighlight.gameObject.SetActive(false);
-        UIManager.Instance.mutationHighlight.gameObject.SetActive(false);
-    }
-
-    public void PlayCatNarration()
-    {
-        UIManager.Instance.SetTutorialCaption(catNarration);
-        UIManager.Instance.hungerHighlight.gameObject.SetActive(false);
-        UIManager.Instance.staminaHighlight.gameObject.SetActive(false);
-        UIManager.Instance.mutationHighlight.gameObject.SetActive(false);
-    }
-
     public void SetTutorial()
     {
         switch (tutorialStage)
@@ -98,14 +103,6 @@ public class TutorialManager : MonoBehaviour
             case 4:
                 PlayEndTutorialNarration();
                 GameObject.FindGameObjectWithTag("player").GetComponent<PlayerMovement>().spawnRandom();
-                tutorialStage = 9;
-                break;
-            case 5:
-                PlayHumanNarration();
-                tutorialStage = 9;
-                break;
-            case 6:
-                PlayCatNarration();
                 tutorialStage = 9;
                 break;
             case 10:

@@ -119,9 +119,14 @@ public class HumanAI : EnemyAi
         cat.Chase();
         agent.speed /= 2;
 
-        if(!playerSpottedFirstTime){
+        if (!playerSpottedFirstTime)
+        {
             playerSpottedFirstTime = true;
-            UIManager.Instance.beginTutorial(5);
+
+            if (PopupManager.Instance != null)
+            {
+                PopupManager.Instance.ShowHumanPopup();
+            }
         }
 
         yield return new WaitForSeconds(3);

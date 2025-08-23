@@ -6,15 +6,19 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject controlsScreen;
     public GameObject loadingScreen;
-    public GameObject SettingObject;
     public Image loadingBarFill;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+
+        // Play background music using MainAudioManager
+        if (MainAudioManager.Instance != null)
+        {
+            MainAudioManager.Instance.PlayMusic("Main");
+        }
     }
 
     IEnumerator LoadSceneAsyncly(string _scenename)
@@ -31,35 +35,27 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    public void PlayGame()
+    public void LoadLevel(string sceneName)
     {
-        StartCoroutine(LoadSceneAsyncly("Main"));
+        // Stop background music before loading next scene
+        if (MainAudioManager.Instance != null)
+        {
+            MainAudioManager.Instance.StopMusic();
+        }
+
+        StartCoroutine(LoadSceneAsyncly(sceneName));
     }
 
-    public void PlayDemo()
-    {
-        StartCoroutine(LoadSceneAsyncly("SpringFinal_Demo"));
-    }
-
-    //SettingsUI
-    public void SettingOpen()
-    {
-        SettingObject.SetActive(true);
-    }
-    public void SettingClose()
-    {
-        SettingObject.SetActive(false);
-    }
-
-    public void Controls()
-    {
-        controlsScreen.SetActive(true);
-    }
-    public void ControlsBack()
-    {
-        controlsScreen.SetActive(false);
-    }
     
+    public void ShowUI(GameObject uiObject)
+    {
+        uiObject.SetActive(true);
+    }
+
+    public void HideUI(GameObject uiObject)
+    {
+        uiObject.SetActive(false);
+    }
 
     public static void QuitGame()
     {

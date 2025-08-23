@@ -62,6 +62,7 @@ GameObject:
   - component: {fileID: 3429569208074652711}
   - component: {fileID: 7218541586542324789}
   - component: {fileID: 8562539769043811959}
+  - component: {fileID: 4671223769224461850}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -99,6 +100,9 @@ MonoBehaviour:
   theRat: {fileID: 0}
   ratStats: {fileID: 0}
   mutationLibrary: {fileID: 0}
+  aiUpdate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &3429569208074652711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,13 +118,18 @@ MonoBehaviour:
   gameTime: {fileID: 0}
   gameDay: {fileID: 0}
   isTutorialActive: 0
-  tutorialManager: {fileID: 0}
+  tutorialManager: {fileID: 8562539769043811959}
   tutorialParent: {fileID: 0}
   tutorialCaption: {fileID: 0}
   hungerHighlight: {fileID: 0}
   staminaHighlight: {fileID: 0}
   mutationHighlight: {fileID: 0}
   tutorialContinueButton: {fileID: 0}
+  biteIncicator: {fileID: 0}
+  climbIndicator: {fileID: 0}
+  contaminationIndicator: {fileID: 0}
+  WinSet: {fileID: 0}
+  everythingElseToHide: []
   deathSet: {fileID: 0}
   deathNoise: {fileID: 0}
   deathRed: {fileID: 0}
@@ -131,7 +140,17 @@ MonoBehaviour:
   deathCaption_Cat: The Cat got you. Pity.
   deathCaption_Hunger: 'Starved to death. Say Hi to loading screen for me. '
   deathCaption_Trap: Caught in a trap. Skill Issue
-  pauseScreens: []
+  pauseScreens:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   hungerBar: {fileID: 0}
   StaminaBar: {fileID: 0}
   ContaminationBar: {fileID: 0}
@@ -158,7 +177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: f32264f347aa0d6479b1c97bac5f0e12, type: 2}
   level: 0
-  useRandomPotency: 0
+  useRandomPotency: 1
   mutationRequirements: 3
 --- !u!114 &8562539769043811959
 MonoBehaviour:
@@ -229,6 +248,19 @@ MonoBehaviour:
     down, you cannot outrun it. \n\nThe only safe zone is behind the walls, so find
     a way to get back there!"
   tutorialStage: 0
+--- !u!114 &4671223769224461850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3129960194719436932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44e954cffbb45974e82c377a1fbe26fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sos: {fileID: 0}
 --- !u!1 &4196633381828397414
 GameObject:
   m_ObjectHideFlags: 0
