@@ -5,10 +5,7 @@ using UnityEngine;
 public class WindCurrent : MonoBehaviour
 {
     private BoxCollider triggerArea;
-    [SerializeField]
-    [Tooltip("How long does the gust last?")]
-    private float windDuration = 30f;
-
+    private ParticleSystem windVisual;
     private Vector3 windDirection;
     [SerializeField]
     private float windMagnitude = 15f;
@@ -16,19 +13,26 @@ public class WindCurrent : MonoBehaviour
     void Start()
     {
         triggerArea = GetComponent<BoxCollider>();
+        windVisual = GetComponent<ParticleSystem>();
+        if (windVisual.isPlaying)
+        {
+            windVisual.Stop();
+        }
     }
 
     public void EnableCurrent(Vector3 direction)
     {
         windDirection = direction;
         triggerArea.enabled = true;
-        Invoke(nameof(DisableCurrent), windDuration);
+        transform.rotation = Quaternion.LookRotation(windDirection.normalized);
+        windVisual.Play();
 
     }
 
-    private void DisableCurrent()
+    public void DisableCurrent()
     {
         triggerArea.enabled = false;
+        windVisual.Stop();
     }
 
     private void OnTriggerEnter(Collider other)
