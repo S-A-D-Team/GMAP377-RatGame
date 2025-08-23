@@ -3718,6 +3718,11 @@ PrefabInstance:
       objectReference: {fileID: 976986262}
     - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
         type: 3}
+      propertyPath: jumpSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3633575864985357935, guid: 01832c9110ba56e44885512f6813cb0b,
+        type: 3}
       propertyPath: tasks.Array.size
       value: 11
       objectReference: {fileID: 0}
@@ -18882,6 +18887,7 @@ MonoBehaviour:
   mutationLevel: 0
   currentHungerLevel: 100
   scentRange: 0
+  hasStinky: 0
   hungerPenalty: 100
   hungerTolerance: 0
 --- !u!114 &2014804301
