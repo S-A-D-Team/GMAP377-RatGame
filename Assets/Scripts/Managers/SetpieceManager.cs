@@ -21,6 +21,7 @@ public class SetpieceManager : MonoBehaviour
         }
 
         Instance = this;
+        lastKnownSector = null;
     }
 
     public void RegisterSector(Sector sector)
@@ -31,6 +32,11 @@ public class SetpieceManager : MonoBehaviour
     public void RegisterSetpiece(Setpiece sp)
     {
         setpieces.Add(sp);
+    }
+
+    public void UnregisterSetpiece(Setpiece sp)
+    {
+        setpieces.Remove(sp);
     }
 
     public void UpdatePlayerSector(Sector sector)
@@ -53,7 +59,7 @@ public class SetpieceManager : MonoBehaviour
     public void TriggerSetpiece()
     {
         Sector searchSector = currentPlayerSector == null ? lastKnownSector : currentPlayerSector;
-        if  (currentPlayerSector == null)
+        if  (searchSector == null)
         {
             return;
         }

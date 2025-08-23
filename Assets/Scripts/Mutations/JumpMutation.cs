@@ -94,12 +94,15 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
         stackMutation();
     }
 
+    //NOTE: CURRENTLY DOING AWAY WITH STACKING VALUES, TEMPORARY FIX APPLEID TO SIMULATE THIS
     //Flat minimum multiplier at 1 with subsequent stacks providing smooth, diminishing returns up to a hard capped maximum multiplier (resulting in a soft cap of stacks)
     //Logic handled in its own function to avoid redundant behavior when the mutation is stacked in GameManager
     public override void stackMutation()
     {
         //Ensure stacks is non-negative
-        stacks = Mathf.Max(0, stacks);
+        //stacks = Mathf.Max(0, stacks);
+        //Sneaky workaround to remove stacking behavior at the moment
+        stacks = 1;
 
         //Might have to edit this like speed mutation as well
         //Programmatic version, modifiable by changing the serialized min/max/decay directly
@@ -115,7 +118,7 @@ public class JumpMutation : MetaMutation, IMutation, IStackable
             float finalMultiplier = MutationUtils.ApplyStackedMultiplier(decayCurve, stacks, minJumpMultiplier, maxJumpMultiplier);
             rat.maxJumpForce *= finalMultiplier;
         }
-        stacks++;
+        //stacks++;
         if (stacks > 1)
         {
             UIManager.Instance.cueMutation(stackStr + " x" + stacks.ToString());

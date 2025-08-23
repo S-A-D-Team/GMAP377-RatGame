@@ -8,6 +8,7 @@ public class Setpiece : MonoBehaviour
     [SerializeField]
     private ISetpieceEvent spEvent;
     public Sector sector;
+    public bool isRepeatable;
 
     // Start is called before the first frame update
     void Start()
@@ -20,5 +21,9 @@ public class Setpiece : MonoBehaviour
     public void TriggerSetpieceEvent()
     {
         spEvent.TriggerEvent();
+        if (!isRepeatable)
+        {
+            SetpieceManager.Instance.UnregisterSetpiece(this);
+        }
     }
 }
