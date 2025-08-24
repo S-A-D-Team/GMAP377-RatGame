@@ -100,6 +100,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private PhysicMaterial idleFriction;
 
+    [SerializeField]
+    private float soundMultiplier;
+
     //Collects movement inputs
     private PlayerInputCollection playerInput;
 
@@ -218,6 +221,8 @@ public class PlayerMovement : MonoBehaviour
 
         canBite = playerStats.canBite;
         canClimb = playerStats.canClimb;
+
+        soundMultiplier = playerStats.soundMultiplier;
     }
 
     private void Update()
@@ -392,7 +397,7 @@ public class PlayerMovement : MonoBehaviour
 
         StopCoroutine(FullHop());
 
-        GameManager.Instance.emitSound(gameObject, gameObject.transform.position, Mathf.Abs(lastVerticalVelocity) * 3);
+        GameManager.Instance.emitSound(gameObject, gameObject.transform.position, Mathf.Abs(lastVerticalVelocity) * 3 * soundMultiplier);
 
         Vector3 smoothedVelocity = rb.velocity;
         //Stops the rat from bouncing off slopes
@@ -858,7 +863,7 @@ public class PlayerMovement : MonoBehaviour
                     UIManager.Instance.playClimb();
                     rb.AddForce(3f * climbSpeed * moveDirection.normalized, ForceMode.Force);
 
-                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 3f * climbSpeed);
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 3f * climbSpeed * soundMultiplier);
                 }
                 else if (currentLateral == lateralAction.Idle)
                 {
@@ -878,7 +883,7 @@ public class PlayerMovement : MonoBehaviour
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(2.5f * speed * moveDirection, ForceMode.Force);
 
-                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * speed);
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * speed * soundMultiplier);
                 }
                 else if (currentLateral == lateralAction.Running)
                 {
@@ -886,7 +891,7 @@ public class PlayerMovement : MonoBehaviour
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(moveDirection * runSpeed * 2.5f, ForceMode.Force);
 
-                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * runSpeed);
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * runSpeed * soundMultiplier);
                 }
                 else
                 {

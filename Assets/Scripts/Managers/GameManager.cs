@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
         ratStats.currentHungerLevel = hungerLevel.Full;
         ratStats.staminaCap = 1f;
         ratStats.mutationLevel = 0;
+        ratStats.soundMultiplier = 1;
 
         sens.changeSmellRadius(ratStats.scentRange);
     }
