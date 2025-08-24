@@ -87,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
     private bool jumpStarted;
     private float currentJumpForce;
     private float lastJumped;
+     private float lastVerticalVelocity;
 
     [Header("Coyote Jumping")]
     [SerializeField]
@@ -282,6 +283,11 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         //Swap player material depending on physics needs
         MaterialUpdate();
+
+        if (jumpStarted)
+        {
+            lastVerticalVelocity = rb.velocity.y;
+        }
     }
 
     public void AdjustStatsToHunger()
@@ -385,6 +391,8 @@ public class PlayerMovement : MonoBehaviour
         currentVertical = verticalAction.Idle;
 
         StopCoroutine(FullHop());
+
+        GameManager.Instance.emitSound(gameObject, gameObject.transform.position, Mathf.Abs(lastVerticalVelocity) * 3);
 
         Vector3 smoothedVelocity = rb.velocity;
         //Stops the rat from bouncing off slopes
@@ -699,11 +707,10 @@ public class PlayerMovement : MonoBehaviour
         {
             airTime += Time.deltaTime;
 
+            //Debug.Log("Air Time: " + airTime);
             yield return null;
         }
         canJump = true;
-
-        GameManager.Instance.emitSound(gameObject, gameObject.transform.position, airTime);
     }
 
     IEnumerator WaitForFrames(int frameWindow)
