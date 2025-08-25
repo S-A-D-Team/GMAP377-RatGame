@@ -6,10 +6,13 @@ public class SenseOfHearing : MonoBehaviour
 {
     [SerializeField]
     private float hearingRange;
+    private CatAI cat;
+
     // Start is called before the first frame update
     void Start()
     {
          GameManager.Instance.addListener(this);
+         cat = this.GetComponent<CatAI>();
     }
 
     // Update is called once per frame
@@ -27,5 +30,8 @@ public class SenseOfHearing : MonoBehaviour
             return;
         }
         //Debug.Log("Heard: " + source.name + " at location: " + location + " with an intensity of: " + intensity);
+
+        cat.Reaction();
+        cat.Chase();
     }
 }

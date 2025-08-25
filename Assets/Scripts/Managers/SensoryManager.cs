@@ -99,9 +99,12 @@ public class SensoryManager : MonoBehaviour
     public void emitSound(GameObject source, Vector3 location, float intensity)
     {
         //Debug.Log("Sensory Manager emit sound");
+        Vector3 randomDirection = Random.insideUnitSphere * 100 / intensity;
+        Debug.Log("Exact location: " + location + " General location: " + (location + randomDirection));
+        Debug.Log("Intensity: " + intensity);
         foreach (var listener in listeners)
         {
-            listener.hear(source, location, intensity);
+            listener.hear(source, location + randomDirection, intensity);
         }
     }
 
