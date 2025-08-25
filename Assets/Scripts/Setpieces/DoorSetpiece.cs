@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DoorSetpiece : ISetpieceEvent
+public class DoorSetpiece : MonoBehaviour, ISetpieceEvent
 {
     public Transform doorHinge;
     private bool isOpen = false;

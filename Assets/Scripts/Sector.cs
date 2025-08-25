@@ -43,7 +43,7 @@ public class Sector : MonoBehaviour
             triggerArea = GetComponent<BoxCollider>();
             if (triggerArea == null)
             {
-                triggerArea.gameObject.AddComponent<BoxCollider>();
+                triggerArea = gameObject.AddComponent<BoxCollider>();
             }
         }
 

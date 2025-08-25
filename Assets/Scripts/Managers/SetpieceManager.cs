@@ -6,6 +6,8 @@ using System.Linq;
 public class SetpieceManager : MonoBehaviour
 {
     public static SetpieceManager Instance { get; private set; }
+    [Tooltip("Toggle on to allow setpieces to be triggered even when the player is not in their sector")]
+    public bool allowGlobalActivation;
     private List<Sector> sectors;
     private List<Setpiece> setpieces;
     private Sector currentPlayerSector;
@@ -59,14 +61,20 @@ public class SetpieceManager : MonoBehaviour
     public void TriggerSetpiece()
     {
         Sector searchSector = currentPlayerSector == null ? lastKnownSector : currentPlayerSector;
-        if  (searchSector == null)
+        if (allowGlobalActivation || searchSector == null)
         {
-            return;
+            int rn = Random.Range(0, setpieces.Count);
+            Setpiece spToTrigger = setpieces[rn];
+            spToTrigger.TriggerSetpieceEvent();
         }
-        List<Setpiece> setpiecesInSector = setpieces.Where(sp => sp.sector == searchSector).ToList();
-        int rn = Random.Range(0, setpiecesInSector.Count);
-        Setpiece spToTrigger = setpiecesInSector[rn];
-        spToTrigger.TriggerSetpieceEvent();
+        else
+        {
+            List<Setpiece> setpiecesInSector = setpieces.Where(sp => sp.sector == searchSector).ToList();
+            int rn = Random.Range(0, setpiecesInSector.Count);
+            Setpiece spToTrigger = setpiecesInSector[rn];
+            spToTrigger.TriggerSetpieceEvent();
+        }
+        
     }
 
 }
