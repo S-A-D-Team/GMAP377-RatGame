@@ -124,21 +124,32 @@ public class GameManager : MonoBehaviour
    
     public void RandomMutate()
     {
-        string randomMutationName = mutationPool[Random.Range(0, mutationPool.Count)].name;
+        // Pick a random mutation prefab
+        GameObject prefab = mutationPool[Random.Range(0, mutationPool.Count)];
+        string randomMutationName = prefab.name;
+
+        // Add the mutation to the player
         AddMutation(randomMutationName);
+
+        // Show the corresponding icon in the UI
+        if (MutationUIManager.Instance != null)
+            MutationUIManager.Instance.AddMutationUI(randomMutationName);
     }
-    //Handler so mutations can be added by an identifier instead of the direct type
+
+    // Also update the string-based AddMutation to handle UI
     public void AddMutation(string mutationName)
     {
         var prefab = mutationPool.FirstOrDefault(p => p.name == mutationName);
-
         if (prefab != null)
         {
             IMutation mutationComponent = prefab.GetComponent<IMutation>();
-
             if (mutationComponent != null)
             {
                 AddMutation(mutationComponent.GetType());
+
+                // Track UI for this mutation
+                if (MutationUIManager.Instance != null)
+                    MutationUIManager.Instance.AddMutationUI(mutationName);
             }
         }
     }
