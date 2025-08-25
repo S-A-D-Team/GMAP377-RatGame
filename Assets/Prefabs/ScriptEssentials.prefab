@@ -63,6 +63,8 @@ GameObject:
   - component: {fileID: 7218541586542324789}
   - component: {fileID: 8562539769043811959}
   - component: {fileID: 4671223769224461850}
+  - component: {fileID: 4197855102786905970}
+  - component: {fileID: 8789356782267748908}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -115,8 +117,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 384e3a981d1402140933f5281ecd5cff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTime: {fileID: 0}
-  gameDay: {fileID: 0}
   isTutorialActive: 0
   tutorialManager: {fileID: 8562539769043811959}
   tutorialParent: {fileID: 0}
@@ -158,11 +158,6 @@ MonoBehaviour:
   InfectUI: {fileID: 0}
   mutationPointsGainCueText: {fileID: 0}
   mutationPointsGainCue: {fileID: 0}
-  Parameters_UI_Object: {fileID: 0}
-  biteToggle: {fileID: 0}
-  ClimbToggle: {fileID: 0}
-  jumpStack: {fileID: 0}
-  speedStack: {fileID: 0}
 --- !u!114 &7218541586542324789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,13 +235,6 @@ MonoBehaviour:
     spot in this apartment. Seek food, seek havok, spread infections, the goal is
     to deteriorate the environment till the human and his pet cat dies.\n\nTry not
     to get caught, watch out for traps, and fear that cat."
-  humanNarration: '
-
-    Oh no! The human has seen you. The human will alert the
-    cat now! Quick! Scramble away from this zone!'
-  catNarration: "\nOh no no no. That wretched cat has seen you. Cat will chase you
-    down, you cannot outrun it. \n\nThe only safe zone is behind the walls, so find
-    a way to get back there!"
   tutorialStage: 0
 --- !u!114 &4671223769224461850
 MonoBehaviour:
@@ -261,6 +249,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sos: {fileID: 0}
+--- !u!114 &4197855102786905970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3129960194719436932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40a3a8dac1a95144d8ac97c1db93324e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mutationContainer: {fileID: 0}
+  mutationPrefab: {fileID: 7492106626138466740, guid: a27897522cfc67c4da477ae036fbcd21,
+    type: 3}
+  mutationIcons:
+  - mutationName: BiteMutation
+    icon: {fileID: 21300000, guid: 88a2206d7d0544c96af31cfe272eab76, type: 3}
+  - mutationName: ClimbMutation
+    icon: {fileID: 21300000, guid: 0eee2df792f6a4d16afaf6f371dc399a, type: 3}
+  - mutationName: JumpMutation
+    icon: {fileID: 21300000, guid: bc0067fb4fd124a5681468111d0f12d9, type: 3}
+  - mutationName: SpeedMutation
+    icon: {fileID: 21300000, guid: 000899c373b674fd297af5b103a1860b, type: 3}
+  - mutationName: GlideMutation
+    icon: {fileID: 21300000, guid: c27259887e03d6f4aaffbaa99bfef25d, type: 3}
+  - mutationName: StinkyMutation
+    icon: {fileID: 21300000, guid: 043063832c948f445be575a7d7fcaa90, type: 3}
+  - mutationName: FullBellyMutation
+    icon: {fileID: 21300000, guid: 462987916990adf49a146638e2a42030, type: 3}
+  - mutationName: HollowBoneMutation
+    icon: {fileID: 21300000, guid: f32c302a8b1ae644196409cc35fa1444, type: 3}
+--- !u!114 &8789356782267748908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3129960194719436932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ae15bd5ee9fb8341b0147cd121b4583, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  popupPrefab: {fileID: 3142149362509588659, guid: b8f078aa588d87146975423947db69ff,
+    type: 3}
+  popupContainer: {fileID: 0}
+  popupDuration: 3
+  humanDefaultText: AH, A RAT!
+  catDefaultText: Meow, I see you!
 --- !u!1 &4196633381828397414
 GameObject:
   m_ObjectHideFlags: 0

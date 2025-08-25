@@ -13909,7 +13909,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1820522565}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1676289541}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 384e3a981d1402140933f5281ecd5cff, type: 3}
@@ -15179,12 +15179,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1667526624}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1676289541 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3129960194719436932, guid: d3122e841a998c841abddaa1b3dc90b6,
-    type: 3}
-  m_PrefabInstance: {fileID: 1820522565}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1681131409
 GameObject:
   m_ObjectHideFlags: 0
@@ -16629,6 +16623,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4197855102786905970, guid: d3122e841a998c841abddaa1b3dc90b6,
+        type: 3}
+      propertyPath: mutationContainer
+      value: 
+      objectReference: {fileID: 406696366}
     - target: {fileID: 6398189281160355245, guid: d3122e841a998c841abddaa1b3dc90b6,
         type: 3}
       propertyPath: mutationLibrary
@@ -16659,6 +16658,11 @@ PrefabInstance:
       propertyPath: useRandomPotency
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8789356782267748908, guid: d3122e841a998c841abddaa1b3dc90b6,
+        type: 3}
+      propertyPath: popupContainer
+      value: 
+      objectReference: {fileID: 7216693908380721562}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -16666,15 +16670,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 347476867}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3129960194719436932, guid: d3122e841a998c841abddaa1b3dc90b6,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1820522567}
-    - targetCorrespondingSourceObject: {fileID: 3129960194719436932, guid: d3122e841a998c841abddaa1b3dc90b6,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1820522568}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d3122e841a998c841abddaa1b3dc90b6, type: 3}
 --- !u!114 &1820522566 stripped
 MonoBehaviour:
@@ -16682,62 +16678,12 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1820522565}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1676289541}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87bc19297bc412141a8f22378e97006e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1820522567
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1676289541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ae15bd5ee9fb8341b0147cd121b4583, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  popupPrefab: {fileID: 3142149362509588659, guid: b8f078aa588d87146975423947db69ff,
-    type: 3}
-  popupContainer: {fileID: 7216693908380721562}
-  popupDuration: 3
-  humanDefaultText: AH, A RAT!
-  catDefaultText: Meow, I see you!
---- !u!114 &1820522568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1676289541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40a3a8dac1a95144d8ac97c1db93324e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mutationContainer: {fileID: 406696366}
-  mutationPrefab: {fileID: 7492106626138466740, guid: a27897522cfc67c4da477ae036fbcd21,
-    type: 3}
-  mutationIcons:
-  - mutationName: BiteMutation
-    icon: {fileID: 21300000, guid: 88a2206d7d0544c96af31cfe272eab76, type: 3}
-  - mutationName: ClimbMutation
-    icon: {fileID: 21300000, guid: 0eee2df792f6a4d16afaf6f371dc399a, type: 3}
-  - mutationName: JumpMutation
-    icon: {fileID: 21300000, guid: bc0067fb4fd124a5681468111d0f12d9, type: 3}
-  - mutationName: SpeedMutation
-    icon: {fileID: 21300000, guid: 000899c373b674fd297af5b103a1860b, type: 3}
-  - mutationName: GlideMutation
-    icon: {fileID: 21300000, guid: c27259887e03d6f4aaffbaa99bfef25d, type: 3}
-  - mutationName: StinkyMutation
-    icon: {fileID: 21300000, guid: 043063832c948f445be575a7d7fcaa90, type: 3}
-  - mutationName: FullBellyMutation
-    icon: {fileID: 21300000, guid: 462987916990adf49a146638e2a42030, type: 3}
-  - mutationName: HollowBoneMutation
-    icon: {fileID: 21300000, guid: f32c302a8b1ae644196409cc35fa1444, type: 3}
 --- !u!1 &1836787895
 GameObject:
   m_ObjectHideFlags: 0
