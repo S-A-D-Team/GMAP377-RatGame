@@ -36,6 +36,8 @@ public class CatAI : EnemyAi
 
     private RatStats ratStats;
 
+    private bool audioPlayed = false; // Added: ensures audio plays only once per cat
+
     void Start()
     {
         prevTask = transform.position;
@@ -244,7 +246,13 @@ public class CatAI : EnemyAi
         agent.speed *= chaseSpeedMultiplier;
         currentState = CatState.Chasing;
         anim.SetFloat("WalkSpeed", 3f);
-        if (audioData != null) audioData.Play();
+
+        // Play audio only once per cat
+        if (!audioPlayed && audioData != null)
+        {
+            audioData.Play();
+            audioPlayed = true;
+        }
 
         if (!playerSpottedFirstTime)
         {
