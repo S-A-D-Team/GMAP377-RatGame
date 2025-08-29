@@ -12,7 +12,6 @@ public class CatAI : EnemyAi
     [SerializeField] private GameObject eyes;
     [SerializeField] private GameObject crouchedEyes;
     [SerializeField] private Animator anim;
-    [SerializeField] private AudioSource audioData;
     [SerializeField] private float chaseSpeedMultiplier;
     [SerializeField] private float crouchSpeedMultiplier;
     [SerializeField] private float jumpSpeed;
@@ -36,7 +35,7 @@ public class CatAI : EnemyAi
 
     private RatStats ratStats;
 
-    private bool audioPlayed = false; // Added: ensures audio plays only once per cat
+    private bool audioPlayed = false;
 
     void Start()
     {
@@ -247,10 +246,9 @@ public class CatAI : EnemyAi
         currentState = CatState.Chasing;
         anim.SetFloat("WalkSpeed", 3f);
 
-        // Play audio only once per cat
-        if (!audioPlayed && audioData != null)
+        if (!audioPlayed)
         {
-            audioData.Play();
+            MainAudioManager.Instance.PlaySFX("Cat Meow");
             audioPlayed = true;
         }
 
