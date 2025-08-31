@@ -36,6 +36,8 @@ public class PlayerMovement : MonoBehaviour
     private float climbStamDrain = 0.1f;
     [SerializeField]
     private float biteStamDrain = 0.25f;
+    [SerializeField] 
+    private float wallJumpStamDrain = 0.2f;
 
     [Header("Base Movement")]
     [SerializeField]
@@ -238,11 +240,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 regenStamina();
             }
-            else if (running)
+            else if (running && HasEnoughStamina(runStamDrain * Time.deltaTime))
             {
                 useStamina(runStamDrain * Time.deltaTime);
             }
-            else if (climbing)
+            else if (climbing && HasEnoughStamina(climbStamDrain * Time.deltaTime))
             {
                 useStamina(climbStamDrain * Time.deltaTime);
             }
@@ -255,7 +257,6 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(GameManager.Instance.winTheGame());
         }
     }
-
 
     private void FixedUpdate()
     {
@@ -440,7 +441,7 @@ public class PlayerMovement : MonoBehaviour
         float offsetGravity = 4.25f;
         while (holdWindow > 0f)
         {
-            if (!playerInput.JumpHeld)
+            if (!playerInput.JumpHeld || !HasEnoughStamina(biteStamDrain))
             {
                 yield break;
             }
@@ -449,7 +450,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(jumpDirection * offsetGravity, ForceMode.Acceleration);
             yield return null;
         }
-        if (playerInput.JumpHeld)
+        if (playerInput.JumpHeld && HasEnoughStamina(biteStamDrain))
         {
             currentVertical = verticalAction.FullHopping;
             StartCoroutine(FullHop());
@@ -461,24 +462,27 @@ public class PlayerMovement : MonoBehaviour
 
         StartCoroutine(JumpCooldown());
     }
-    
+
     private void ShortHop()
     {
         bool canCoyoteJump = Time.time < lastGrounded + coyoteInterval;
         bool bufferedJump = playerInput.BufferedJump() && canJump;
         //Short hop, accounts for coyote and buffered timings
         //Always entered from grounded (or briefly after exiting it)
-        if ((grounded || canCoyoteJump) && bufferedJump && canJump)
+        if ((grounded || canCoyoteJump) && bufferedJump && canJump && HasEnoughStamina(minJumpForce))
         {
             canJump = false;
             //Makes sure y speed is 0
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             jumpDirection = (Vector3.up + groundNormal).normalized;
+
+            //Use stamina proportional to minJumpForce
+            useStamina(minJumpForce);
+
             rb.AddForce(jumpDirection * minJumpForce, ForceMode.Impulse);
             //Not currently used but might be useful later to vary the jumping cooldown, prevent instant double jump(?), etc.
             lastJumped = Time.time;
         }
-        
     }
 
     IEnumerator FullHop()
@@ -486,30 +490,42 @@ public class PlayerMovement : MonoBehaviour
         //Full hop up to variable, capped jump height
         //Always entered from short hop, ends at height cap or jump button release
         currentJumpForce = minJumpForce;
-		while (playerInput.JumpHeld && currentJumpForce < maxJumpForce && jumpStarted)
-		{
-			float deltaForce = jumpChargeRate * Time.deltaTime;
-			//Calculate the next force increment to apply with a capped jump height
-			//Sanity checks the jump height while still allowing current to surpass the max to break sentinel value
-			jumpDirection = (Vector3.up + groundNormal).normalized;
-			//Increment direction is straight up to create a natural jump arc increase when jumping from angled surfaces
-			rb.AddForce(jumpDirection * deltaForce, ForceMode.Impulse);
+
+        while (playerInput.JumpHeld && currentJumpForce < maxJumpForce && jumpStarted && stamina > 0f)
+        {
+            float deltaForce = jumpChargeRate * Time.deltaTime;
+            jumpDirection = (Vector3.up + groundNormal).normalized;
+
+            //Add force
+            rb.AddForce(jumpDirection * deltaForce, ForceMode.Impulse);
             currentJumpForce += deltaForce;
-            if (!playerInput.JumpHeld)
-            {
+
+            //Apply proportional stamina cost immediately
+            float chargePercent = deltaForce / maxJumpForce;
+            float stamThisFrame = biteStamDrain * chargePercent;
+            useStamina(stamThisFrame); // this clamps automatically to remaining stamina
+
+            //Stop if we ran out of stamina
+            if (stamina <= 0f)
                 break;
-            }
+
             yield return null;
-		}
+        }
+
         currentJumpForce = 0f;
     }
-   
+
     private void WallJump()
     {
+        if (!HasEnoughStamina(wallJumpStamDrain)) return; // prevent jump if not enough stamina
+
+        useStamina(wallJumpStamDrain); // deduct stamina
+
         climbing = false;
         rb.velocity = Vector3.zero;
         Vector3 wallJumpForce = wallJumpDirection * horizontalBounce + Vector3.up * ((minJumpForce + maxJumpForce) / 2f);
         rb.AddForce(wallJumpForce, ForceMode.Impulse);
+
         StartCoroutine(ClimbCooldown());
         StartCoroutine(JumpCooldown());
     }
@@ -841,24 +857,35 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private bool HasEnoughStamina(float cost)
+    {
+        return stamina - cost >= 0f;
+    }
+
     //Act on player input intent based on position (Not all actions are available in all positions)
     private void MovePlayer()
     {
         rb.drag = grounded ? groundDrag : 0f;
         rb.useGravity = !climbing;
 
+        if (stamina <= 0)
+        {
+            running = false;
+            climbing = false;
+            canJump = false;
+            return; // Prevent all stamina-consuming movement actions
+        }
+
         switch (currentPositional)
         {
             case positionalState.Climbing:
-                running = false;
                 if (currentLateral == lateralAction.Scaling)
                 {
-                    //Can only climb vertically, not horizontally
                     moveDirection = climbDirection * playerInput.MoveInput.y;
                     UIManager.Instance.playClimb();
                     rb.AddForce(3f * climbSpeed * moveDirection.normalized, ForceMode.Force);
-
                     GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 3f * climbSpeed);
+                    useStamina(climbStamDrain * Time.deltaTime);
                 }
                 else if (currentLateral == lateralAction.Idle)
                 {
@@ -868,33 +895,30 @@ public class PlayerMovement : MonoBehaviour
                 {
                     WallJump();
                 }
-
                 break;
-            
+
             case positionalState.Grounded:
                 if (currentLateral == lateralAction.Walking)
                 {
                     running = false;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(2.5f * speed * moveDirection, ForceMode.Force);
-
                     GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * speed);
                 }
-                else if (currentLateral == lateralAction.Running)
+                else if (currentLateral == lateralAction.Running && HasEnoughStamina(runStamDrain * Time.deltaTime))
                 {
                     running = true;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(moveDirection * runSpeed * 2.5f, ForceMode.Force);
-
                     GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * runSpeed);
+                    useStamina(runStamDrain * Time.deltaTime);
                 }
                 else
                 {
                     running = false;
                 }
-                
                 break;
-            
+
             case positionalState.Airborne:
                 if (currentLateral == lateralAction.Walking)
                 {
@@ -902,18 +926,18 @@ public class PlayerMovement : MonoBehaviour
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
                     rb.AddForce(moveDirection * airMovement, ForceMode.Acceleration);
                 }
-                else if (currentLateral == lateralAction.Running)
+                else if (currentLateral == lateralAction.Running && HasEnoughStamina(runStamDrain * Time.deltaTime))
                 {
                     running = true;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
                     rb.AddForce(moveDirection * (airMovement * 1.25f), ForceMode.Acceleration);
+                    useStamina(runStamDrain * Time.deltaTime);
                 }
                 else
                 {
                     running = false;
                 }
                 break;
-
         }
     }
 
@@ -927,14 +951,19 @@ public class PlayerMovement : MonoBehaviour
     //Slap this at the end of any code block implementing a stamina draining behavior
     private void useStamina(float stamCost)
     {
-        GameManager.Instance.changeStamina(-stamCost);
-        stamina = playerStats.stamina;
+        stamCost = Mathf.Min(stamCost, stamina);
+        stamina -= stamCost;
+        stamina = Mathf.Max(stamina, 0f);
+
+        GameManager.Instance.changeStamina(-stamCost); 
         lastStamUse = Time.time;
     }
 
     private void regenStamina()
     {
+        stamina += staminaRegen * Time.deltaTime;
+        stamina = Mathf.Min(stamina, maxStamina);
         GameManager.Instance.changeStamina(staminaRegen * Time.deltaTime);
-        stamina = playerStats.stamina;
     }
+
 }
