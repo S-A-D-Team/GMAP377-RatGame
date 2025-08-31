@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Trap : MonoBehaviour
 {
-	public AudioSource snapAudio;
 
 	private void OnTriggerEnter(Collider other)
 	{
@@ -15,7 +14,7 @@ public class Trap : MonoBehaviour
 			Destroy(other.gameObject);
 			GameManager.Instance.onPlayerDead();
 			StartCoroutine(GameObject.Find("RELOADQUIT").GetComponent<UIManagerTWOOOOO>().startReload(3f));
-			snapAudio.Play();
+			MainAudioManager.Instance.PlaySFX("Rat Trap");
             UIManager.Instance.cueDeathUI(3);
         }
 	}
