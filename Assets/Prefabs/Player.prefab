@@ -286,8 +286,8 @@ MonoBehaviour:
     m_Bits: 64
   climbCooldown: 90
   jumpChargeRate: 30
-  minJumpForce: 2.5
-  maxJumpForce: 6.5
+  minJumpForce: 2
+  maxJumpForce: 2.5
   jumpCooldown: 8
   verticalBounce: 0.75
   horizontalBounce: 6
@@ -404,6 +404,7 @@ MonoBehaviour:
   mutationLevel: 0
   currentHungerLevel: 100
   scentRange: 1
+  hasStinky: 0
   hungerPenalty: 100
   hungerTolerance: 0
 --- !u!114 &468299749160769950

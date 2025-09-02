@@ -48,7 +48,7 @@ public class EnemyAi : MonoBehaviour
     protected virtual void updateAi(){
         isDesperate = true;
         aiLevel++;
-        agent.speed += (1f * (aiLevel - 1));
+        agent.speed += (0.5f * (aiLevel - 1));
     }
 
     protected bool isPlayerSighted(Transform enemyEyes, float fieldOfView = 120f, float viewDistance = 20f)
