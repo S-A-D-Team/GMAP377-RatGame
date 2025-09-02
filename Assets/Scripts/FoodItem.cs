@@ -7,7 +7,7 @@ public class FoodItem : Contaminable
     [Space]
     [Header("Food Details")]
     public bool poisoned;
-	public ParticleSystem poisonedEffect;
+    public ParticleSystem poisonedEffect;
     //public ParticleSystem poisoningEffect;
     public GameObject chompEffect;
     public float chompAnimLength;
@@ -21,22 +21,27 @@ public class FoodItem : Contaminable
 
     private MeshRenderer mesh;
 
+    [Space]
+    [Header("Materials")]
+    [SerializeField] public Material contaminatedMaterial; // Material to switch to when poisoned
+
     protected override void Awake()
     {
         base.Awake();
         audioData = GetComponent<AudioSource>();
         mesh = GetComponent<MeshRenderer>();
     }
+
     protected override void Start()
-	{
-		base.Start();
-		//make sure the fx is not playing and the mesh is active
-		poisonedEffect.Stop();
+    {
+        base.Start();
+        //make sure the fx is not playing and the mesh is active
+        poisonedEffect.Stop();
         audioData.Stop();
         if (mesh != null) { mesh.enabled = true; }
         //if (poisoningEffect != null) { poisoningEffect.Stop(); }
 
-	}
+    }
     protected void Update()
     {
         if (isColliding)
@@ -109,12 +114,24 @@ public class FoodItem : Contaminable
         isPoisoning = false;
     }
     protected virtual void onPoisoned()
-	{
-		poisonedEffect.Play();
+    {
+        poisonedEffect.Play();
         poisoned = true;
 
-		//Always show contaminated
+        //Always show contaminated
         //mat.SetFloat(lerpProperty, 100);
+
+        // Change the material to contaminated
+        if (mesh != null && contaminatedMaterial != null)
+        {
+            mesh.material = contaminatedMaterial;
+        }
+
+        // Optional: play a sound when fully poisoned
+        if (audioData != null && !audioData.isPlaying)
+        {
+            audioData.Play();
+        }
     }
 
     protected virtual void onFullyContaminated()
@@ -127,9 +144,9 @@ public class FoodItem : Contaminable
     protected override void atMinutePass()
     {
         base.atMinutePass();
-		//if we exceed value,
-		if(contaminationValue >= 100 && !poisonedEffect.isPlaying)
-		{
+        //if we exceed value,
+        if(contaminationValue >= 100 && !poisonedEffect.isPlaying)
+        {
             onPoisoned();
             onFullyContaminated(); 
         }
@@ -157,7 +174,7 @@ public class FoodItem : Contaminable
         {
             Destroy(gameObject, audioData.clip.length);
         }
-        
+
     }
 
     void OnCollisionEnter(Collision collision)

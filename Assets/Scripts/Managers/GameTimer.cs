@@ -7,14 +7,14 @@ using UnityEngine.UI;
 
 public class GameTimer : MonoBehaviour
 {
-
     public static GameTimer Instance { get; private set; }
 
     [Tooltip("How many real life seconds equal to 1 in-gameMinute")]
     public int RealSecondsToGameMinutes = 10;
-    //timing
+
     private float realSecondsElapsed;
-    //in-game time
+    private float hungerTimer;
+
     [Space]
     [Header("In-Game Time")]
     [SerializeField] private int gameDay = 1;
@@ -22,19 +22,13 @@ public class GameTimer : MonoBehaviour
     [SerializeField] private int gameMinute = 30;
     [SerializeField] private bool isPM = true;
 
+    [Tooltip("Hunger decrease per real-life second")]
+    public float hungerPerSecond = 0.0133f; // adjust for desired rate
 
-    //action for other objects to listen to when a in-game time passes 
     public event Action minutePassed;
-
-    void OnValidate()
-    {
-        gameHour = Mathf.Clamp(gameHour, 1, 12);
-        gameMinute = Mathf.Clamp(gameMinute, 0, 59);
-    }
 
     private void Awake()
     {
-        //Singleton
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -42,49 +36,49 @@ public class GameTimer : MonoBehaviour
         }
 
         Instance = this;
-
-        //persistent across scenes
         DontDestroyOnLoad(gameObject);
     }
-    //Clear on destroy
+
     private void OnDestroy()
     {
         if (Instance == this)
-        {
             Instance = null;
-        }
     }
+
     public void SelfDestroy()
     {
         Instance = null;
         Destroy(gameObject);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         UIManager.Instance.UpdateTimeUI(gameDay, gameHour, gameMinute, isPM);
     }
 
-    // Update is called once per frame
     void Update()
     {
         realSecondsElapsed += Time.deltaTime;
+        hungerTimer += Time.deltaTime;
 
-        //once we cross that threshold in irl seconds
+        // Advance in-game minute as before
         if (realSecondsElapsed >= RealSecondsToGameMinutes)
         {
-            //remove the int part and move a minute
             realSecondsElapsed -= RealSecondsToGameMinutes;
             AdvanceMinute();
-
             UIManager.Instance.UpdateTimeUI(gameDay, gameHour, gameMinute, isPM);
         }
-    }
 
-    public float getgameMinutesElapsed() { return (gameDay * 24 * 60) + (gameHour * 60) + gameMinute; }
-    public float getHour() { return gameHour; }
-    public float getDay() { return gameDay; }
+        // Reduce hunger every real-life second
+        if (hungerTimer >= 1f)
+        {
+            hungerTimer -= 1f;
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.changeHunger(-hungerPerSecond);
+            }
+        }
+    }
 
     private void AdvanceMinute()
     {
@@ -95,46 +89,29 @@ public class GameTimer : MonoBehaviour
             gameMinute = 0;
             gameHour++;
 
-            if (gameHour > 12) //rolloverr
-            {
-                gameHour = 1;
-            }
-            //switch AM and PM
-            if (gameHour == 12) 
-            {
-                isPM = !isPM; 
-            }
-            //increment day when flipping from 11:59 PM to 12:00 AM
-            if (gameHour == 1 && !isPM) 
-            {
-                gameDay++;
-            }
+            if (gameHour > 12) gameHour = 1;
+
+            if (gameHour == 12) isPM = !isPM;
+
+            if (gameHour == 1 && !isPM) gameDay++;
         }
 
-        //Let all subsscribers know of minuteIncrease
         minutePassed?.Invoke();
-
-        //-0.5 for day skip, so such is per minute
-        GameManager.Instance.changeHunger(-0.08f);
-
     }
 
     public void skipDay()
     {
-        if (!GameObject.FindWithTag("player").gameObject.GetComponent<PlayerSafeZone>().isTouchingWallBack)
-        {
+        if (!GameObject.FindWithTag("player").GetComponent<PlayerSafeZone>().isTouchingWallBack)
             return;
-        }
+
         UIManager.Instance.onResume();
         Time.timeScale = 1.0f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        for (int i = 0; i < 1440; i++) 
+        for (int i = 0; i < 1440; i++)
         {
             AdvanceMinute();
         }
-
     }
-
 }

@@ -70,6 +70,13 @@ public class UIManager : MonoBehaviour
     public GameObject mutationPointsGainCue;
     private Queue<string> pendingMutationCues;
     private bool cueRunning = false;
+
+    [Header("Bar Settings")]
+    [SerializeField] private float barSmoothTime = 0.5f; // Duration of the lerp
+
+    private Coroutine hungerCoroutine;
+    private Coroutine staminaCoroutine;
+    private Coroutine contaminationCoroutine;
     
     //public event System.Action<List<int>> updateParams;
 
@@ -89,35 +96,6 @@ public class UIManager : MonoBehaviour
     //Thanks ChatG
     private void Start()
     {
-        //disable them just in case
-        //template_InputField.SetActive(false);
-        //template_Dropdown.SetActive(false);
-        //template_Toggle.SetActive(false);
-
-        // Add a TextField parameter
-        //int textParamID = AddParameterOptionTextField("Username", "PlayerOne");
-        //int jumpMutationTextParamID = AddParameterOptionTextField("Jump");
-        //setParamValue(jumpMutationTextParamID, "Stack #");
-        //int speedMutationTextParamID = AddParameterOptionTextField("Speed");
-        //setParamValue(speedMutationTextParamID, "Stack #");
-        //setParamValue(textParamID, "NewPlayerName");
-        //Debug.Log("Text Param Value: " + getParamValue(textParamID));
-
-        ///*Add a Dropdown parameter
-        //List<string> dropdownOptions = new List<string> { "Easy", "Medium", "Hard" };
-        //int dropdownParamID = AddParameterOptionDropMenu("Difficulty", dropdownOptions, 0);
-        //setParamValue(dropdownParamID, "Hard");
-        //Debug.Log("Dropdown Param Value: " + getParamValue(dropdownParamID));
-        //*/
-
-        //// Add a Toggle parameter
-        //int toggleClimbID = AddParameterOptionToggle("Climb", false);
-        //int toggleBiteID = AddParameterOptionToggle("Bite", false);
-        //setParamValue(toggleClimbID, false);
-        //setParamValue(toggleBiteID, false);
-
-        //paramIDs = new List<int> { jumpMutationTextParamID, speedMutationTextParamID, toggleClimbID, toggleBiteID };
-
         //disable all pause ui elements
         foreach (GameObject _uis in pauseScreens)
         {
@@ -291,20 +269,43 @@ public class UIManager : MonoBehaviour
         InfectUI.SetActive(_state);
     }
 
-    public void changeStaminaBar(float _newvalue)
+    public void changeStaminaBar(float _newValue)
     {
-        StaminaBar.fillAmount = _newvalue;
+        float targetValue = Mathf.Clamp01(_newValue);
+
+        if (staminaCoroutine != null) StopCoroutine(staminaCoroutine);
+        staminaCoroutine = StartCoroutine(SmoothBarFill(StaminaBar, targetValue));
     }
-    public void changeContaminationBar(float _newvalue)
+
+    public void changeContaminationBar(float _newValue)
     {
-        ContaminationBar.fillAmount = _newvalue;
+        float targetValue = Mathf.Clamp01(_newValue);
+
+        if (contaminationCoroutine != null) StopCoroutine(contaminationCoroutine);
+        contaminationCoroutine = StartCoroutine(SmoothBarFill(ContaminationBar, targetValue));
     }
 
     public void changeHungerBar(float _change)
     {
-        float _value = hungerBar.fillAmount += _change;
-        _value = Mathf.Clamp(_value, 0f, 1f);
-        hungerBar.fillAmount = _value;
+        float targetValue = Mathf.Clamp(hungerBar.fillAmount + _change, 0f, 1f);
+
+        if (hungerCoroutine != null) StopCoroutine(hungerCoroutine);
+        hungerCoroutine = StartCoroutine(SmoothBarFill(hungerBar, targetValue));
+    }
+
+    private IEnumerator SmoothBarFill(Image bar, float targetValue)
+    {
+        float startValue = bar.fillAmount;
+        float elapsed = 0f;
+
+        while (elapsed < barSmoothTime)
+        {
+            elapsed += Time.deltaTime;
+            bar.fillAmount = Mathf.Lerp(startValue, targetValue, elapsed / barSmoothTime);
+            yield return null;
+        }
+
+        bar.fillAmount = targetValue; // Ensure it reaches exactly the target
     }
 
     public void SetTutorialCaption(string _narration)
