@@ -20,7 +20,7 @@ public class BiteMutation : PhysicalMutation, IMutation, IToggleable
         GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "BiteMutation");
         if (toRemove != null)
         {
-            GameManager.Instance.mutationPool.Remove(toRemove);
+            GameManager.Instance.RemoveFromPool(toRemove);
         }
         rat.canBite = true;
         notifyFlag();

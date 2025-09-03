@@ -15,7 +15,21 @@ using System.Linq;
 public static class MutationLibraryGenerator
 {
     const string LIBRARY_PATH = "Assets/Resources/MutationLibrary.asset";
-
+    const string ALL_MUTATIONS_PATH = "Assets/Prefabs/Mutations";
+    const string TEST_MUTATIONS_PATH = "Assets/Prefabs/MutationsToTest";
+    const string DEBUG_KEY = "MutationDebugEnabled";
+    private static bool IsDebug
+    {
+        get => EditorPrefs.GetBool(DEBUG_KEY, false);
+        set => EditorPrefs.SetBool(DEBUG_KEY, value);
+    }
+    [MenuItem("Tools/Mutation Library/Toggle Debug")]
+    private static void ToggleDebug()
+    {
+        IsDebug = !IsDebug;
+        Menu.SetChecked("Tools/Mutation Library/Toggle Debug", IsDebug);
+        Debug.Log("Using Debug Mutations: " + IsDebug);
+    }
     [MenuItem("Tools/Mutation Library/Refresh")]
     public static void Refresh()
     {
@@ -28,8 +42,16 @@ public static class MutationLibraryGenerator
             System.IO.Directory.CreateDirectory("Assets/Resources");
             AssetDatabase.CreateAsset(library, LIBRARY_PATH);
         }
-
-        var globalUIDs = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Prefabs/Mutations" });
+        string mutationsPath;
+        if (IsDebug)
+        {
+            mutationsPath = TEST_MUTATIONS_PATH;
+        }
+        else
+        {
+            mutationsPath = ALL_MUTATIONS_PATH;
+        }
+        var globalUIDs = AssetDatabase.FindAssets("t:Prefab", new[] { mutationsPath });
         /*
          Chain of Linq queries that does the following:
             1. Convert each unique asset reference from the guid list into a corresponding asset path (Transform the data)

@@ -12,6 +12,7 @@ public class Sector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        UpdateBounds();
         SetpieceManager.Instance.RegisterSector(this);
     }
 
@@ -21,14 +22,6 @@ public class Sector : MonoBehaviour
         
     }
 
-    //Auto generate the sector's trigger area based on any scene changes
-    private void OnValidate()
-    {
-        if (minBound != null && maxBound != null)
-        {
-            UpdateBounds();
-        }
-    }
 
     private void UpdateBounds()
     {
@@ -43,7 +36,7 @@ public class Sector : MonoBehaviour
             triggerArea = GetComponent<BoxCollider>();
             if (triggerArea == null)
             {
-                triggerArea.gameObject.AddComponent<BoxCollider>();
+                triggerArea = gameObject.AddComponent<BoxCollider>();
             }
         }
 

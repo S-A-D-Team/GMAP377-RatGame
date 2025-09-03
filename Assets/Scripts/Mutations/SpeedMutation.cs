@@ -104,14 +104,16 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
         stackMutation();
     }
 
+    //Arbitrary workaround placed to not have actual stacking behavior for design testing purposes, refactor/fix later
     public override void stackMutation()
     {
         //Ensure stacks is non-negative
-        stacks = Mathf.Max(0, stacks);
+        //stacks = Mathf.Max(0, stacks);
+        stacks = 1;
 
         //Flat multiplier to run and walk speed on first stack, subsequent stacks decay the drag exponentially (faster acceleration, slippier to control)
         //Designed to increase burst movement per stack in exchange for long-term control
-        if (stacks == 0)
+        if (stacks == 1)
         {
             rat.runSpeed *= runSpeedMultiplier;
             rat.walkSpeed *= walkSpeedMultiplier;
@@ -128,7 +130,7 @@ public class SpeedMutation : MetaMutation, IMutation, IStackable
                 rat.groundDrag = MutationUtils.ApplyMultiplicativeDecay(decayCurve, maxDrag, stacks, minDrag);
             }
         }
-        stacks++;
+        //stacks++;
         if(stacks > 1)
         {
             UIManager.Instance.cueMutation(stackStr + " x" + stacks.ToString());
