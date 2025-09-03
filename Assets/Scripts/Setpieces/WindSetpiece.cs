@@ -9,6 +9,7 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
     public List<Transform> dangerSpots;
     public Transform minRandomBound;
     public Transform maxRandomBound;
+    public float offsetZ = 0f;
     public Transform windowHinge;
 
     //The trigger area to apply the wind force, set in inspector
@@ -16,9 +17,8 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
 
     [SerializeField]
     private float eventDuration = 30f;
-
-    private Quaternion closedRotation;
-    private Quaternion openRotation;
+    private Vector3 closedPosition;
+    private Vector3 openPosition;
     private enum destinationType
     {
         RANDOM = 0,
@@ -31,8 +31,8 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
 
     private void Start()
     {
-        closedRotation = windowHinge.localRotation;
-        openRotation = closedRotation * Quaternion.Euler(0f, 0f, -135f);
+        closedPosition = windowHinge.localPosition;
+        openPosition = closedPosition + new Vector3(0, 2.5f, 0);
     }
     public void TriggerEvent()
     {
@@ -58,7 +58,7 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
             case destinationType.RANDOM:
                 float xPos = Random.Range(minRandomBound.position.x, maxRandomBound.position.x);
                 float yPos = Random.Range(minRandomBound.position.y, maxRandomBound.position.y);
-                float zPos = Random.Range(minRandomBound.position.z, maxRandomBound.position.z);
+                float zPos = Random.Range(minRandomBound.position.z + offsetZ, maxRandomBound.position.z - offsetZ);
                 targetArea = new Vector3(xPos, yPos, zPos);
                 break;
             case destinationType.SAFETY:
@@ -75,10 +75,10 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
 
     IEnumerator WindowEvent()
     {
-        windowHinge.localRotation = openRotation;
+        windowHinge.localPosition = openPosition;
         current.EnableCurrent(calculateTargetArea());
         yield return new WaitForSeconds(eventDuration);
-        windowHinge.localRotation = closedRotation;
+        windowHinge.localPosition = closedPosition;
         current.DisableCurrent();
     }
 }
