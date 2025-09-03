@@ -17,7 +17,7 @@ public class HollowBonesMutation : PhysicalMutation, IMutation, IToggleable
 
     public override void onMutate()
     {
-        //UIManager.Instance.cueMutation(obtainedStr);
+        UIManager.Instance.cueMutation(obtainedStr);
         GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "HollowBonesMutation");
         if (toRemove != null)
         {
@@ -36,7 +36,7 @@ public class HollowBonesMutation : PhysicalMutation, IMutation, IToggleable
 
     public void Toggle()
     {
-        rat.hasHollowBones = !rat.canBite;
+        rat.hasHollowBones = !rat.hasHollowBones;
         notifyFlag();
     }
 
