@@ -43,6 +43,7 @@ public class UIManagerTWOOOOO : MonoBehaviour
         UIManager.Instance?.SelfDestroy();
         GameTimer.Instance?.SelfDestroy();
         ContaminationManager.Instance?.SelfDestroy();
+        SetpieceManager.Instance?.SelfDestroy();
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }

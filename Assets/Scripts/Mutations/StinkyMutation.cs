@@ -4,31 +4,26 @@ using UnityEngine;
 
 public class StinkyMutation : PhysicalMutation, IMutation, IToggleable
 {
-    private Hole biteLogic;
+    private PlayerMovement stinkyLogic;
     [SerializeField]
     private string obtainedStr = "You really smell, maybe enough to drive off a cat!";
     public void Initialize()
     {
         rat = GameManager.Instance.ratStats;
-        biteLogic = rat.gameObject.GetComponent<Hole>();
+        stinkyLogic = rat.gameObject.GetComponent<PlayerMovement>();
         Debug.Log("Stinky Mutation Obtained");
     }
 
     public override void onMutate()
     {
-        //UIManager.Instance.cueMutation(obtainedStr);
-        GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "StinkyMutation");
-        if (toRemove != null)
-        {
-            GameManager.Instance.mutationPool.Remove(toRemove);
-        }
+        UIManager.Instance.cueMutation(obtainedStr);
         rat.hasStinky = true;
         notifyFlag();
     }
 
     public void Toggle()
     {
-        rat.hasStinky = !rat.canBite;
+        rat.hasStinky = !rat.hasStinky;
         notifyFlag();
     }
 
@@ -45,13 +40,22 @@ public class StinkyMutation : PhysicalMutation, IMutation, IToggleable
 
     public void notifyFlag()
     {
-        biteLogic.isEnabled = rat.canBite;
+        stinkyLogic.RefreshStats();
     }
 
 
     public override void stackMutation()
     {
-        //Future consideration: Visual changes on stacks
+        //Reroll if gained again while active
+        if (rat.hasStinky)
+        {
+            GameManager.Instance.RandomMutate();
+        }
+        else
+        {
+            setCurrentFlag(true);
+        }
+        
     }
 
     // Start is called before the first frame update

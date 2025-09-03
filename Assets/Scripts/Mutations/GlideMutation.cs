@@ -2,51 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
+public class GlideMutation : PhysicalMutation, IMutation, IToggleable
 {
-    private PlayerMovement climbLogic;
+    private PlayerMovement glideLogic;
     [SerializeField]
-    private string obtainedStr = "You feel like inclines can no longer decline you (Climb Unlocked!)";
+    private string obtainedStr = "You feel like you can ride the wind (Glide Unlocked!)";
     public void Initialize()
     {
         rat = GameManager.Instance.ratStats;
-        climbLogic = rat.gameObject.GetComponent<PlayerMovement>();
-        Debug.Log("You can climb now");
+        glideLogic = rat.gameObject.GetComponent<PlayerMovement>();
+        Debug.Log("You can glide now");
     }
 
     public override void onMutate()
     {
         UIManager.Instance.cueMutation(obtainedStr);
         //One-and-done mutation, removed from mutation pool after unlocked
-        GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "ClimbMutation");
+        GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "GlideMutation");
         if (toRemove != null)
         {
             GameManager.Instance.RemoveFromPool(toRemove);
         }
-        rat.canClimb = true;
+        rat.canGlide = true;
         notifyFlag();
     }
 
     public void Toggle()
     {
-        rat.canClimb = !rat.canClimb;
+        rat.canGlide= !rat.canGlide;
         notifyFlag();
     }
 
     public bool getCurrentFlag()
     {
-        return rat.canClimb;
+        return rat.canGlide;
     }
 
     public void setCurrentFlag(bool flag)
     {
-        rat.canClimb = flag;
+        rat.canGlide = flag;
         notifyFlag();
     }
 
     public void notifyFlag()
     {
-        climbLogic.RefreshStats();
+        glideLogic.RefreshStats();
     }
 
     public override void stackMutation()
@@ -57,12 +57,13 @@ public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
+

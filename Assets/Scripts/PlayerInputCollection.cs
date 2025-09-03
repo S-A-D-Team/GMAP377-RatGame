@@ -12,9 +12,11 @@ public class PlayerInputCollection : MonoBehaviour
     public bool ClimbPressed { get; private set; }
     public bool BiteHeld { get; private set; }
     public bool BiteReleased { get; private set; }
+    public bool GlidePressed { get; private set; }
     //Mostly for testing stats
     public bool RefreshPressed { get; private set; }
     public bool DebugMovePressed { get; private set; }
+
     
     [Header("Movement Inputs")]
     private float horInput;
@@ -25,8 +27,11 @@ public class PlayerInputCollection : MonoBehaviour
     private float jumpBuffer = 0.1f;
     [SerializeField]
     private float climbBuffer = 0.1f;
+    [SerializeField]
+    private float glideBuffer = 0.1f;
     private float lastJumpPress = -100f;
     private float lastClimbPress = -100f;
+    private float lastGlidePress = -100f;
 
     [Header("Key Bindings")]
     [SerializeField]
@@ -41,6 +46,8 @@ public class PlayerInputCollection : MonoBehaviour
     private KeyCode debugMoveUpKey = KeyCode.L;
     [SerializeField]
     private KeyCode biteKey = KeyCode.E;
+    [SerializeField]
+    private KeyCode glideKey = KeyCode.Space;
 
     private void Update()
     {
@@ -48,6 +55,7 @@ public class PlayerInputCollection : MonoBehaviour
         vertInput = Input.GetAxisRaw("Vertical");
         MoveInput = new Vector2(horInput, vertInput);
         ClimbPressed = Input.GetKeyDown(climbKey);
+        GlidePressed = Input.GetKeyDown(glideKey);
         RefreshPressed = Input.GetKeyDown(refreshStatsKey);
         RunHeld = Input.GetKey(runKey);
         JumpHeld = Input.GetKey(jumpKey);
@@ -55,6 +63,7 @@ public class PlayerInputCollection : MonoBehaviour
         BiteHeld = Input.GetKey(biteKey);
         DebugMovePressed = Input.GetKeyDown(debugMoveUpKey);
         BiteReleased = Input.GetKeyUp(biteKey);
+        
         if (JumpPressed)
         {
             lastJumpPress = Time.time;
@@ -62,6 +71,11 @@ public class PlayerInputCollection : MonoBehaviour
         if (ClimbPressed)
         {
             lastClimbPress = Time.time;
+        }
+
+        if (GlidePressed)
+        {
+            lastGlidePress = Time.time;
         }
         //if (Input.GetKeyDown(KeyCode.Escape) && !UIManager.Instance.isTutorialActive)
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -81,6 +95,11 @@ public class PlayerInputCollection : MonoBehaviour
     public bool BufferedClimb()
     {
         return Time.time < lastClimbPress + climbBuffer;
+    }
+
+    public bool BufferedGlide()
+    {
+        return Time.time < lastGlidePress + glideBuffer;
     }
 
 }
