@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private bool canBite;
     private bool canClimb;
     private bool canGlide;
+    private bool hasStinky;
     private float climbSpeed;
 
     //Resources that affect mobility stats/access
@@ -91,7 +92,7 @@ public class PlayerMovement : MonoBehaviour
     private float lastJumped;
     [SerializeField]
     [Tooltip("Minimum amount of time to be airborne before player can start gliding")]
-    private float minAirtime = 1f;
+    private float minAirtime = 0.16f;
 
     [Header("Glide Check")]
     private bool gliding = false;
@@ -232,6 +233,7 @@ public class PlayerMovement : MonoBehaviour
         canBite = playerStats.canBite;
         canClimb = playerStats.canClimb;
         canGlide = playerStats.canGlide;
+        hasStinky = playerStats.hasStinky;
     }
 
     private void Update()

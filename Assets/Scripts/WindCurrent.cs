@@ -24,7 +24,8 @@ public class WindCurrent : MonoBehaviour
     {
         windDirection = direction;
         triggerArea.enabled = true;
-        transform.rotation = Quaternion.LookRotation(windDirection.normalized);
+        var shape = windVisual.shape;
+        shape.rotation = Quaternion.LookRotation(windDirection).eulerAngles;
         windVisual.Play();
 
     }

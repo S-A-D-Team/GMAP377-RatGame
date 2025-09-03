@@ -21,7 +21,7 @@ public class GlideMutation : PhysicalMutation, IMutation, IToggleable
         GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "GlideMutation");
         if (toRemove != null)
         {
-            GameManager.Instance.mutationPool.Remove(toRemove);
+            GameManager.Instance.RemoveFromPool(toRemove);
         }
         rat.canGlide = true;
         notifyFlag();

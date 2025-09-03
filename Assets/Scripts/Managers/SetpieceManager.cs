@@ -8,8 +8,8 @@ public class SetpieceManager : MonoBehaviour
     public static SetpieceManager Instance { get; private set; }
     [Tooltip("Toggle on to allow setpieces to be triggered even when the player is not in their sector")]
     public bool allowGlobalActivation;
-    private List<Sector> sectors;
-    private List<Setpiece> setpieces;
+    private List<Sector> sectors = new List<Sector>();
+    private List<Setpiece> setpieces = new List<Setpiece>();
     private Sector currentPlayerSector;
     private Sector lastKnownSector;
     
@@ -24,6 +24,11 @@ public class SetpieceManager : MonoBehaviour
 
         Instance = this;
         lastKnownSector = null;
+    }
+    public void SelfDestroy()
+    {
+        Instance = null;
+        Destroy(gameObject);
     }
 
     public void RegisterSector(Sector sector)

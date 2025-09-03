@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Setpiece : MonoBehaviour
 {
-    public GameObject spObject;
     private ISetpieceEvent spEvent;
     public Sector sector;
     public bool isRepeatable;
@@ -12,8 +11,7 @@ public class Setpiece : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spEvent = spObject.GetComponent<ISetpieceEvent>();
-        sector = GetComponent<Sector>();
+        spEvent = gameObject.GetComponent<ISetpieceEvent>();
         SetpieceManager.Instance.RegisterSetpiece(this);
     }
 

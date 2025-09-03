@@ -21,7 +21,7 @@ public class ClimbMutation : PhysicalMutation, IMutation, IToggleable
         GameObject toRemove = GameManager.Instance.mutationPool.Find(obj => obj.name == "ClimbMutation");
         if (toRemove != null)
         {
-            GameManager.Instance.mutationPool.Remove(toRemove);
+            GameManager.Instance.RemoveFromPool(toRemove);
         }
         rat.canClimb = true;
         notifyFlag();
