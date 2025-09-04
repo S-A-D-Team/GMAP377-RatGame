@@ -47,7 +47,7 @@ public class PlayerInputCollection : MonoBehaviour
     [SerializeField]
     private KeyCode biteKey = KeyCode.E;
     [SerializeField]
-    private KeyCode glideKey = KeyCode.Space;
+    private KeyCode glideKey = KeyCode.G;
 
     private void Update()
     {

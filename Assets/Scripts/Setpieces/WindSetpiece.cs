@@ -9,6 +9,7 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
     public List<Transform> dangerSpots;
     public Transform minRandomBound;
     public Transform maxRandomBound;
+    public SpriteRenderer warning;
     public float offsetZ = 0f;
     public Transform windowHinge;
 
@@ -19,6 +20,7 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
     private float eventDuration = 30f;
     private Vector3 closedPosition;
     private Vector3 openPosition;
+    private Color baseColor;
     private enum destinationType
     {
         RANDOM = 0,
@@ -33,6 +35,7 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
     {
         closedPosition = windowHinge.localPosition;
         openPosition = closedPosition + new Vector3(0, 2.5f, 0);
+        warning.enabled = false;
     }
     public void TriggerEvent()
     {
@@ -76,6 +79,17 @@ public class WindSetpiece : MonoBehaviour, ISetpieceEvent
     IEnumerator WindowEvent()
     {
         windowHinge.localPosition = openPosition;
+        float t = 0f;
+        warning.enabled = true;
+        while (t < 3f)
+        {
+            float transparency = Mathf.PingPong(Time.time * 5f, 1f);
+            warning.color = new Color(baseColor.r, baseColor.g, baseColor.b, transparency);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        warning.color = baseColor;
+        warning.enabled = false;
         current.EnableCurrent(calculateTargetArea());
         yield return new WaitForSeconds(eventDuration);
         windowHinge.localPosition = closedPosition;

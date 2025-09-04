@@ -27,7 +27,7 @@ public class SensoryManager : MonoBehaviour
 
     public void AddToContaminablesSensed(Collider collider)
     {
-        Debug.Log("Something Sensed");
+        //Debug.Log("Something Sensed");
         if (collider.GetComponent<Contaminable>() != null)
         {
             //Debug.Log("Contaminable Sensed");
@@ -135,8 +135,8 @@ public class SensoryManager : MonoBehaviour
     {
         //Debug.Log("Sensory Manager emit sound");
         Vector3 randomDirection = Random.insideUnitSphere * 100 / intensity;
-        Debug.Log("Exact location: " + location + " General location: " + (location + randomDirection));
-        Debug.Log("Intensity: " + intensity);
+        //Debug.Log("Exact location: " + location + " General location: " + (location + randomDirection));
+        //Debug.Log("Intensity: " + intensity);
         foreach (var listener in listeners)
         {
             listener.hear(source, location + randomDirection, intensity);

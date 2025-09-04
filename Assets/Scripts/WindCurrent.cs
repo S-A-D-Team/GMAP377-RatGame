@@ -18,6 +18,7 @@ public class WindCurrent : MonoBehaviour
         {
             windVisual.Stop();
         }
+        triggerArea.enabled = false;
     }
 
     public void EnableCurrent(Vector3 direction)

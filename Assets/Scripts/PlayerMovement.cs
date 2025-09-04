@@ -38,6 +38,8 @@ public class PlayerMovement : MonoBehaviour
     private float climbStamDrain = 0.1f;
     [SerializeField]
     private float biteStamDrain = 0.25f;
+    [SerializeField]
+    private float jumpStamDrain = 0.05f;
     [SerializeField] 
     private float wallJumpStamDrain = 0.2f;
 
@@ -78,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     public float maxJumpForce;
     [SerializeField]
-    private int jumpCooldown = 10;
+    private int jumpCooldown = 5;
     [SerializeField]
     [Tooltip("Affects wall jump height")]
     private float verticalBounce = 0.75f;
@@ -127,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 attachDirection;
     private Vector3 jumpDirection = Vector3.up;
     private Vector3 externalForces;
-    private Vector3 glideGravityOffset;
+    private Vector3 glideGravityScale;
 
     [Space]
     [Header("RandomSpawn")]
@@ -191,13 +193,14 @@ public class PlayerMovement : MonoBehaviour
         canJump = true;
         jumpStarted = false;
         climbing = false;
+        gliding = false;
         groundNormal = orientation.up;
         climbDirection = orientation.up;
         wallJumpDirection = -orientation.forward;
         attachDirection = orientation.forward;
         externalForces = Vector3.zero;
         glideMovement = airMovement * 0.75f;
-        glideGravityOffset = Physics.gravity * -0.66f;
+        glideGravityScale = Physics.gravity * 0.3f;
         GameManager.Instance.RegisterPlayer(gameObject);
         playerStats = GameManager.Instance.ratStats;
         //Initialize stats from rat stats
@@ -234,7 +237,6 @@ public class PlayerMovement : MonoBehaviour
         stamina = playerStats.stamina;
         maxStamina = playerStats.staminaCap;
         regenDelay = playerStats.stamRegenDelay;
-
 
         canBite = playerStats.canBite;
         canClimb = playerStats.canClimb;
@@ -363,17 +365,17 @@ public class PlayerMovement : MonoBehaviour
 
             //Adjust air handling based on speed
             //Harder to steer at high speed, more precise at lower speed
-            if (!grounded)
+            if (!grounded && !gliding)
             {
-                float trueAirMovement = gliding ? glideMovement : airMovement;
+                
                 Vector3 airDrift = GetInputDirection();
                 float lateralSpeed = flatVelocity.magnitude;
 
                 float airControl = Mathf.Lerp(1.2f, 0.6f, lateralSpeed / runSpeed);
 
-                float adjustedHandling = airControl * (running ? 0.9f : 1.1f);
+                float adjustedHandling = airControl * (running ? 0.9f : gliding ? 1.3f : 1f);
 
-                Vector3 adjustedAirForce = airDrift * trueAirMovement * adjustedHandling;
+                Vector3 adjustedAirForce = airDrift * airMovement * adjustedHandling;
                 rb.AddForce(adjustedAirForce, ForceMode.Force);
             }
             
@@ -482,7 +484,7 @@ public class PlayerMovement : MonoBehaviour
         float offsetGravity = 4.25f;
         while (holdWindow > 0f)
         {
-            if (!playerInput.JumpHeld || !hasStamina(biteStamDrain))
+            if (!playerInput.JumpHeld || !hasStamina(jumpStamDrain))
             {
                 yield break;
             }
@@ -491,7 +493,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(jumpDirection * offsetGravity, ForceMode.Acceleration);
             yield return null;
         }
-        if (playerInput.JumpHeld && hasStamina(biteStamDrain))
+        if (playerInput.JumpHeld && hasStamina(jumpStamDrain))
         {
             currentVertical = verticalAction.FullHopping;
             StartCoroutine(FullHop());
@@ -510,15 +512,14 @@ public class PlayerMovement : MonoBehaviour
         bool bufferedJump = playerInput.BufferedJump() && canJump;
         //Short hop, accounts for coyote and buffered timings
         //Always entered from grounded (or briefly after exiting it)
-        if ((grounded || canCoyoteJump) && bufferedJump && canJump && hasStamina(minJumpForce))
+        if ((grounded || canCoyoteJump) && bufferedJump && canJump)
         {
             canJump = false;
             //Makes sure y speed is 0
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             jumpDirection = (Vector3.up + groundNormal).normalized;
 
-            //Use stamina proportional to minJumpForce
-            useStamina(minJumpForce);
+            useStamina(jumpStamDrain);
 
             rb.AddForce(jumpDirection * minJumpForce, ForceMode.Impulse);
             //Not currently used but might be useful later to vary the jumping cooldown, prevent instant double jump(?), etc.
@@ -532,7 +533,7 @@ public class PlayerMovement : MonoBehaviour
         //Always entered from short hop, ends at height cap or jump button release
         currentJumpForce = minJumpForce;
 
-        while (playerInput.JumpHeld && currentJumpForce < maxJumpForce && jumpStarted && stamina > 0f)
+        while (playerInput.JumpHeld && currentJumpForce < maxJumpForce && jumpStarted)
         {
             float deltaForce = jumpChargeRate * Time.deltaTime;
             jumpDirection = (Vector3.up + groundNormal).normalized;
@@ -540,16 +541,6 @@ public class PlayerMovement : MonoBehaviour
             //Add force
             rb.AddForce(jumpDirection * deltaForce, ForceMode.Impulse);
             currentJumpForce += deltaForce;
-
-            //Apply proportional stamina cost immediately
-            float chargePercent = deltaForce / maxJumpForce;
-            float stamThisFrame = biteStamDrain * chargePercent;
-            useStamina(stamThisFrame); // this clamps automatically to remaining stamina
-
-            //Stop if we ran out of stamina
-            if (stamina <= 0f)
-                break;
-
             yield return null;
         }
 
@@ -684,6 +675,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 Debug.Log("Yep near climbable");
                 float contactAngle = Mathf.Floor(Vector3.Angle(hit.normal, Vector3.up));
+                contactAngle = Mathf.Min(contactAngle, 180f - contactAngle);
                 
                 Debug.Log(contactAngle);
                 //Surface must be sufficiently steep, climb must be unlocked (mutation) and not on cooldown
@@ -819,8 +811,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (currentPositional == positionalState.Airborne)
         {
-            if (Time.time < lastGrounded + minAirtime || Time.time < lastJumped + minAirtime)
+            if (Time.time > lastGrounded + minAirtime || Time.time > lastJumped + minAirtime)
             {
+                Debug.Log("Yep time to glide");
                 return true;
             }
             else
@@ -841,10 +834,10 @@ public class PlayerMovement : MonoBehaviour
         if (currentPositional != positionalState.Climbing)
         {
             climbing = false;
-            currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
+            currentPositional = grounded ? positionalState.Grounded : gliding ?  positionalState.Gliding : positionalState.Airborne;
         }
 
-        if (currentPositional != positionalState.Gliding)
+        else if (currentPositional != positionalState.Gliding)
         {
             gliding = false;
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
@@ -864,7 +857,7 @@ public class PlayerMovement : MonoBehaviour
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
 
-        if (currentPositional == positionalState.Gliding && (grounded || !canGlide || !IsGlideReady()))
+        if (currentPositional == positionalState.Gliding && (grounded || !canGlide))
         {
             gliding = false;
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
@@ -959,9 +952,8 @@ public class PlayerMovement : MonoBehaviour
     //Act on player input intent based on position (Not all actions are available in all positions)
     private void MovePlayer()
     {
-        rb.drag = grounded ? groundDrag : 0f;
+        rb.drag = grounded ? groundDrag : gliding ? 6f : 0f;
         rb.useGravity = !climbing;
-
         switch (currentPositional)
         {
             case positionalState.Climbing:
@@ -1030,10 +1022,10 @@ public class PlayerMovement : MonoBehaviour
                 if (currentLateral == lateralAction.Walking)
                 {
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
-                    rb.AddForce(moveDirection * glideMovement, ForceMode.Acceleration);
+                    rb.AddForce(moveDirection * airMovement, ForceMode.Acceleration);
                 }
                 //Apply a constant force against gravity to simulate "floatiness"
-                rb.AddForce(glideGravityOffset);
+                rb.AddForce(glideGravityScale - Physics.gravity, ForceMode.Acceleration);
                 break;
         }
     }
