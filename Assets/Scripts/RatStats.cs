@@ -17,6 +17,7 @@ public class RatStats : MonoBehaviour
     public float maxJumpForce;
     public bool canBite;
     public bool canClimb;
+    public bool canGlide;
     public float groundDrag;
     public float hunger;
     public float stamina;

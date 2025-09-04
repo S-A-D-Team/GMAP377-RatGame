@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     //Ability flags
     private bool canBite;
     private bool canClimb;
+    private bool canGlide;
+    private bool hasStinky;
     private float climbSpeed;
 
     //Resources that affect mobility stats/access
@@ -36,6 +38,8 @@ public class PlayerMovement : MonoBehaviour
     private float climbStamDrain = 0.1f;
     [SerializeField]
     private float biteStamDrain = 0.25f;
+    [SerializeField] 
+    private float wallJumpStamDrain = 0.2f;
 
     [Header("Base Movement")]
     [SerializeField]
@@ -83,11 +87,19 @@ public class PlayerMovement : MonoBehaviour
     private float horizontalBounce = 6f;
     [SerializeField]
     private float airMovement;
+    private float glideMovement;
     private bool canJump;
     private bool jumpStarted;
     private float currentJumpForce;
     private float lastJumped;
+    [SerializeField]
+    [Tooltip("Minimum amount of time to be airborne before player can start gliding")]
+    private float minAirtime = 0.16f;
      private float lastVerticalVelocity;
+
+    [Header("Glide Check")]
+    private bool gliding = false;
+    private bool glideToggleQueued = false;
 
     [Header("Coyote Jumping")]
     [SerializeField]
@@ -114,6 +126,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 wallJumpDirection;
     private Vector3 attachDirection;
     private Vector3 jumpDirection = Vector3.up;
+    private Vector3 externalForces;
+    private Vector3 glideGravityOffset;
 
     [Space]
     [Header("RandomSpawn")]
@@ -148,11 +162,13 @@ public class PlayerMovement : MonoBehaviour
     //Grounded: On a flat/moderately steep surface
     //Climbing: On a surface within a certain steepness range, and climb has been activated
     //Airborne: No surfaces being touched
+    //Gliding: Certain airtime has been reached, and glide has been activated
     private enum positionalState
     {
         Grounded,
         Climbing,
-        Airborne
+        Airborne,
+        Gliding
     }
 
     private lateralAction currentLateral;
@@ -179,8 +195,9 @@ public class PlayerMovement : MonoBehaviour
         climbDirection = orientation.up;
         wallJumpDirection = -orientation.forward;
         attachDirection = orientation.forward;
-        
-
+        externalForces = Vector3.zero;
+        glideMovement = airMovement * 0.75f;
+        glideGravityOffset = Physics.gravity * -0.66f;
         GameManager.Instance.RegisterPlayer(gameObject);
         playerStats = GameManager.Instance.ratStats;
         //Initialize stats from rat stats
@@ -221,6 +238,8 @@ public class PlayerMovement : MonoBehaviour
 
         canBite = playerStats.canBite;
         canClimb = playerStats.canClimb;
+        canGlide = playerStats.canGlide;
+        hasStinky = playerStats.hasStinky;
 
         soundMultiplier = playerStats.soundMultiplier;
     }
@@ -234,6 +253,7 @@ public class PlayerMovement : MonoBehaviour
         //Ascertain player intention based on input and position
         ActionStateUpdate();
         HandleClimbToggle();
+        HandleGlideToggle();
 
         //Ignore any stamina interactions if ravenous - it is essentially infinite in this state
         if (!tooHungryToCare)
@@ -243,11 +263,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 regenStamina();
             }
-            else if (running)
+            else if (running && hasStamina(runStamDrain * Time.deltaTime))
             {
                 useStamina(runStamDrain * Time.deltaTime);
             }
-            else if (climbing)
+            else if (climbing && hasStamina(climbStamDrain * Time.deltaTime))
             {
                 useStamina(climbStamDrain * Time.deltaTime);
             }
@@ -260,7 +280,6 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(GameManager.Instance.winTheGame());
         }
     }
-
 
     private void FixedUpdate()
     {
@@ -280,6 +299,11 @@ public class PlayerMovement : MonoBehaviour
             TryClimbToggle();
 
         }
+        if (glideToggleQueued)
+        {
+            glideToggleQueued = false;
+            TryGlideToggle();
+        }
         //Ascertain player positioning relative to surfaces
         PositionalStateUpdate();
         //Apply movement based on the above combination of surface checks, input, current positional state
@@ -288,12 +312,16 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         //Swap player material depending on physics needs
         MaterialUpdate();
-
+        //Factor in any possible forces calculated by other objects
+        ResolveExternalForces();
         if (jumpStarted)
         {
             lastVerticalVelocity = rb.velocity.y;
         }
     }
+
+        
+    
 
     public void AdjustStatsToHunger()
     {
@@ -337,6 +365,7 @@ public class PlayerMovement : MonoBehaviour
             //Harder to steer at high speed, more precise at lower speed
             if (!grounded)
             {
+                float trueAirMovement = gliding ? glideMovement : airMovement;
                 Vector3 airDrift = GetInputDirection();
                 float lateralSpeed = flatVelocity.magnitude;
 
@@ -344,7 +373,7 @@ public class PlayerMovement : MonoBehaviour
 
                 float adjustedHandling = airControl * (running ? 0.9f : 1.1f);
 
-                Vector3 adjustedAirForce = airDrift * airMovement * adjustedHandling;
+                Vector3 adjustedAirForce = airDrift * trueAirMovement * adjustedHandling;
                 rb.AddForce(adjustedAirForce, ForceMode.Force);
             }
             
@@ -397,7 +426,7 @@ public class PlayerMovement : MonoBehaviour
 
         StopCoroutine(FullHop());
 
-        GameManager.Instance.emitSound(gameObject, gameObject.transform.position, Mathf.Abs(lastVerticalVelocity) * 3 * soundMultiplier);
+        GameManager.Instance.emitSound(gameObject, gameObject.transform.position, Mathf.Abs(lastVerticalVelocity) * 3);
 
         Vector3 smoothedVelocity = rb.velocity;
         //Stops the rat from bouncing off slopes
@@ -434,6 +463,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void HandleGlideToggle()
+    {
+        if (playerInput.GlidePressed && canGlide)
+        {
+            glideToggleQueued = true;
+        }
+    }
+
     IEnumerator HandleJump()
     {
         jumpStarted = true;
@@ -445,7 +482,7 @@ public class PlayerMovement : MonoBehaviour
         float offsetGravity = 4.25f;
         while (holdWindow > 0f)
         {
-            if (!playerInput.JumpHeld)
+            if (!playerInput.JumpHeld || !hasStamina(biteStamDrain))
             {
                 yield break;
             }
@@ -454,7 +491,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(jumpDirection * offsetGravity, ForceMode.Acceleration);
             yield return null;
         }
-        if (playerInput.JumpHeld)
+        if (playerInput.JumpHeld && hasStamina(biteStamDrain))
         {
             currentVertical = verticalAction.FullHopping;
             StartCoroutine(FullHop());
@@ -466,24 +503,27 @@ public class PlayerMovement : MonoBehaviour
 
         StartCoroutine(JumpCooldown());
     }
-    
+
     private void ShortHop()
     {
         bool canCoyoteJump = Time.time < lastGrounded + coyoteInterval;
         bool bufferedJump = playerInput.BufferedJump() && canJump;
         //Short hop, accounts for coyote and buffered timings
         //Always entered from grounded (or briefly after exiting it)
-        if ((grounded || canCoyoteJump) && bufferedJump && canJump)
+        if ((grounded || canCoyoteJump) && bufferedJump && canJump && hasStamina(minJumpForce))
         {
             canJump = false;
             //Makes sure y speed is 0
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             jumpDirection = (Vector3.up + groundNormal).normalized;
+
+            //Use stamina proportional to minJumpForce
+            useStamina(minJumpForce);
+
             rb.AddForce(jumpDirection * minJumpForce, ForceMode.Impulse);
             //Not currently used but might be useful later to vary the jumping cooldown, prevent instant double jump(?), etc.
             lastJumped = Time.time;
         }
-        
     }
 
     IEnumerator FullHop()
@@ -491,30 +531,42 @@ public class PlayerMovement : MonoBehaviour
         //Full hop up to variable, capped jump height
         //Always entered from short hop, ends at height cap or jump button release
         currentJumpForce = minJumpForce;
-		while (playerInput.JumpHeld && currentJumpForce < maxJumpForce && jumpStarted)
-		{
-			float deltaForce = jumpChargeRate * Time.deltaTime;
-			//Calculate the next force increment to apply with a capped jump height
-			//Sanity checks the jump height while still allowing current to surpass the max to break sentinel value
-			jumpDirection = (Vector3.up + groundNormal).normalized;
-			//Increment direction is straight up to create a natural jump arc increase when jumping from angled surfaces
-			rb.AddForce(jumpDirection * deltaForce, ForceMode.Impulse);
+
+        while (playerInput.JumpHeld && currentJumpForce < maxJumpForce && jumpStarted && stamina > 0f)
+        {
+            float deltaForce = jumpChargeRate * Time.deltaTime;
+            jumpDirection = (Vector3.up + groundNormal).normalized;
+
+            //Add force
+            rb.AddForce(jumpDirection * deltaForce, ForceMode.Impulse);
             currentJumpForce += deltaForce;
-            if (!playerInput.JumpHeld)
-            {
+
+            //Apply proportional stamina cost immediately
+            float chargePercent = deltaForce / maxJumpForce;
+            float stamThisFrame = biteStamDrain * chargePercent;
+            useStamina(stamThisFrame); // this clamps automatically to remaining stamina
+
+            //Stop if we ran out of stamina
+            if (stamina <= 0f)
                 break;
-            }
+
             yield return null;
-		}
+        }
+
         currentJumpForce = 0f;
     }
-   
+
     private void WallJump()
     {
+        if (!hasStamina(wallJumpStamDrain)) return; // prevent jump if not enough stamina
+
+        useStamina(wallJumpStamDrain); // deduct stamina
+
         climbing = false;
         rb.velocity = Vector3.zero;
         Vector3 wallJumpForce = wallJumpDirection * horizontalBounce + Vector3.up * ((minJumpForce + maxJumpForce) / 2f);
         rb.AddForce(wallJumpForce, ForceMode.Impulse);
+        lastJumped = Time.time;
         StartCoroutine(ClimbCooldown());
         StartCoroutine(JumpCooldown());
     }
@@ -747,6 +799,41 @@ public class PlayerMovement : MonoBehaviour
         
     }
 
+    private void TryGlideToggle()
+    {
+        //Cancel glide
+        if (currentPositional == positionalState.Gliding)
+        {
+            gliding = false;
+            currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
+        }
+        else if (canGlide && IsGlideReady())
+        {
+            gliding = true;
+            currentPositional = positionalState.Gliding;
+        }
+
+    }
+
+    private bool IsGlideReady()
+    {
+        if (currentPositional == positionalState.Airborne)
+        {
+            if (Time.time < lastGrounded + minAirtime || Time.time < lastJumped + minAirtime)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void PositionalStateUpdate()
     {
         
@@ -754,6 +841,12 @@ public class PlayerMovement : MonoBehaviour
         if (currentPositional != positionalState.Climbing)
         {
             climbing = false;
+            currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
+        }
+
+        if (currentPositional != positionalState.Gliding)
+        {
+            gliding = false;
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
 
@@ -768,6 +861,12 @@ public class PlayerMovement : MonoBehaviour
                 StartCoroutine(ClimbCooldown());
             }
             
+            currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
+        }
+
+        if (currentPositional == positionalState.Gliding && (grounded || !canGlide || !IsGlideReady()))
+        {
+            gliding = false;
             currentPositional = grounded ? positionalState.Grounded : positionalState.Airborne;
         }
     }
@@ -843,6 +942,17 @@ public class PlayerMovement : MonoBehaviour
                     }
                 }
                 break;
+            case positionalState.Gliding:
+                if (playerInput.MoveInput == Vector2.zero)
+                {
+                    currentLateral = lateralAction.Idle;
+                }
+                else
+                {
+                    //Can't "run" while gliding"
+                    currentLateral = lateralAction.Walking;
+                }
+                break;
         }
     }
 
@@ -855,15 +965,13 @@ public class PlayerMovement : MonoBehaviour
         switch (currentPositional)
         {
             case positionalState.Climbing:
-                running = false;
                 if (currentLateral == lateralAction.Scaling)
                 {
-                    //Can only climb vertically, not horizontally
                     moveDirection = climbDirection * playerInput.MoveInput.y;
                     UIManager.Instance.playClimb();
                     rb.AddForce(3f * climbSpeed * moveDirection.normalized, ForceMode.Force);
-
-                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 3f * climbSpeed * soundMultiplier);
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 3f * climbSpeed);
+                    useStamina(climbStamDrain * Time.deltaTime);
                 }
                 else if (currentLateral == lateralAction.Idle)
                 {
@@ -873,33 +981,30 @@ public class PlayerMovement : MonoBehaviour
                 {
                     WallJump();
                 }
-
                 break;
-            
+
             case positionalState.Grounded:
                 if (currentLateral == lateralAction.Walking)
                 {
                     running = false;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(2.5f * speed * moveDirection, ForceMode.Force);
-
-                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * speed * soundMultiplier);
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * speed);
                 }
-                else if (currentLateral == lateralAction.Running)
+                else if (currentLateral == lateralAction.Running && hasStamina(runStamDrain * Time.deltaTime))
                 {
                     running = true;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), groundNormal).normalized;
                     rb.AddForce(moveDirection * runSpeed * 2.5f, ForceMode.Force);
-
-                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * runSpeed * soundMultiplier);
+                    GameManager.Instance.emitSound(gameObject, gameObject.transform.position, 2.5f * runSpeed);
+                    useStamina(runStamDrain * Time.deltaTime);
                 }
                 else
                 {
                     running = false;
                 }
-                
                 break;
-            
+
             case positionalState.Airborne:
                 if (currentLateral == lateralAction.Walking)
                 {
@@ -907,11 +1012,12 @@ public class PlayerMovement : MonoBehaviour
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
                     rb.AddForce(moveDirection * airMovement, ForceMode.Acceleration);
                 }
-                else if (currentLateral == lateralAction.Running)
+                else if (currentLateral == lateralAction.Running && hasStamina(runStamDrain * Time.deltaTime))
                 {
                     running = true;
                     moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
                     rb.AddForce(moveDirection * (airMovement * 1.25f), ForceMode.Acceleration);
+                    useStamina(runStamDrain * Time.deltaTime);
                 }
                 else
                 {
@@ -919,7 +1025,24 @@ public class PlayerMovement : MonoBehaviour
                 }
                 break;
 
+            case positionalState.Gliding:
+                running = false;
+                if (currentLateral == lateralAction.Walking)
+                {
+                    moveDirection = Vector3.ProjectOnPlane(GetInputDirection(), Vector3.up).normalized;
+                    rb.AddForce(moveDirection * glideMovement, ForceMode.Acceleration);
+                }
+                //Apply a constant force against gravity to simulate "floatiness"
+                rb.AddForce(glideGravityOffset);
+                break;
         }
+    }
+
+    //Apply any culminated external forces and reset the value for the next frame update
+    private void ResolveExternalForces()
+    {
+        rb.AddForce(externalForces);
+        externalForces = Vector3.zero;
     }
 
     //Make sure player has the stamina to use an intended action
@@ -932,14 +1055,30 @@ public class PlayerMovement : MonoBehaviour
     //Slap this at the end of any code block implementing a stamina draining behavior
     private void useStamina(float stamCost)
     {
-        GameManager.Instance.changeStamina(-stamCost);
-        stamina = playerStats.stamina;
+        stamCost = Mathf.Min(stamCost, stamina);
+        stamina -= stamCost;
+        stamina = Mathf.Max(stamina, 0f);
+
+        GameManager.Instance.changeStamina(-stamCost); 
         lastStamUse = Time.time;
     }
 
     private void regenStamina()
     {
+        stamina += staminaRegen * Time.deltaTime;
+        stamina = Mathf.Min(stamina, maxStamina);
         GameManager.Instance.changeStamina(staminaRegen * Time.deltaTime);
-        stamina = playerStats.stamina;
+    }
+
+    //Allow other objects to request physics calculations on the player, influenced by their current state
+    //Player is "sticky" while climbing and cannot be budged externally
+    //Player is lighter while gliding and is influenced more easily
+    public void applyExternalForce(Vector3 force)
+    {
+        float glideModifier = gliding ? 1.5f : 1f;
+        if (!climbing)
+        {
+            externalForces += force * glideModifier;
+        }
     }
 }
